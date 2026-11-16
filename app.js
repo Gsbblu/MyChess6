@@ -33,6 +33,7 @@
   const savedGamesList = document.querySelector('#saved-games');
   const savedCount = document.querySelector('#saved-count');
   const savedStatus = document.querySelector('#saved-status');
+  const cloudProgressStatus = document.querySelector('#cloud-progress-status');
   const libraryTab = document.querySelector('#library-tab');
   const insightsTab = document.querySelector('#insights-tab');
   const libraryPanel = document.querySelector('#library-panel');
@@ -144,6 +145,8 @@
   let autoChessComBusy = false;
   let autoChessComQueue = [];
   let cloudLastSeenGameUrl = '';
+  let cloudSnapshotKey = '';
+  let cloudImportBusy = false;
   window.MyChess6Cloud = {
     lastSeenGameUrl: '', backfillArchiveUrl: '', backfillComplete: false,
     archiveUrl: '', archiveState: 'idle', archiveRemaining: 0
@@ -1311,24 +1314,51 @@
     });
   }
 
+  function renderCloudProgress(data) {
+    const games = Array.isArray(data.games) ? data.games : [];
+    const cursor = (data.backfillArchiveUrl || '').match(/(\d{4}\/\d{2})$/)?.[1];
+    const latestSavedAt = games.reduce((latest, game) => Math.max(latest, Number(game?.savedAt) || 0), 0);
+    const lastUpdate = latestSavedAt ? ` · último lote ${new Date(latestSavedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : '';
+    const progress = data.backfillComplete
+      ? 'Retropreenchimento de 2026 concluído'
+      : `Retropreenchimento em andamento${cursor ? ` · arquivo ${cursor}` : ''}`;
+    const pending = Number(data.pendingInArchive) || 0;
+    const pendingLabel = !data.backfillComplete && pending > 0 ? ` · ${pending} partidas restantes neste arquivo` : '';
+    cloudProgressStatus.textContent = `${games.length} análises publicadas na nuvem · ${progress}${pendingLabel}${lastUpdate}.`;
+  }
+
   async function importCloudLibrary() {
-    let response;
-    try { response = await fetch('cloud-data/games.json', { cache: 'no-store' }); }
-    catch { return; }
-    if (!response.ok) return;
-    let data;
-    try { data = await response.json(); } catch { return; }
-    let games = data.games;
-    if (!Array.isArray(games)) return;
-    cloudLastSeenGameUrl = typeof data.lastSeenGameUrl === 'string' ? data.lastSeenGameUrl : '';
-    window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
-    window.MyChess6Cloud.backfillArchiveUrl = typeof data.backfillArchiveUrl === 'string' ? data.backfillArchiveUrl : '';
-    window.MyChess6Cloud.backfillComplete = data.backfillComplete === true;
-    for (const record of games) {
-      if (!record || typeof record.id !== 'string' || typeof record.pgn !== 'string' || !Array.isArray(record.results)) continue;
-      const local = await libraryRequest('readonly', 'get', record.id);
-      if (!local || Number(record.depth || 0) > Number(local.depth || 0)) await libraryRequest('readwrite', 'put', record);
-    }
+    if (cloudImportBusy) return 0;
+    cloudImportBusy = true;
+    try {
+      let response;
+      try { response = await fetch('cloud-data/games.json', { cache: 'no-store' }); }
+      catch { return 0; }
+      if (!response.ok) return 0;
+      let data;
+      try { data = await response.json(); } catch { return 0; }
+      const games = data.games;
+      if (!Array.isArray(games)) return 0;
+      renderCloudProgress(data);
+      cloudLastSeenGameUrl = typeof data.lastSeenGameUrl === 'string' ? data.lastSeenGameUrl : '';
+      window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
+      window.MyChess6Cloud.backfillArchiveUrl = typeof data.backfillArchiveUrl === 'string' ? data.backfillArchiveUrl : '';
+      window.MyChess6Cloud.backfillComplete = data.backfillComplete === true;
+      const latestSavedAt = games.reduce((latest, game) => Math.max(latest, Number(game?.savedAt) || 0), 0);
+      const snapshotKey = [games.length, data.backfillArchiveUrl || '', data.backfillComplete === true, data.lastSeenGameUrl || '', latestSavedAt].join('|');
+      if (snapshotKey === cloudSnapshotKey) return 0;
+      let imported = 0;
+      for (const record of games) {
+        if (!record || typeof record.id !== 'string' || typeof record.pgn !== 'string' || !Array.isArray(record.results)) continue;
+        const local = await libraryRequest('readonly', 'get', record.id);
+        if (!local || Number(record.depth || 0) > Number(local.depth || 0)) {
+          await libraryRequest('readwrite', 'put', record);
+          imported += 1;
+        }
+      }
+      cloudSnapshotKey = snapshotKey;
+      return imported;
+    } finally { cloudImportBusy = false; }
   }
 
   function gameIdentity(pgn, source) {
@@ -3370,4 +3400,10 @@
     chessComSearch.requestSubmit();
   }
   initializeMyChess();
+  window.setInterval(async () => {
+    try {
+      const imported = await importCloudLibrary();
+      if (imported) await renderSavedGames();
+    } catch {}
+  }, 60 * 1000);
 })();

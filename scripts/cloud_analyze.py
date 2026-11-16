@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import functools
 import json
+import subprocess
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -76,15 +77,25 @@ def valid_records(records: list[dict]) -> list[dict]:
             and isinstance(record.get("results"), list)]
 
 
-def save_checkpoint(records: list[dict], last_seen: str, cursor: str, complete: bool) -> None:
+def save_checkpoint(records: list[dict], last_seen: str, cursor: str, complete: bool,
+                    pending: int = 0) -> None:
     OUTPUT.write_text(json.dumps({
         "format": "MyChess cloud library",
         "version": 1,
         "lastSeenGameUrl": last_seen,
         "backfillArchiveUrl": cursor,
         "backfillComplete": complete,
+        "pendingInArchive": pending,
         "games": records,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    subprocess.run(["git", "add", "cloud-data/games.json"], cwd=ROOT, check=True)
+    staged = subprocess.run(["git", "diff", "--cached", "--quiet", "--", "cloud-data/games.json"], cwd=ROOT, check=False)
+    if staged.returncode == 0:
+        return
+    if staged.returncode != 1:
+        raise subprocess.CalledProcessError(staged.returncode, staged.args)
+    subprocess.run(["git", "commit", "--only", "cloud-data/games.json", "-m", "Update automatic Chess.com analysis"], cwd=ROOT, check=True)
+    subprocess.run(["git", "push", "origin", "main"], cwd=ROOT, check=True)
 
 
 def main() -> None:
@@ -135,16 +146,16 @@ def main() -> None:
                 previous_cursor = previous.get("backfillArchiveUrl") or ""
                 last_seen = page.evaluate("window.MyChess6Cloud?.lastSeenGameUrl || ''")
 
-                def checkpoint(cursor: str, complete: bool) -> list[dict]:
+                def checkpoint(cursor: str, complete: bool, pending: int = 0) -> list[dict]:
                     nonlocal last_seen
                     current = valid_records(read_browser_library(page))
                     last_seen = page.evaluate("window.MyChess6Cloud?.lastSeenGameUrl || ''") or last_seen
-                    save_checkpoint(current, last_seen, cursor, complete)
+                    save_checkpoint(current, last_seen, cursor, complete, pending)
                     return current
 
                 def finish_archive(archive_url: str, remaining: int) -> tuple[list[dict], int]:
                     nonlocal records
-                    records = checkpoint(archive_url, backfill_complete)
+                    records = checkpoint(archive_url, backfill_complete, remaining)
                     while remaining > 0:
                         time_left = run_deadline - time.monotonic()
                         if time_left < MIN_BATCH_WINDOW_SECONDS:
@@ -153,11 +164,23 @@ def main() -> None:
                         print(f"Lote de {BATCH_SIZE} concluído; restam {remaining} partida(s) neste arquivo. Iniciando outro lote.", flush=True)
                         records, remaining = start_archive_batch(page, archive_url)
                         records = valid_records(records)
-                        records = checkpoint(archive_url, backfill_complete)
+                        records = checkpoint(archive_url, backfill_complete, remaining)
                     return records, 0
 
                 def enough_time_for_batch() -> bool:
                     return run_deadline - time.monotonic() >= MIN_BATCH_WINDOW_SECONDS
+
+                if archive_remaining:
+                    initial_cursor = "" if backfill_was_complete else latest_url
+                elif backfill_was_complete:
+                    initial_cursor = ""
+                elif previous_cursor in options:
+                    initial_cursor = previous_cursor
+                    if previous_cursor == latest_url and len(options) > 1:
+                        initial_cursor = options[1]
+                else:
+                    initial_cursor = options[1] if len(options) > 1 else ""
+                checkpoint(initial_cursor, backfill_was_complete, archive_remaining)
 
                 if archive_remaining:
                     records, archive_remaining = finish_archive(latest_url, archive_remaining)
@@ -177,6 +200,7 @@ def main() -> None:
                         if enough_time_for_batch():
                             records, archive_remaining = start_archive_batch(page, previous_url)
                             records = valid_records(records)
+                            records = checkpoint(previous_url, True, archive_remaining)
                             records, archive_remaining = finish_archive(previous_url, archive_remaining)
                         else:
                             print("Sem tempo para conferir o mês anterior nesta execução; o próximo run fará essa verificação.", flush=True)
@@ -209,6 +233,7 @@ def main() -> None:
                             print(f"Retropreenchendo arquivo: {archive_url}", flush=True)
                             records, archive_remaining = start_archive_batch(page, archive_url)
                             records = valid_records(records)
+                            records = checkpoint(archive_url, False, archive_remaining)
                             records, archive_remaining = finish_archive(archive_url, archive_remaining)
                             if archive_remaining:
                                 next_cursor = archive_url

@@ -29,6 +29,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip playwright
           python -m playwright install --with-deps chromium
+      - name: Configure git for incremental checkpoints
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
       - name: Analyze unreviewed games in the public archives
         run: python scripts/cloud_analyze.py
       - name: Save analyses for the site
