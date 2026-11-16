@@ -2,8 +2,8 @@
   "format": "MyChess cloud library",
   "version": 1,
   "lastSeenGameUrl": "https://www.chess.com/game/live/184961057088",
-  "backfillArchiveUrl": "https://api.chess.com/pub/player/gab0bu/games/2026/10",
-  "backfillComplete": false,
+  "backfillArchiveUrl": "",
+  "backfillComplete": true,
   "pendingInArchive": 0,
   "games": [
     {
