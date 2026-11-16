@@ -1344,6 +1344,26 @@
     return headers.White && headers.Black ? `${headers.White} × ${headers.Black}` : record.title || 'Partida sem nome';
   }
 
+  function recordRecency(record) {
+    const headers = record.headers || {};
+    for (const [rawDate, rawTime] of [
+      [headers.UTCDate, headers.UTCTime],
+      [headers.EndDate, headers.EndTime],
+      [headers.Date, headers.StartTime]
+    ]) {
+      const date = String(rawDate || '').replaceAll('.', '-');
+      const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) continue;
+      const [, year, month, day] = match.map(Number);
+      const dateValue = new Date(Date.UTC(year, month - 1, day));
+      if (dateValue.getUTCFullYear() !== year || dateValue.getUTCMonth() !== month - 1 || dateValue.getUTCDate() !== day) continue;
+      const time = String(rawTime || '00:00:00');
+      const timestamp = Date.parse(`${date}T${/^\d{2}:\d{2}(?::\d{2})?$/.test(time) ? time : '00:00:00'}Z`);
+      if (Number.isFinite(timestamp)) return timestamp;
+    }
+    return Number(record.savedAt) || 0;
+  }
+
   // ---- Visão geral: o cálculo vive em insights.js (módulo puro); aqui só desenhamos o relatório. ----
   const insightsEngine = window.MyChessInsights;
   const SPEED_NAMES = { bullet: 'bullet', blitz: 'blitz', rapid: 'rápidas', daily: 'por correspondência' };
@@ -1559,7 +1579,8 @@
 
   async function renderSavedGames() {
     try {
-      const records = (await libraryRequest('readonly', 'all')).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+      const records = (await libraryRequest('readonly', 'all')).sort((a, b) =>
+        recordRecency(b) - recordRecency(a) || (Number(b.savedAt) || 0) - (Number(a.savedAt) || 0));
       try { renderInsights(records); }
       catch (error) { insightsStatus.textContent = `Não consegui montar o resumo: ${error.message || 'erro nos dados salvos'}.`; }
       savedCount.textContent = String(records.length);
