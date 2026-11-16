@@ -1446,10 +1446,11 @@
   }
 
   function sparkline(series) {
-    const width = 300, height = 64, pad = 6, svgNs = 'http://www.w3.org/2000/svg';
+    const height = 78, pad = 8, pointSpacing = 16, width = Math.max(320, (series.length - 1) * pointSpacing + pad * 2), svgNs = 'http://www.w3.org/2000/svg';
+    const wrap = node('div', 'insight-spark-wrap');
     const svg = document.createElementNS(svgNs, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('class', 'insight-spark'); svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', `Precisão estimada por partida, da mais antiga à mais recente: ${series.map((item) => Math.round(item.accuracy)).join(', ')}.`);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('width', String(width)); svg.setAttribute('height', String(height)); svg.setAttribute('class', 'insight-spark'); svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', `Precisão estimada nas ${series.length} partidas, da mais antiga à mais recente: ${series.map((item) => Math.round(item.accuracy)).join(', ')}.`);
     const values = series.map((item) => item.accuracy), low = Math.max(0, Math.min(...values) - 6), high = Math.min(100, Math.max(...values) + 6);
     const x = (i) => (series.length === 1 ? width / 2 : pad + i * (width - 2 * pad) / (series.length - 1));
     const y = (value) => height - pad - (high === low ? 0.5 : (value - low) / (high - low)) * (height - 2 * pad);
@@ -1458,11 +1459,18 @@
     svg.append(line);
     series.forEach((item, i) => {
       const dot = document.createElementNS(svgNs, 'circle');
-      dot.setAttribute('cx', x(i).toFixed(1)); dot.setAttribute('cy', y(item.accuracy).toFixed(1)); dot.setAttribute('r', '3.4'); dot.setAttribute('class', `insight-spark-dot outcome-${item.outcome || 'none'}`);
+      dot.setAttribute('cx', x(i).toFixed(1)); dot.setAttribute('cy', y(item.accuracy).toFixed(1)); dot.setAttribute('r', '4'); dot.setAttribute('class', `insight-spark-dot outcome-${item.outcome || 'none'}`);
       const tip = document.createElementNS(svgNs, 'title'); tip.textContent = `${new Date(item.time).toLocaleDateString('pt-BR')} · ${item.outcome ? OUTCOME_NAMES[item.outcome] : 'sem resultado'} · ${decimal(item.accuracy)}%`;
       dot.append(tip); svg.append(dot);
     });
-    return svg;
+    wrap.append(svg);
+    wrap.setAttribute('role', 'region'); wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('aria-label', `Gráfico rolável com ${series.length} partidas, da mais antiga à mais recente.`);
+    const container = node('div', 'insight-spark-container');
+    container.append(wrap);
+    if (width > 480) container.append(node('span', 'insight-spark-hint', 'Role o gráfico para ver as partidas anteriores.'));
+    requestAnimationFrame(() => { wrap.scrollLeft = wrap.scrollWidth; });
+    return container;
   }
 
   function renderInsights(records) {
