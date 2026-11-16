@@ -1316,7 +1316,8 @@
     window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
     for (const record of games) {
       if (!record || typeof record.id !== 'string' || typeof record.pgn !== 'string' || !Array.isArray(record.results)) continue;
-      if (!await libraryRequest('readonly', 'get', record.id)) await libraryRequest('readwrite', 'put', record);
+      const local = await libraryRequest('readonly', 'get', record.id);
+      if (!local || Number(record.depth || 0) > Number(local.depth || 0)) await libraryRequest('readwrite', 'put', record);
     }
   }
 
