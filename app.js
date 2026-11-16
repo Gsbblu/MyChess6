@@ -20,6 +20,7 @@
   const positionName = document.querySelector('#position-name');
   const moveListElement = document.querySelector('#move-list');
   const gameDetails = document.querySelector('#game-details');
+  const gameOutcomeIndicator = document.querySelector('#game-outcome-indicator');
   const importStatus = document.querySelector('#import-status');
   const pgnFile = document.querySelector('#pgn-file');
   const chessComSearch = document.querySelector('#chesscom-search');
@@ -551,6 +552,10 @@
     const players = [gameHeaders.White, gameHeaders.Black].filter((player) => player && player !== '?').join(' × ');
     const event = gameHeaders.Event && gameHeaders.Event !== '?' ? gameHeaders.Event : '';
     gameDetails.textContent = [event, players, variationSession ? 'Modo de variação' : gameResult !== '*' ? gameResult : 'Partida local'].filter(Boolean).join(' · ');
+    const outcome = getPlayerOutcome(gameHeaders, gameResult);
+    gameOutcomeIndicator.hidden = !outcome;
+    gameOutcomeIndicator.replaceChildren();
+    if (outcome) gameOutcomeIndicator.append(createOutcomeBadge(outcome));
     const groups = new Map();
     history.slice(1).forEach((entry, offset) => {
       const key = entry.moveNumber;
@@ -1344,6 +1349,30 @@
     return headers.White && headers.Black ? `${headers.White} × ${headers.Black}` : record.title || 'Partida sem nome';
   }
 
+  function getPlayerOutcome(headers, result) {
+    const player = chessComUsername.value.trim().toLowerCase();
+    if (!player) return null;
+    const white = (headers?.White || '').trim().toLowerCase();
+    const black = (headers?.Black || '').trim().toLowerCase();
+    if (white !== player && black !== player) return null;
+    const score = result || headers?.Result || '*';
+    if (score === '1/2-1/2') return 'draw';
+    if (score !== '1-0' && score !== '0-1') return null;
+    const playerWon = (score === '1-0' && white === player) || (score === '0-1' && black === player);
+    return playerWon ? 'win' : 'loss';
+  }
+
+  function createOutcomeBadge(outcome) {
+    const labels = { win: ['Vitória', '✓'], loss: ['Derrota', '×'], draw: ['Empate', '½'] };
+    const [label, symbol] = labels[outcome];
+    const badge = document.createElement('span');
+    badge.className = `game-outcome-badge outcome-${outcome}`;
+    badge.textContent = `${label} ${symbol}`;
+    badge.title = label;
+    badge.setAttribute('aria-label', label);
+    return badge;
+  }
+
   function recordRecency(record) {
     const headers = record.headers || {};
     for (const [rawDate, rawTime] of [
@@ -1590,6 +1619,8 @@
       for (const record of records) {
         const card = document.createElement('article'); card.className = 'saved-game-card';
         const title = document.createElement('strong'); title.textContent = recordTitle(record);
+        const outcome = getPlayerOutcome(record.headers, record.headers?.Result);
+        if (outcome) title.append(createOutcomeBadge(outcome));
         const details = document.createElement('span');
         const date = record.headers?.Date && record.headers.Date !== '????.??.??' ? record.headers.Date.replaceAll('.', '-') : new Date(record.savedAt).toLocaleDateString('pt-BR');
         const classes = Object.entries(record.qualities || {}).map(([name, count]) => `${count} ${name.toLowerCase()}`).join(' · ');
@@ -1714,8 +1745,9 @@
     const player = (game.white?.username || '').toLowerCase() === chessComUsername.value.trim().toLowerCase() ? game.white : game.black;
     const opponent = player === game.white ? game.black : game.white;
     const outcome = player?.result === 'win' ? 'Vitória' : ['agreed', 'repetition', 'stalemate', 'insufficient'].includes(player?.result) ? 'Empate' : player?.result ? 'Derrota' : 'Resultado —';
+    const outcomeKey = player?.result === 'win' ? 'win' : ['agreed', 'repetition', 'stalemate', 'insufficient'].includes(player?.result) ? 'draw' : player?.result ? 'loss' : null;
     const date = game.end_time ? new Date(game.end_time * 1000).toLocaleDateString('pt-BR') : 'Data —';
-    return { game, player, opponent, outcome, date };
+    return { game, player, opponent, outcome, outcomeKey, date };
   }
 
   function renderChessComGames() {
@@ -1729,6 +1761,7 @@
       const info = document.createElement('div'); info.className = 'external-game-info';
       const heading = document.createElement('strong'); heading.textContent = `vs. ${item.opponent?.username || 'adversário'}`;
       const meta = document.createElement('span'); meta.textContent = `${item.date} · ${game.time_class || game.time_control || 'xadrez'} · ${item.outcome}${item.player?.rating ? ` · ${item.player.rating}` : ''}`;
+      if (item.outcomeKey) meta.append(createOutcomeBadge(item.outcomeKey));
       info.append(heading, meta);
       const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Analisar'; button.className = 'secondary-button';
       button.addEventListener('click', () => {
