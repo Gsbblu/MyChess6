@@ -43,7 +43,9 @@ def read_browser_library(page) -> list[dict]:
 
 
 def archive_snapshot(page, url: str) -> tuple[list[dict], int]:
-    page.wait_for_function(ARCHIVE_FINISHED, arg=url, timeout=28 * 60 * 1000)
+    # A full depth-16 review can take well over 28 minutes on a hosted runner.
+    # Keep the browser alive for nearly the full Actions job window.
+    page.wait_for_function(ARCHIVE_FINISHED, arg=url, timeout=350 * 60 * 1000)
     state = page.evaluate("window.MyChess6Cloud?.archiveState || 'error'")
     status = page.locator("#chesscom-status").inner_text()
     if state == "error":
