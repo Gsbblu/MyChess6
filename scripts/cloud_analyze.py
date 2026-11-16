@@ -16,6 +16,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cloud-data" / "games.json"
 MAX_GAMES_PER_RUN = 5
+MIN_ARCHIVE_YEAR = 2026
 ARCHIVE_FINISHED = """url => window.MyChess6Cloud?.archiveUrl === url &&
   ['done', 'error'].includes(window.MyChess6Cloud?.archiveState)"""
 
@@ -93,8 +94,10 @@ def main() -> None:
                       window.MyChess6Cloud?.archiveState === 'error'""", timeout=60_000)
                     options = page.locator("#chesscom-month option").evaluate_all(
                         "items => items.map(item => item.value).filter(value => /^https:\\/\\/api\\.chess\\.com\\/pub\\/player\\/[^/]+\\/games\\/\\d{4}\\/\\d{2}$/.test(value))")
+                options = [archive_url for archive_url in options
+                           if int(archive_url.rstrip('/').split('/')[-2]) >= MIN_ARCHIVE_YEAR]
                 if not options:
-                    raise RuntimeError(page.locator("#chesscom-status").inner_text())
+                    raise RuntimeError(f"Não encontrei arquivos públicos de {MIN_ARCHIVE_YEAR} em diante para este perfil.")
 
                 latest_url = options[0]
                 print(f"Verificando arquivo mais recente: {latest_url}", flush=True)
