@@ -1614,6 +1614,7 @@
       catch (error) { insightsStatus.textContent = `Não consegui montar o resumo: ${error.message || 'erro nos dados salvos'}.`; }
       savedCount.textContent = String(records.length);
       savedGamesList.replaceChildren();
+      savedGamesList.scrollTop = 0;
       if (!records.length) { savedStatus.textContent = 'Suas análises aparecerão aqui quando uma análise de partida terminar.'; return; }
       savedStatus.textContent = `${records.length} análise${records.length === 1 ? '' : 's'} guardada${records.length === 1 ? '' : 's'} neste navegador.`;
       for (const record of records) {
