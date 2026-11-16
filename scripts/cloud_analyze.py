@@ -15,7 +15,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cloud-data" / "games.json"
-MAX_GAMES_PER_RUN = 1
+MAX_GAMES_PER_RUN = 5
 ARCHIVE_FINISHED = """url => window.MyChess6Cloud?.archiveUrl === url &&
   ['done', 'error'].includes(window.MyChess6Cloud?.archiveState)"""
 
@@ -81,7 +81,7 @@ def main() -> None:
                 page.add_init_script("""
                   localStorage.setItem('mychess6-auto-chesscom', 'on');
                   window.__MyChess6ScanAllArchives = true;
-                  window.__MyChess6MaxGamesPerArchive = 1;
+                  window.__MyChess6MaxGamesPerArchive = 5;
                 """)
                 page.goto(url, wait_until="load", timeout=60_000)
 
