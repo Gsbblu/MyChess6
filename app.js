@@ -1466,6 +1466,29 @@
     wrap.append(svg);
     wrap.setAttribute('role', 'region'); wrap.setAttribute('tabindex', '0');
     wrap.setAttribute('aria-label', `Gráfico rolável com ${series.length} partidas, da mais antiga à mais recente.`);
+    let dragStart = null;
+    wrap.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      dragStart = { pointerId: event.pointerId, x: event.clientX, scrollLeft: wrap.scrollLeft };
+      wrap.setPointerCapture(event.pointerId);
+    });
+    wrap.addEventListener('pointermove', (event) => {
+      if (!dragStart || dragStart.pointerId !== event.pointerId) return;
+      const distance = event.clientX - dragStart.x;
+      if (Math.abs(distance) > 3) wrap.classList.add('is-dragging');
+      if (wrap.classList.contains('is-dragging')) {
+        event.preventDefault();
+        wrap.scrollLeft = dragStart.scrollLeft - distance;
+      }
+    });
+    const endDrag = (event) => {
+      if (!dragStart || dragStart.pointerId !== event.pointerId) return;
+      dragStart = null;
+      wrap.classList.remove('is-dragging');
+    };
+    wrap.addEventListener('pointerup', endDrag);
+    wrap.addEventListener('pointercancel', endDrag);
+    wrap.addEventListener('lostpointercapture', endDrag);
     const container = node('div', 'insight-spark-container');
     container.append(wrap);
     if (width > 480) container.append(node('span', 'insight-spark-hint', 'Role o gráfico para ver as partidas anteriores.'));
