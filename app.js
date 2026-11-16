@@ -1645,6 +1645,17 @@
   function openSavedRecord(record, moveIndex) {
     activeGameSource = record.source || null;
     if (!loadPgn(record.pgn)) return;
+    const player = chessComUsername.value.trim().toLowerCase();
+    const savedHeaders = record.headers || {};
+    const savedWhite = (savedHeaders.White || gameHeaders.White || '').trim().toLowerCase();
+    const savedBlack = (savedHeaders.Black || gameHeaders.Black || '').trim().toLowerCase();
+    const titlePlayers = (record.title || record.source?.title || '').split(/\s+[×x]\s+/i);
+    const white = savedWhite || (titlePlayers[0] || '').trim().toLowerCase();
+    const black = savedBlack || (titlePlayers[1] || '').trim().toLowerCase();
+    if (player && (white === player || black === player)) {
+      flipped = black === player;
+      render();
+    }
     gameReviewResults = JSON.parse(JSON.stringify(record.results || []));
     gameAnalysisPanel.hidden = false;
     gameProgressBar.value = 100;
