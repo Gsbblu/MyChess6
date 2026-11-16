@@ -143,7 +143,10 @@
   let autoChessComBusy = false;
   let autoChessComQueue = [];
   let cloudLastSeenGameUrl = '';
-  window.MyChess6Cloud = { lastSeenGameUrl: '' };
+  window.MyChess6Cloud = {
+    lastSeenGameUrl: '', backfillArchiveUrl: '', backfillComplete: false,
+    archiveUrl: '', archiveState: 'idle', archiveRemaining: 0
+  };
   let libraryDbPromise = null;
   const analysisCache = new Map();
   const analysisCacheLimit = 256;
@@ -1314,6 +1317,8 @@
     if (!Array.isArray(games)) return;
     cloudLastSeenGameUrl = typeof data.lastSeenGameUrl === 'string' ? data.lastSeenGameUrl : '';
     window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
+    window.MyChess6Cloud.backfillArchiveUrl = typeof data.backfillArchiveUrl === 'string' ? data.backfillArchiveUrl : '';
+    window.MyChess6Cloud.backfillComplete = data.backfillComplete === true;
     for (const record of games) {
       if (!record || typeof record.id !== 'string' || typeof record.pgn !== 'string' || !Array.isArray(record.results)) continue;
       const local = await libraryRequest('readonly', 'get', record.id);
@@ -1600,12 +1605,19 @@
         if (nextGame) startAutoChessComGame(nextGame);
         else {
           autoChessComBusy = false;
-          chessComStatus.textContent = `Análise automática pronta: ${recordTitle(record)}.`;
+          window.MyChess6Cloud.archiveState = 'done';
+          chessComStatus.textContent = window.MyChess6Cloud.archiveRemaining
+            ? `Lote pronto: ${recordTitle(record)}. Ainda restam ${window.MyChess6Cloud.archiveRemaining} partidas neste arquivo.`
+            : `Análise automática pronta: ${recordTitle(record)}.`;
         }
       }
     } catch (error) {
       savedStatus.textContent = error.message || 'Não foi possível salvar esta análise.';
-      if (autoChessComBusy) { autoChessComBusy = false; autoChessComQueue = []; chessComStatus.textContent = 'A análise terminou, mas não consegui salvá-la na biblioteca local.'; }
+      if (autoChessComBusy) {
+        autoChessComBusy = false; autoChessComQueue = [];
+        window.MyChess6Cloud.archiveState = 'error';
+        chessComStatus.textContent = 'A análise terminou, mas não consegui salvá-la na biblioteca local.';
+      }
     }
   }
 
@@ -1713,43 +1725,57 @@
       chessComArchiveList.forEach((url) => { const option = document.createElement('option'); option.value = url; option.textContent = url.match(/(\d{4})\/(\d{2})$/)?.slice(1).join('/') || url; chessComMonth.append(option); });
       chessComMonth.disabled = false; chessComUsername.value = username;
       await loadChessComArchive(chessComArchiveList[0]);
-    } catch (error) { chessComStatus.textContent = error.message || 'Falha ao buscar o jogador. Verifique a conexão.'; }
+    } catch (error) {
+      window.MyChess6Cloud.archiveState = 'error';
+      chessComStatus.textContent = error.message || 'Falha ao buscar o jogador. Verifique a conexão.';
+    }
   });
 
   async function loadChessComArchive(url) {
+    window.MyChess6Cloud.archiveUrl = url;
+    window.MyChess6Cloud.archiveState = 'loading';
+    window.MyChess6Cloud.archiveRemaining = 0;
     chessComStatus.textContent = 'Carregando partidas deste mês…'; chessComGames.replaceChildren();
     try {
       const data = await chessComGet(url);
       chessComGamesCache = Array.isArray(data.games) ? data.games.slice().reverse() : [];
       chessComShownGames = 24; renderChessComGames();
       chessComStatus.textContent = `${chessComGamesCache.length} partidas encontradas neste arquivo.`;
-      if (autoAnalyzeChessCom.checked && url === chessComArchiveList[0]) await autoAnalyzeNewestChessComGame();
-    } catch (error) { chessComStatus.textContent = error.message || 'Falha ao carregar esse mês.'; }
+      if (autoAnalyzeChessCom.checked && (window.__MyChess6ScanAllArchives || url === chessComArchiveList[0])) await autoAnalyzeUnanalyzedChessComGames();
+      else window.MyChess6Cloud.archiveState = 'done';
+    } catch (error) {
+      window.MyChess6Cloud.archiveState = 'error';
+      chessComStatus.textContent = error.message || 'Falha ao carregar esse mês.';
+    }
   }
 
-  async function autoAnalyzeNewestChessComGame() {
+  async function autoAnalyzeUnanalyzedChessComGames() {
     if (autoChessComBusy || pendingAnalysis || activeAnalysis || analysisStopping) return;
     try {
-      const games = chessComGamesCache.filter((game) => game.pgn && game.url);
-      if (!games.length) { chessComStatus.textContent = 'Nenhuma partida com PGN está disponível para análise automática.'; return; }
-      const markerIndex = cloudLastSeenGameUrl ? games.findIndex((game) => game.url === cloudLastSeenGameUrl) : -1;
-      // On first setup only the newest game is analyzed; later runs catch every game since the last marker.
-      const candidates = markerIndex >= 0 ? games.slice(0, markerIndex).reverse() : [games[0]];
+      const games = chessComGamesCache.filter((game) => game.pgn && game.url && (!game.rules || game.rules === 'chess'));
+      if (!games.length) {
+        window.MyChess6Cloud.archiveState = 'done';
+        chessComStatus.textContent = 'Nenhuma partida com PGN está disponível para análise automática.';
+        return;
+      }
       const records = await libraryRequest('readonly', 'all');
-      autoChessComQueue = candidates.filter((game) => !records.some((record) => record.id === gameIdentity(game.pgn, { url: game.url })));
+      const candidates = games.slice().reverse().filter((game) => !records.some((record) => record.id === gameIdentity(game.pgn, { url: game.url })));
+      const configuredLimit = Number(window.__MyChess6MaxGamesPerArchive);
+      const limit = Number.isInteger(configuredLimit) && configuredLimit > 0 ? configuredLimit : candidates.length;
+      autoChessComQueue = candidates.slice(0, limit);
+      window.MyChess6Cloud.archiveRemaining = Math.max(0, candidates.length - autoChessComQueue.length);
       if (!autoChessComQueue.length) {
-        if (candidates.length) {
-          cloudLastSeenGameUrl = candidates[candidates.length - 1].url;
-          window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
-        }
-        chessComStatus.textContent = 'A partida mais recente já tem análise salva.';
+        window.MyChess6Cloud.archiveState = 'done';
+        chessComStatus.textContent = 'Todas as partidas com PGN deste arquivo já têm análise salva.';
         return;
       }
       autoChessComBusy = true;
+      window.MyChess6Cloud.archiveState = 'analyzing';
       startAutoChessComGame(autoChessComQueue.shift());
     } catch (error) {
       autoChessComBusy = false;
       autoChessComQueue = [];
+      window.MyChess6Cloud.archiveState = 'error';
       chessComStatus.textContent = error.message || 'Não consegui iniciar a análise automática.';
     }
   }
@@ -1758,6 +1784,7 @@
     const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com' };
     if (!loadPgn(game.pgn)) {
       autoChessComBusy = false; autoChessComQueue = [];
+      window.MyChess6Cloud.archiveState = 'error';
       chessComStatus.textContent = 'Não consegui carregar o PGN da nova partida.';
       return;
     }
@@ -1766,9 +1793,12 @@
     requestGameAnalysis({ skipDepthPrompt: true, depth: 16 }).then(() => {
       if (!pendingAnalysis && !activeAnalysis && autoChessComBusy) {
         autoChessComBusy = false; autoChessComQueue = [];
+        window.MyChess6Cloud.archiveState = 'error';
+        chessComStatus.textContent = 'A análise automática não iniciou; nenhum resultado foi salvo.';
       }
     }).catch((error) => {
       autoChessComBusy = false; autoChessComQueue = [];
+      window.MyChess6Cloud.archiveState = 'error';
       chessComStatus.textContent = error.message || 'Não consegui iniciar a análise automática.';
     });
   }
@@ -1778,7 +1808,7 @@
   autoAnalyzeChessCom.checked = localStorage.getItem('mychess6-auto-chesscom') !== 'off';
   autoAnalyzeChessCom.addEventListener('change', () => {
     localStorage.setItem('mychess6-auto-chesscom', autoAnalyzeChessCom.checked ? 'on' : 'off');
-    if (autoAnalyzeChessCom.checked) autoAnalyzeNewestChessComGame();
+    if (autoAnalyzeChessCom.checked) autoAnalyzeUnanalyzedChessComGames();
   });
   window.setInterval(() => {
     if (!autoAnalyzeChessCom.checked || !chessComArchiveList.length || autoChessComBusy || pendingAnalysis || activeAnalysis || analysisStopping) return;
@@ -2067,7 +2097,11 @@
 
   function failEngine(message) {
     stopEngine(); pendingAnalysis = null; activeAnalysis = null; analysisStopping = false;
-    if (autoChessComBusy) { autoChessComBusy = false; autoChessComQueue = []; chessComStatus.textContent = 'A análise automática não pôde iniciar. Verifique o Stockfish local.'; }
+    if (autoChessComBusy) {
+      autoChessComBusy = false; autoChessComQueue = [];
+      window.MyChess6Cloud.archiveState = 'error';
+      chessComStatus.textContent = 'A análise automática não pôde iniciar. Verifique o Stockfish local.';
+    }
     variationNeedsAnalysis = false;
     if (gameBatch) {
       gameBatch = null;
@@ -3229,7 +3263,11 @@
 
   depthDialog.querySelector('.depth-cancel').addEventListener('click', () => depthDialog.close('cancel'));
   cancelAnalysisButton.addEventListener('click', () => {
-    if (autoChessComBusy) { autoChessComBusy = false; autoChessComQueue = []; chessComStatus.textContent = 'Análise automática interrompida.'; }
+    if (autoChessComBusy) {
+      autoChessComBusy = false; autoChessComQueue = [];
+      window.MyChess6Cloud.archiveState = 'error';
+      chessComStatus.textContent = 'Análise automática interrompida.';
+    }
     if (pendingAnalysis) {
       const wasGame = pendingAnalysis.kind === 'game';
       pendingAnalysis = null;

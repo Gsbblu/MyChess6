@@ -2,6 +2,8 @@
   "format": "MyChess cloud library",
   "version": 1,
   "lastSeenGameUrl": "https://www.chess.com/game/live/187301446504",
+  "backfillArchiveUrl": "",
+  "backfillComplete": false,
   "games": [
     {
       "id": "chesscom:https://www.chess.com/game/live/187301446504",

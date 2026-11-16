@@ -1,12 +1,12 @@
 # Análise automática na nuvem
 
-O workflow `.github/workflows/chesscom-cloud-analysis.yml` executa o MyChess6 a cada 15 minutos num navegador sem interface do GitHub Actions. O próprio app consulta o arquivo público do perfil, analisa partidas novas com o Stockfish local do projeto na profundidade equilibrada (16) e salva as avaliações em `cloud-data/games.json`. No primeiro ciclo, analisa somente a partida mais recente; os ciclos seguintes processam partidas novas desde a última marca salva. Ao abrir o site publicado, o MyChess importa as análises para sua biblioteca.
+O workflow `.github/workflows/chesscom-cloud-analysis.yml` executa o MyChess6 a cada 15 minutos num navegador sem interface do GitHub Actions. Ele percorre os arquivos mensais públicos do perfil e analisa todas as partidas que ainda não estão em `cloud-data/games.json`, usando o Stockfish na profundidade equilibrada (16). Cada execução processa até cinco partidas e guarda um cursor para continuar do arquivo em que parou; assim, também preenche o histórico existente por lotes. Depois de alcançar o fim do histórico, continua verificando o mês atual e o anterior. Ao abrir o site publicado, o MyChess importa as análises para sua biblioteca.
 
 ## Custo e visibilidade
 
 No GitHub Free, execuções padrão do Actions são gratuitas e sem limite em repositórios públicos. GitHub Pages também está disponível gratuitamente para repositórios públicos. Para esse caminho continuar gratuito, o repositório precisa ser público. Isso torna público o código do MyChess6, os PGNs públicos processados e as análises geradas. O perfil Chess.com configurado no app também fica visível.
 
-O workflow roda a cada 15 minutos, fora do início da hora, para reduzir atrasos. O GitHub pode atrasar execuções agendadas em períodos de alta demanda. A API do Chess.com também pode levar várias horas para atualizar seus arquivos públicos. Portanto, a análise pode não aparecer imediatamente após uma partida.
+O workflow roda a cada 15 minutos, fora do início da hora, para reduzir atrasos. O preenchimento retroativo pode levar várias execuções, conforme a quantidade de partidas e o tempo que cada análise exige. O GitHub pode atrasar execuções agendadas em períodos de alta demanda. A API do Chess.com também pode levar várias horas para atualizar seus arquivos públicos. Portanto, a análise pode não aparecer imediatamente após uma partida.
 
 Workflows agendados em repositórios públicos podem ser desativados pelo GitHub após 60 dias sem atividade no repositório. Se isso ocorrer, reative o workflow na aba **Actions**.
 
