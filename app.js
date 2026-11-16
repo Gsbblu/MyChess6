@@ -1762,7 +1762,7 @@
     }
     activeGameSource = source;
     chessComStatus.textContent = `Analisando automaticamente: ${source.title}…`;
-    requestGameAnalysis({ skipDepthPrompt: true }).then(() => {
+    requestGameAnalysis({ skipDepthPrompt: true, depth: 16 }).then(() => {
       if (!pendingAnalysis && !activeAnalysis && autoChessComBusy) {
         autoChessComBusy = false; autoChessComQueue = [];
       }
@@ -3108,7 +3108,8 @@
 
   async function requestGameAnalysis(options = {}) {
     if (pendingAnalysis || activeAnalysis || analysisStopping || history.length < 2) return;
-    if (options.skipDepthPrompt) { if (lastGameAnalysisDepth) selectedDepth = lastGameAnalysisDepth; }
+    if (Number.isInteger(options.depth)) selectedDepth = options.depth;
+    else if (options.skipDepthPrompt) { if (lastGameAnalysisDepth) selectedDepth = lastGameAnalysisDepth; }
     else if (!await askAnalysisDepth()) return;
     if (pendingAnalysis || activeAnalysis || analysisStopping || history.length < 2) return;
     lastGameAnalysisDepth = selectedDepth;

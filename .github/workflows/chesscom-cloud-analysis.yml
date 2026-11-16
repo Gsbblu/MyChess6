@@ -2,8 +2,8 @@ name: Chess.com automatic analysis
 
 on:
   schedule:
-    # Avoid the top of the hour, when GitHub Actions is busiest.
-    - cron: '17 * * * *'
+    # Every 15 minutes, offset from the top of the hour.
+    - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
 
 permissions:

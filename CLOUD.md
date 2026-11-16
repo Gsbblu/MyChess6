@@ -1,12 +1,12 @@
 # Análise automática na nuvem
 
-O workflow `.github/workflows/chesscom-cloud-analysis.yml` executa o MyChess6 a cada hora num navegador sem interface do GitHub Actions. O próprio app consulta o arquivo público do perfil, analisa partidas novas com o Stockfish local do projeto e salva as avaliações em `cloud-data/games.json`. No primeiro ciclo, analisa somente a partida mais recente; os ciclos seguintes processam partidas novas desde a última marca salva. Ao abrir o site publicado, o MyChess importa as análises para sua biblioteca.
+O workflow `.github/workflows/chesscom-cloud-analysis.yml` executa o MyChess6 a cada 15 minutos num navegador sem interface do GitHub Actions. O próprio app consulta o arquivo público do perfil, analisa partidas novas com o Stockfish local do projeto na profundidade equilibrada (16) e salva as avaliações em `cloud-data/games.json`. No primeiro ciclo, analisa somente a partida mais recente; os ciclos seguintes processam partidas novas desde a última marca salva. Ao abrir o site publicado, o MyChess importa as análises para sua biblioteca.
 
 ## Custo e visibilidade
 
 No GitHub Free, execuções padrão do Actions são gratuitas e sem limite em repositórios públicos. GitHub Pages também está disponível gratuitamente para repositórios públicos. Para esse caminho continuar gratuito, o repositório precisa ser público. Isso torna público o código do MyChess6, os PGNs públicos processados e as análises geradas. O perfil Chess.com configurado no app também fica visível.
 
-O workflow foi agendado para uma vez por hora, fora do início da hora, para reduzir atrasos. O GitHub pode atrasar execuções agendadas em períodos de alta demanda. A API do Chess.com também pode levar várias horas para atualizar seus arquivos públicos. Portanto, a análise pode não aparecer imediatamente após uma partida.
+O workflow roda a cada 15 minutos, fora do início da hora, para reduzir atrasos. O GitHub pode atrasar execuções agendadas em períodos de alta demanda. A API do Chess.com também pode levar várias horas para atualizar seus arquivos públicos. Portanto, a análise pode não aparecer imediatamente após uma partida.
 
 Workflows agendados em repositórios públicos podem ser desativados pelo GitHub após 60 dias sem atividade no repositório. Se isso ocorrer, reative o workflow na aba **Actions**.
 
