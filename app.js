@@ -1887,6 +1887,8 @@
       renderAdvantageChart(gameReviewResults);
       history = parsed.history; historyIndex = 0; position = clone(history[0].position);
       gameHeaders = parsed.headers; gameResult = parsed.result;
+      flipped = !fenOnly
+        && (gameHeaders.Black || '').trim().toLowerCase() === chessComUsername.value.trim().toLowerCase();
       currentBoardQuality = null;
       syncRatingsFromHeaders(gameHeaders);
       selected = -1; legalTargets = []; lastMove = null;
