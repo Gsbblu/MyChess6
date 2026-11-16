@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: chesscom-cloud-analysis
@@ -16,7 +17,7 @@ concurrency:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 360
     steps:
       - name: Check out MyChess6
         uses: actions/checkout@v4
@@ -39,4 +40,12 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m 'Update automatic Chess.com analysis'
             git push
+          fi
+      - name: Continue backfill if games remain
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if python -c "import json, sys; data = json.load(open('cloud-data/games.json', encoding='utf-8')); sys.exit(0 if data.get('backfillComplete') is False else 1)"; then
+            gh workflow run chesscom-cloud-analysis.yml --repo "$GITHUB_REPOSITORY" --ref main
           fi

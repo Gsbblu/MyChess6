@@ -16,7 +16,7 @@ O MyChess6 importa partidas públicas de xadrez padrão do perfil Gab0bu e gera 
 
 - Workflow: `.github/workflows/chesscom-cloud-analysis.yml`.
 - Agendamento: a cada 15 minutos, nos minutos 7, 22, 37 e 52 de cada hora.
-- Processa até cinco partidas sem análise por execução.
+- Processa lotes de até cinco partidas e repete os lotes dentro da mesma execução até concluir o retropreenchimento ou atingir o limite seguro de tempo; salva um cursor após cada lote e inicia outra execução automaticamente se ainda houver partidas.
 - Busca arquivos mensais de 2026 em diante; partidas de anos anteriores ficam fora do retropreenchimento automático.
 - Continua do arquivo mensal salvo em `cloud-data/games.json` até concluir o histórico elegível. Depois, revisita os meses recentes.
 - Para iniciar manualmente: GitHub → **Actions** → **Chess.com automatic analysis** → **Run workflow**.
@@ -43,4 +43,4 @@ Uma falha anterior fez o script confundir a opção inicial “Busque um jogador
 
 ## Resumo para colar em outra conversa
 
-> Estou continuando o projeto MyChess6. O repositório público é <https://github.com/Gsbblu/MyChess6> e o site é <https://gsbblu.github.io/MyChess6/>. Antes de alterar algo, leia `CONTEXTO-PROJETO.md` e confira o estado atual do GitHub Actions. O sistema analisa automaticamente partidas públicas de xadrez padrão do Chess.com para Gab0bu com Stockfish em profundidade 16. O cron roda a cada 15 minutos, analisa até cinco partidas por ciclo e está limitado a arquivos de 2026 em diante. Os resultados são publicados em `cloud-data/games.json` e importados pelo site para IndexedDB de cada navegador. A biblioteca do site deve mostrar as partidas jogadas mais recentemente no topo.
+> Estou continuando o projeto MyChess6. O repositório público é <https://github.com/Gsbblu/MyChess6> e o site é <https://gsbblu.github.io/MyChess6/>. Antes de alterar algo, leia `CONTEXTO-PROJETO.md` e confira o estado atual do GitHub Actions. O sistema analisa automaticamente partidas públicas de xadrez padrão do Chess.com para Gab0bu com Stockfish em profundidade 16. O cron roda a cada 15 minutos; cada execução repete lotes de até cinco partidas até concluir o retropreenchimento ou atingir o limite seguro de tempo, salvando o cursor a cada lote. Se ainda houver partidas, inicia outra execução automaticamente. A busca está limitada a arquivos de 2026 em diante. Os resultados são publicados em `cloud-data/games.json` e importados pelo site para IndexedDB de cada navegador. A biblioteca do site deve mostrar as partidas jogadas mais recentemente no topo.

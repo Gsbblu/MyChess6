@@ -6,17 +6,19 @@ from __future__ import annotations
 import functools
 import json
 import threading
+import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cloud-data" / "games.json"
-MAX_GAMES_PER_RUN = 5
+BATCH_SIZE = 5
 MIN_ARCHIVE_YEAR = 2026
+MAX_RUN_SECONDS = 5 * 60 * 60 + 30 * 60
+MIN_BATCH_WINDOW_SECONDS = 30 * 60
 ARCHIVE_FINISHED = """url => window.MyChess6Cloud?.archiveUrl === url &&
   ['done', 'error'].includes(window.MyChess6Cloud?.archiveState)"""
 
@@ -54,11 +56,35 @@ def archive_snapshot(page, url: str) -> tuple[list[dict], int]:
     return records, int(remaining)
 
 
+def start_archive_batch(page, url: str) -> tuple[list[dict], int]:
+    page.evaluate("""url => {
+      window.__MyChess6MaxGamesPerArchive = 5;
+      const select = document.querySelector('#chesscom-month');
+      if (!select || !Array.from(select.options).some(option => option.value === url)) {
+        throw new Error(`O arquivo mensal ${url} não está disponível no seletor.`);
+      }
+      select.value = url;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }""", url)
+    return archive_snapshot(page, url)
+
+
 def valid_records(records: list[dict]) -> list[dict]:
     return [record for record in records if isinstance(record, dict)
             and isinstance(record.get("id"), str)
             and isinstance(record.get("pgn"), str)
             and isinstance(record.get("results"), list)]
+
+
+def save_checkpoint(records: list[dict], last_seen: str, cursor: str, complete: bool) -> None:
+    OUTPUT.write_text(json.dumps({
+        "format": "MyChess cloud library",
+        "version": 1,
+        "lastSeenGameUrl": last_seen,
+        "backfillArchiveUrl": cursor,
+        "backfillComplete": complete,
+        "games": records,
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -74,6 +100,7 @@ def main() -> None:
     threading.Thread(target=server.serve_forever, daemon=True).start()
     url = f"http://127.0.0.1:{server.server_port}/index.html"
 
+    run_deadline = time.monotonic() + MAX_RUN_SECONDS
     try:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
@@ -87,13 +114,13 @@ def main() -> None:
                 page.goto(url, wait_until="load", timeout=60_000)
 
                 options = page.locator("#chesscom-month option").evaluate_all(
-                    "items => items.map(item => item.value).filter(value => /^https:\\/\\/api\\.chess\\.com\\/pub\\/player\\/[^/]+\\/games\\/\\d{4}\\/\\d{2}$/.test(value))")
+                    r"items => items.map(item => item.value).filter(value => /^https:\/\/api\.chess\.com\/pub\/player\/[^/]+\/games\/\d{4}\/\d{2}$/.test(value))")
                 if not options:
-                    page.wait_for_function("""() => Array.from(document.querySelectorAll('#chesscom-month option')).some(item =>
+                    page.wait_for_function(r"""() => Array.from(document.querySelectorAll('#chesscom-month option')).some(item =>
                       /^https:\/\/api\.chess\.com\/pub\/player\/[^/]+\/games\/\d{4}\/\d{2}$/.test(item.value)) ||
                       window.MyChess6Cloud?.archiveState === 'error'""", timeout=60_000)
                     options = page.locator("#chesscom-month option").evaluate_all(
-                        "items => items.map(item => item.value).filter(value => /^https:\\/\\/api\\.chess\\.com\\/pub\\/player\\/[^/]+\\/games\\/\\d{4}\\/\\d{2}$/.test(value))")
+                        r"items => items.map(item => item.value).filter(value => /^https:\/\/api\.chess\.com\/pub\/player\/[^/]+\/games\/\d{4}\/\d{2}$/.test(value))")
                 options = [archive_url for archive_url in options
                            if int(archive_url.rstrip('/').split('/')[-2]) >= MIN_ARCHIVE_YEAR]
                 if not options:
@@ -103,72 +130,99 @@ def main() -> None:
                 print(f"Verificando arquivo mais recente: {latest_url}", flush=True)
                 records, archive_remaining = archive_snapshot(page, latest_url)
                 records = valid_records(records)
-                new_count = sum(1 for record in records if record["id"] not in previous_ids)
-                remaining_budget = MAX_GAMES_PER_RUN - new_count
-                backfill_complete = previous.get("backfillComplete") is True
+                backfill_was_complete = previous.get("backfillComplete") is True
+                backfill_complete = backfill_was_complete
                 previous_cursor = previous.get("backfillArchiveUrl") or ""
-                next_cursor = ""
+                last_seen = page.evaluate("window.MyChess6Cloud?.lastSeenGameUrl || ''")
+
+                def checkpoint(cursor: str, complete: bool) -> list[dict]:
+                    nonlocal last_seen
+                    current = valid_records(read_browser_library(page))
+                    last_seen = page.evaluate("window.MyChess6Cloud?.lastSeenGameUrl || ''") or last_seen
+                    save_checkpoint(current, last_seen, cursor, complete)
+                    return current
+
+                def finish_archive(archive_url: str, remaining: int) -> tuple[list[dict], int]:
+                    nonlocal records
+                    records = checkpoint(archive_url, backfill_complete)
+                    while remaining > 0:
+                        time_left = run_deadline - time.monotonic()
+                        if time_left < MIN_BATCH_WINDOW_SECONDS:
+                            print(f"Pausa segura: restam {remaining} partida(s) em {archive_url}; cursor salvo para a próxima execução.", flush=True)
+                            return records, remaining
+                        print(f"Lote de {BATCH_SIZE} concluído; restam {remaining} partida(s) neste arquivo. Iniciando outro lote.", flush=True)
+                        records, remaining = start_archive_batch(page, archive_url)
+                        records = valid_records(records)
+                        records = checkpoint(archive_url, backfill_complete)
+                    return records, 0
+
+                def enough_time_for_batch() -> bool:
+                    return run_deadline - time.monotonic() >= MIN_BATCH_WINDOW_SECONDS
 
                 if archive_remaining:
-                    next_cursor = latest_url
-                elif backfill_complete and remaining_budget > 0 and len(options) > 1:
-                    # Recheck the previous month for games published late by Chess.com.
-                    previous_url = options[1]
-                    if previous_cursor in options[1:2]:
-                        previous_url = previous_cursor
-                    page.evaluate("limit => { window.__MyChess6MaxGamesPerArchive = limit; }", remaining_budget)
-                    page.select_option("#chesscom-month", value=previous_url)
-                    records, archive_remaining = archive_snapshot(page, previous_url)
-                    records = valid_records(records)
-                    new_count = sum(1 for record in records if record["id"] not in previous_ids)
+                    records, archive_remaining = finish_archive(latest_url, archive_remaining)
                     if archive_remaining:
-                        next_cursor = previous_url
-                elif not backfill_complete:
+                        next_cursor = "" if backfill_was_complete else latest_url
+                        backfill_complete = backfill_was_complete
+                        checkpoint(next_cursor, backfill_complete)
+                        records = valid_records(read_browser_library(page))
+                        print("Checkpoint salvo no limite seguro de tempo; a próxima execução retomará automaticamente.", flush=True)
+                        return
+
+                if backfill_was_complete:
+                    # Recheck the previous month for games published late by Chess.com.
+                    if len(options) > 1:
+                        previous_url = options[1]
+                        print(f"Conferindo partidas recentes publicadas com atraso: {previous_url}", flush=True)
+                        if enough_time_for_batch():
+                            records, archive_remaining = start_archive_batch(page, previous_url)
+                            records = valid_records(records)
+                            records, archive_remaining = finish_archive(previous_url, archive_remaining)
+                        else:
+                            print("Sem tempo para conferir o mês anterior nesta execução; o próximo run fará essa verificação.", flush=True)
+                            archive_remaining = 0
+                        backfill_complete = archive_remaining == 0
+                        next_cursor = previous_url if archive_remaining else ""
+                    else:
+                        next_cursor = ""
+                    checkpoint(next_cursor, backfill_complete)
+                else:
                     if previous_cursor in options:
                         start_index = options.index(previous_cursor)
-                        if previous_cursor == latest_url:
+                        if previous_cursor == latest_url and archive_remaining == 0:
                             start_index += 1
                     else:
                         start_index = 1
 
+                    next_cursor = options[start_index] if start_index < len(options) else ""
                     if start_index >= len(options):
                         backfill_complete = True
-                    for index in range(start_index, len(options)):
-                        if remaining_budget <= 0:
-                            next_cursor = options[index]
-                            break
-                        archive_url = options[index]
-                        print(f"Retropreenchendo arquivo: {archive_url}", flush=True)
-                        page.evaluate("limit => { window.__MyChess6MaxGamesPerArchive = limit; }", remaining_budget)
-                        page.select_option("#chesscom-month", value=archive_url)
-                        records, archive_remaining = archive_snapshot(page, archive_url)
-                        records = valid_records(records)
-                        new_count = sum(1 for record in records if record["id"] not in previous_ids)
-                        remaining_budget = MAX_GAMES_PER_RUN - new_count
-
-                        if archive_remaining:
-                            next_cursor = archive_url
-                            backfill_complete = False
-                            break
-                        if remaining_budget <= 0:
-                            if index + 1 < len(options):
-                                next_cursor = options[index + 1]
-                            else:
-                                backfill_complete = True
-                            break
+                        checkpoint("", True)
                     else:
-                        backfill_complete = True
+                        for index in range(start_index, len(options)):
+                            archive_url = options[index]
+                            if not enough_time_for_batch():
+                                next_cursor = archive_url
+                                checkpoint(next_cursor, False)
+                                print(f"Pausa segura; cursor salvo em {next_cursor} para a próxima execução.", flush=True)
+                                break
+                            print(f"Retropreenchendo arquivo: {archive_url}", flush=True)
+                            records, archive_remaining = start_archive_batch(page, archive_url)
+                            records = valid_records(records)
+                            records, archive_remaining = finish_archive(archive_url, archive_remaining)
+                            if archive_remaining:
+                                next_cursor = archive_url
+                                checkpoint(next_cursor, False)
+                                break
+                            next_cursor = options[index + 1] if index + 1 < len(options) else ""
+                            backfill_complete = not next_cursor
+                            checkpoint(next_cursor, backfill_complete)
+                            if backfill_complete:
+                                break
 
                 records = valid_records(read_browser_library(page))
-                last_seen = page.evaluate("window.MyChess6Cloud?.lastSeenGameUrl || ''")
-                OUTPUT.write_text(json.dumps({
-                    "format": "MyChess cloud library",
-                    "version": 1,
-                    "lastSeenGameUrl": last_seen,
-                    "backfillArchiveUrl": next_cursor,
-                    "backfillComplete": backfill_complete,
-                    "games": records,
-                }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                last_seen = page.evaluate("window.MyChess6Cloud?.lastSeenGameUrl || ''") or last_seen
+                save_checkpoint(records, last_seen, next_cursor, backfill_complete)
                 print(f"Lote salvo: {max(0, len(records) - len(previous_ids))} análise(s) nova(s); "
                       f"{len(records)} no total; retropreenchimento {'concluído' if backfill_complete else 'em andamento'}.")
             finally:
