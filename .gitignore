@@ -1,0 +1,9 @@
+# Personal launchers and handoff notes are not part of the public web app.
+/MyChess5.desktop
+/ENVIAR-AO-CLAUDE.txt
+
+# Local publication copy is maintained separately from the GitHub Pages root.
+/publicacao/
+
+__pycache__/
+*.py[cod]

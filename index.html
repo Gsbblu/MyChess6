@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101512">
+    <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
+    <title>MyChess 6 — revisão de xadrez</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css?v=mychess6-auto-1">
+  </head>
+  <body>
+    <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
+    <header class="topbar">
+      <a class="brand" href="#analisar" aria-label="MyChess 6, início">
+        <span class="brand-mark" aria-hidden="true">♞</span>
+        <span>MyChess<strong>6</strong></span>
+      </a>
+      <span class="free-badge"><span></span> Gratuito e aberto</span>
+    </header>
+
+    <main id="analisar" class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-line"></span> REVISÃO DE XADREZ</p>
+          <h1 id="page-title">Entenda o que <em>decidiu</em> a partida.</h1>
+          <p class="intro-copy">Encontre os momentos importantes e aprenda com suas decisões.</p>
+        </div>
+        <div class="engine-pill"><span class="pulse-dot"></span><span id="engine-pill-label">Motor local desconectado</span></div>
+      </section>
+
+      <section class="import-card" aria-label="Importar partida">
+        <div class="import-icon" aria-hidden="true">↥</div>
+        <div class="import-text"><h2>Comece por uma partida</h2><p>Abra um PGN para revisar os lances, cole uma posição FEN ou explore o tabuleiro livremente.</p></div>
+        <input id="pgn-file" type="file" accept=".pgn,.txt,text/plain" hidden>
+        <button class="secondary-button" id="choose-pgn" type="button">Abrir PGN <span aria-hidden="true">↗</span></button>
+        <details class="paste-pgn"><summary>Colar PGN ou FEN</summary><div class="paste-panel"><label for="pgn-text">Notação PGN ou posição FEN</label><textarea id="pgn-text" rows="5" placeholder="[Event &quot;Partida&quot;]&#10;1. e4 e5 2. Nf3 Nc6 *"></textarea><button id="load-pgn-text" class="secondary-button" type="button">Carregar partida</button></div></details>
+      </section>
+      <p class="import-status" id="import-status" role="status" aria-live="polite"></p>
+
+      <section class="archive-card" aria-labelledby="archive-title">
+        <div class="archive-heading"><div><p class="eyebrow">SEU ESPAÇO DE ESTUDO</p><h2 id="archive-title">Biblioteca de partidas</h2><p>Guarde análises neste navegador ou traga partidas públicas do Chess.com.</p></div><div class="archive-tools"><button class="secondary-button" id="export-library" type="button">Exportar biblioteca</button><button class="secondary-button" id="import-library-button" type="button">Importar cópia</button><input id="import-library-file" type="file" accept="application/json,.json" hidden></div></div>
+        <div class="library-tabs" role="tablist" aria-label="Biblioteca de partidas">
+          <button class="library-tab selected" type="button" role="tab" aria-selected="true" aria-controls="library-panel" id="library-tab">Partidas</button>
+          <button class="library-tab" type="button" role="tab" aria-selected="false" aria-controls="insights-panel" id="insights-tab">Visão geral</button>
+        </div>
+        <section class="insights-panel" id="insights-panel" role="tabpanel" aria-labelledby="insights-tab" hidden>
+          <div class="insights-heading"><div><p class="eyebrow">SEU DIAGNÓSTICO</p><h3>Visão geral do seu xadrez</h3><p>O que as suas análises salvas mostram, o que treinar primeiro e onde ver cada lance.</p></div><div class="insights-filters"><label>Período<select id="insights-period"><option value="all">Todo o período</option><option value="90">Últimos 90 dias</option><option value="30">Últimos 30 dias</option></select></label><label>Ritmo<select id="insights-speed"><option value="all">Todos</option><option value="bullet">Bullet</option><option value="blitz">Blitz</option><option value="rapid">Rápidas</option><option value="daily">Por correspondência</option></select></label></div></div>
+          <p class="insights-status" id="insights-status" role="status" aria-live="polite"></p>
+          <div class="insights-body" id="insights-body"></div>
+          <p class="archive-footnote" id="insights-footnote">Tudo é calculado neste navegador a partir das análises salvas, sem enviar dados a lugar nenhum. A precisão é uma estimativa (fórmula aberta do Lichess aplicada aos pontos esperados do app), não a nota de nenhum site. Temas vêm do treinador; sugestões de treino são conselhos gerais, não medições.</p>
+        </section>
+        <div id="library-panel" role="tabpanel" aria-labelledby="library-tab">
+        <div class="archive-columns">
+          <section class="archive-pane" aria-labelledby="chesscom-title">
+            <div class="archive-pane-title"><h3 id="chesscom-title">Partidas públicas de Gab0bu</h3><span class="archive-tag">PERFIL CONFIGURADO</span></div>
+            <form class="chesscom-search" id="chesscom-search"><label for="chesscom-username">Seu perfil Chess.com</label><div><input id="chesscom-username" name="username" value="Gab0bu" autocomplete="off" readonly required><button class="primary-button" type="submit">Atualizar</button></div></form>
+            <div class="archive-filters"><label for="chesscom-month">Arquivo mensal</label><select id="chesscom-month" disabled><option>Busque um jogador</option></select><label for="chesscom-timeclass">Ritmo</label><select id="chesscom-timeclass"><option value="all">Todos</option><option value="bullet">Bullet</option><option value="blitz">Blitz</option><option value="rapid">Rápidas</option><option value="daily">Diárias</option></select></div>
+            <label class="auto-analysis-setting"><input id="auto-analyze-chesscom" type="checkbox" checked> Também analisar partidas nesta página quando ela estiver aberta</label>
+            <p class="archive-footnote">A análise em nuvem roda por conta própria, em verificações horárias. A API pública do Chess.com pode atualizar as partidas com atraso.</p>
+            <p class="archive-status" id="chesscom-status" role="status" aria-live="polite">As partidas públicas de Gab0bu serão carregadas automaticamente.</p>
+            <div class="external-games-list" id="chesscom-games"></div>
+            <p class="archive-footnote">Dados públicos consultados na API oficial. O Chess.com pode limitar pedidos ou demorar a atualizar arquivos recentes.</p>
+          </section>
+          <section class="archive-pane saved-pane" aria-labelledby="saved-title">
+            <div class="archive-pane-title"><h3 id="saved-title">Análises salvas</h3><span class="saved-count" id="saved-count">0</span></div>
+            <p class="archive-status" id="saved-status">As análises completas ficam neste navegador. Exporte uma cópia para transferi-las.</p>
+            <div class="saved-games-list" id="saved-games"></div>
+          </section>
+        </div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Área de análise">
+        <div class="board-card">
+        <div class="board-toolbar">
+          <div class="board-label"><span class="live-dot"></span> TABULEIRO <span class="toolbar-divider">/</span> <span class="muted" id="position-name">POSIÇÃO INICIAL</span></div>
+            <div class="board-actions">
+              <button class="tool-button board-flip-button" id="flip-board" type="button" aria-label="Inverter tabuleiro" title="Inverter tabuleiro">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v18m0 0-3-3m3 3 3-3M17 21V3m0 0-3 3m3-3 3 3M4 12h16"/></svg><span>Inverter</span>
+              </button>
+            </div>
+          </div>
+          <div class="variation-banner" id="variation-banner" hidden><span>Modo de variação · a partida original está preservada</span><button class="tool-button return-original-button" id="exit-variation" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 5 3 12l7 7M3 12h18"/></svg><span>Voltar à partida original</span></button></div>
+          <div class="board-layout">
+            <div class="eval-meter"><b class="eval-bar-value" id="eval-bar-value">—</b><div class="eval-bar" role="img" aria-label="Avaliação ainda indisponível"><span></span></div></div>
+            <div class="board-wrap">
+              <div class="rank-labels" aria-hidden="true"><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span></div>
+              <div class="board-surface">
+                <div class="chessboard" id="chessboard" role="grid" aria-label="Tabuleiro de xadrez interativo"></div>
+                <svg class="annotation-arrows" id="annotation-arrows" viewBox="0 0 8 8" preserveAspectRatio="none" aria-hidden="true" hidden></svg>
+                <svg class="move-arrows" id="move-arrows" viewBox="0 0 8 8" preserveAspectRatio="none" role="img" aria-label="Sugestões de lances do Stockfish" hidden></svg>
+              </div>
+              <div class="file-labels" aria-hidden="true"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div>
+            </div>
+          </div>
+          <div class="board-footer">
+            <span class="turn-indicator" id="turn-indicator"><span></span> Vez das brancas</span>
+            <span class="fen-label" hidden>FEN <b id="fen-label">posição inicial</b></span>
+          </div>
+        </div>
+
+        <aside class="analysis-card" aria-label="Painel de análise">
+          <div class="panel-heading"><div><p class="eyebrow">STOCKFISH 19</p><h2>Análise</h2></div><span class="soon-tag">ANÁLISE LOCAL</span></div>
+          <div class="mode-tabs" role="tablist" aria-label="Profundidade da análise">
+            <button class="mode-tab selected" type="button" role="tab" aria-selected="true" data-depth="10" title="Analisar até a profundidade 10">Rápida</button>
+            <button class="mode-tab" type="button" role="tab" aria-selected="false" data-depth="16" title="Analisar até a profundidade 16">Equilibrada</button>
+            <button class="mode-tab" type="button" role="tab" aria-selected="false" data-depth="22" title="Analisar até a profundidade 22">Profunda</button>
+          </div>
+          <div class="eval-summary"><span class="eval-number" id="eval-number" hidden>—</span><span class="eval-caption">AVALIAÇÃO</span><span class="eval-side" id="eval-side">Aguardando análise</span></div>
+          <div class="empty-analysis" id="analysis-placeholder"><span class="sparkle" aria-hidden="true">✳</span><p>Use o Stockfish para avaliar esta posição.</p><span>O motor real calcula vantagem, melhor lance e linha principal.</span></div>
+          <section class="analysis-results" id="analysis-results" hidden aria-label="Resultado da análise" aria-live="polite">
+            <div class="analysis-progress" id="analysis-progress" hidden><div class="progress-copy"><span id="progress-label">Preparando motor…</span><span id="progress-stats"></span></div><progress id="analysis-progress-bar" max="100" value="0"></progress></div>
+            <div class="result-line" id="best-move-result" hidden><span id="best-move-caption">MELHOR LANCE</span><strong id="best-move">—</strong></div>
+            <div class="result-line principal-line"><span>LINHA PRINCIPAL</span><p id="principal-variation">Aguardando resultado do Stockfish.</p></div>
+            <section class="game-review-quality" id="game-review-quality" hidden aria-label="Classificação do lance analisado">
+              <div class="game-review-quality-heading"><span id="game-review-context">REVISÃO DA PARTIDA</span><strong class="move-quality-badge" id="game-review-badge"></strong></div>
+              <p id="game-review-explanation"></p>
+              <p class="coach-question" id="game-review-question" hidden></p>
+              <p class="exercise-feedback" id="exercise-feedback" hidden></p>
+              <div class="punishment-walkthrough" id="punishment-walkthrough" hidden>
+                <p id="punishment-status" aria-live="polite"></p>
+                <button class="secondary-button punishment-step-button" id="punishment-step" type="button">Iniciar punição passo a passo</button>
+              </div>
+              <button class="explain-move-button" id="reveal-exercise" type="button" hidden>Mostrar o lance jogado e a análise</button>
+              <small id="game-review-depth"></small>
+              <button class="explain-move-button" id="explain-move" type="button" aria-expanded="false" aria-controls="detailed-move-explanation" hidden>Revelar análise do treinador</button>
+              <div class="detailed-move-explanation" id="detailed-move-explanation" hidden></div>
+              <button class="secondary-button" id="replay-played-line" type="button" hidden>Reproduzir a linha do lance jogado</button>
+              <div class="best-line-actions" id="best-line-actions" hidden aria-label="Explorar a melhor alternativa">
+                <button class="secondary-button" id="show-best-move" type="button">Ver a melhor alternativa</button>
+                <button class="secondary-button" id="show-best-line" type="button">Ver a melhor sequência</button>
+              </div>
+              <button class="secondary-button explore-variation-button" id="explore-variation" type="button">Explorar outra jogada a partir daqui</button>
+            </section>
+            <section class="best-moves-panel" id="best-moves-panel" hidden aria-label="Melhores jogadas para esta posição">
+              <div class="best-moves-heading"><span>MELHORES JOGADAS</span><small id="best-moves-meta"></small></div>
+              <ol class="best-moves-list" id="best-moves-list"></ol>
+            </section>
+          </section>
+          <div class="analysis-actions"><button class="primary-button" id="analyze-position" type="button"><span aria-hidden="true">▶</span> Analisar posição</button><button class="cancel-button" id="cancel-analysis" type="button" hidden>Cancelar</button></div>
+          <p class="engine-note" id="engine-status" role="status" aria-live="polite"><span class="shield" aria-hidden="true">◇</span> <span id="engine-status-text">O Stockfish inicia localmente ao analisar.</span></p>
+        </aside>
+      </section>
+
+      <section class="moves-card" aria-labelledby="moves-title">
+        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled>Analisar partida</button></div>
+        <div class="move-list" id="move-list" role="group" aria-label="Lances da partida"><p class="move-list-empty">Importe uma partida PGN para ver e navegar pelos lances.</p></div>
+        <p class="move-quality-legend">Ícones após a análise: ★ brilhante · 👍 grande lance · ♛ melhor · ⚡ excelente · ✓ bom · ?! imprecisão · ? erro · ?? erro grave · × chance perdida</p>
+        <p class="keyboard-hint">Atalhos: ← e → navegam pelos lances. Com o foco no tabuleiro, as setas movem o foco entre as casas e Shift + ← / → navegam pelos lances. Botão direito + arraste desenha ou remove uma seta.</p>
+        <details class="rating-settings"><summary>Ajustar rating para avaliar os lances</summary><div class="rating-fields"><label>Rating das brancas <input id="white-rating" type="number" min="400" max="3000" step="50" value="1200"></label><label>Rating das pretas <input id="black-rating" type="number" min="400" max="3000" step="50" value="1200"></label></div><p>Os ratings do PGN são preenchidos automaticamente. Sem eles, usamos 1200. Isso ajusta uma estimativa própria de pontos esperados; a Chess.com não publica o modelo interno completo.</p></details>
+        <section class="game-analysis" id="game-analysis" hidden aria-label="Análise da partida" aria-live="polite">
+          <div class="game-analysis-progress"><div class="progress-copy"><span id="game-progress-label">Aguardando análise.</span><span id="game-progress-count"></span></div><progress id="game-progress" max="100" value="0"></progress></div>
+          <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">
+            <div class="game-summary-heading"><div><p class="eyebrow">APRENDIZADO</p><h3 id="game-summary-title">Resumo da partida</h3></div><span id="game-summary-status"></span></div>
+            <div class="game-summary-overview" id="game-summary-overview"></div>
+            <section class="game-summary-block game-summary-coach-block"><h4>Revisão guiada · pense antes de abrir</h4><div id="game-summary-coach"></div></section>
+            <details class="summary-more"><summary>Ver estatísticas e diagnóstico detalhado</summary>
+              <div class="summary-more-content">
+                <div class="game-summary-openings" id="game-summary-opening"></div>
+                <section class="game-summary-block game-summary-quality-block"><h4>Qualidade dos lances</h4><div id="game-summary-qualities"></div></section>
+                <div class="game-summary-columns">
+                  <section class="game-summary-block"><h4>Desempenho por fase</h4><div id="game-summary-phases"></div></section>
+                  <section class="game-summary-block"><h4>Tática · padrões a rever</h4><div id="game-summary-themes"></div></section>
+                  <section class="game-summary-block"><h4>Estratégia · ideias observadas</h4><div id="game-summary-strategy"></div></section>
+                </div>
+                <section class="game-summary-block game-summary-turning-block"><h4>Lances que mais custaram chances</h4><div id="game-summary-turning-points"></div></section>
+              </div>
+            </details>
+          </section>
+          <section class="advantage-chart-card" aria-labelledby="advantage-chart-title">
+            <div class="advantage-chart-heading">
+              <div><h3 id="advantage-chart-title">Vantagem ao longo da partida</h3><p>Escala em peões, limitada a ±5. Toque em um ponto para abrir aquela posição no tabuleiro.</p></div>
+              <span class="chart-current-eval" id="chart-current-eval">Aguardando avaliações</span>
+            </div>
+            <div class="chart-quality-legend" aria-label="Legenda das qualidades dos lances">
+              <span><i class="chart-quality-dot quality-best"></i>Melhor</span>
+              <span><i class="chart-quality-dot quality-good"></i>Bom</span>
+              <span><i class="chart-quality-dot quality-inaccuracy"></i>Imprecisão</span>
+              <span><i class="chart-quality-dot quality-mistake"></i>Erro</span>
+              <span><i class="chart-quality-dot quality-blunder"></i>Erro grave</span>
+              <span><i class="chart-quality-dot quality-brilliant"></i>Brilhante</span>
+              <span><i class="chart-quality-dot quality-great"></i>Grande lance</span>
+            </div>
+            <svg class="advantage-chart" id="advantage-chart" viewBox="0 0 900 250" role="group" aria-label="Gráfico interativo da vantagem e qualidade dos lances"></svg>
+            <p class="advantage-chart-status" id="advantage-chart-status" aria-live="polite">A análise do Stockfish preencherá o gráfico.</p>
+          </section>
+          <details class="all-positions"><summary>Ver todas as posições analisadas</summary><div class="game-analysis-rows" id="game-analysis-rows"></div></details>
+        </section>
+      </section>
+
+      <footer id="como-funciona"><span>♞ &nbsp;MyChess 6</span><span>Feito para aprender, compartilhar e jogar melhor.</span><span>Gratuito para todos <b>♥</b></span></footer>
+    </main>
+    <nav class="move-dock" id="move-dock" aria-label="Navegação de lances" hidden>
+      <div class="move-controls">
+        <button id="first-move" type="button" disabled aria-label="Ir para a posição inicial" title="Posição inicial">|‹</button>
+        <button id="prev-move" type="button" aria-keyshortcuts="ArrowLeft" disabled aria-label="Voltar um lance" title="Lance anterior">‹</button>
+        <span class="move-count" id="move-count" role="status">0 lances</span>
+        <button id="next-move" type="button" aria-keyshortcuts="ArrowRight" disabled aria-label="Avançar um lance" title="Próximo lance">›</button>
+        <button id="last-move" type="button" disabled aria-label="Ir para o último lance" title="Último lance">›|</button>
+      </div>
+    </nav>
+    <dialog class="depth-dialog" id="depth-dialog" aria-labelledby="depth-dialog-title">
+      <form method="dialog" class="depth-dialog-card">
+        <span class="depth-dialog-icon" aria-hidden="true">♞</span>
+        <p class="eyebrow">STOCKFISH 19</p>
+        <h2 id="depth-dialog-title">Qual profundidade?</h2>
+        <p class="depth-dialog-copy">Escolha o nível para esta análise.</p>
+        <fieldset class="depth-options" aria-label="Profundidade da análise">
+          <label class="depth-option"><input type="radio" name="analysis-depth" value="10"><span class="depth-option-copy"><strong>Rápida</strong><small>Resultado em menos tempo</small></span><b>10</b></label>
+          <label class="depth-option"><input type="radio" name="analysis-depth" value="16"><span class="depth-option-copy"><strong>Equilibrada</strong><small>Boa combinação de velocidade e precisão</small></span><b>16</b></label>
+          <label class="depth-option"><input type="radio" name="analysis-depth" value="22"><span class="depth-option-copy"><strong>Profunda</strong><small>Análise mais detalhada</small></span><b>22</b></label>
+        </fieldset>
+        <div class="depth-dialog-actions"><button class="depth-cancel" type="button" value="cancel">Cancelar</button><button class="primary-button" type="submit" value="start">Iniciar análise <span aria-hidden="true">→</span></button></div>
+      </form>
+    </dialog>
+    <script src="coach.js?v=mychess6-auto-1" defer></script>
+    <script src="insights.js?v=mychess6-auto-1" defer></script>
+    <script src="app.js?v=mychess6-auto-1" defer></script>
+  </body>
+</html>

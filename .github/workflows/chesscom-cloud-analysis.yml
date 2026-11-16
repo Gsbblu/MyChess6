@@ -1,0 +1,41 @@
+name: Chess.com automatic analysis
+
+on:
+  schedule:
+    # Avoid the top of the hour, when GitHub Actions is busiest.
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chesscom-cloud-analysis
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out MyChess6
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install headless browser
+        run: |
+          python -m pip install --upgrade pip playwright
+          python -m playwright install --with-deps chromium
+      - name: Fetch and analyze the newest public game
+        run: python scripts/cloud_analyze.py
+      - name: Save analyses for the site
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cloud-data/games.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update automatic Chess.com analysis'
+            git push
+          fi
