@@ -1855,7 +1855,9 @@
         return;
       }
       const records = await libraryRequest('readonly', 'all');
-      const candidates = games.slice().reverse().filter((game) => !records.some((record) => record.id === gameIdentity(game.pgn, { url: game.url })));
+      const candidates = games.slice().reverse().filter((game) =>
+        !records.some((record) => record.id === gameIdentity(game.pgn, { url: game.url }))
+        && hasAnalyzableChessComPgn(game.pgn));
       const configuredLimit = Number(window.__MyChess6MaxGamesPerArchive);
       const limit = Number.isInteger(configuredLimit) && configuredLimit > 0 ? configuredLimit : candidates.length;
       autoChessComQueue = candidates.slice(0, limit);
@@ -1874,6 +1876,11 @@
       window.MyChess6Cloud.archiveState = 'error';
       chessComStatus.textContent = error.message || 'Não consegui iniciar a análise automática.';
     }
+  }
+
+  function hasAnalyzableChessComPgn(pgn) {
+    try { return parsePgn(pgn).history.length > 1; }
+    catch { return false; }
   }
 
   function startAutoChessComGame(game) {
