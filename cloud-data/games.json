@@ -1,7 +1,7 @@
 {
   "format": "MyChess cloud library",
   "version": 1,
-  "lastSeenGameUrl": "https://www.chess.com/game/live/186398084398",
+  "lastSeenGameUrl": "https://www.chess.com/game/live/186398442116",
   "backfillArchiveUrl": "https://api.chess.com/pub/player/gab0bu/games/2026/11",
   "backfillComplete": false,
   "games": [
@@ -3994,6 +3994,3688 @@
               "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
             },
             "explanation": "Melhor. Coincide com o melhor lance do motor; verificado: Nxg5 leva a uma variante com ganho de um peão (1 ponto)."
+          }
+        }
+      ]
+    },
+    {
+      "id": "chesscom:https://www.chess.com/game/live/186398442116",
+      "pgn": "[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2026.11.02\"]\n[Round \"-\"]\n[White \"matisiems1\"]\n[Black \"Gab0bu\"]\n[Result \"1-0\"]\n[CurrentPosition \"r2kQb1r/ppp3pp/3q4/8/3p4/8/PP1P1PPP/RNB1R1K1 b - - 2 14\"]\n[Timezone \"UTC\"]\n[ECO \"C67\"]\n[ECOUrl \"https://www.chess.com/openings/Ruy-Lopez-Opening-Berlin-Rio-Gambit-Accepted-5.Qe2\"]\n[UTCDate \"2026.11.02\"]\n[UTCTime \"13:33:45\"]\n[WhiteElo \"310\"]\n[BlackElo \"291\"]\n[TimeControl \"600\"]\n[Termination \"matisiems1 won by checkmate\"]\n[StartTime \"13:33:45\"]\n[EndDate \"2026.11.02\"]\n[EndTime \"13:41:16\"]\n[Link \"https://www.chess.com/game/live/186398442116\"]\n\n1. e4 {[%clk 0:09:59.2]} 1... e5 {[%clk 0:09:41]} 2. Nf3 {[%clk 0:09:57.3]} 2... Nc6 {[%clk 0:09:36.5]} 3. Bb5 {[%clk 0:09:49.2]} 3... Nf6 {[%clk 0:09:30.1]} 4. O-O {[%clk 0:09:29.9]} 4... Nxe4 {[%clk 0:09:22.6]} 5. Qe2 {[%clk 0:09:18.5]} 5... f5 {[%clk 0:09:08.1]} 6. Bd3 {[%clk 0:09:04.9]} 6... d5 {[%clk 0:08:30.1]} 7. c4 {[%clk 0:08:43.1]} 7... Nd4 {[%clk 0:07:45.1]} 8. Nxd4 {[%clk 0:08:34.6]} 8... exd4 {[%clk 0:07:32.3]} 9. cxd5 {[%clk 0:08:26.9]} 9... Qxd5 {[%clk 0:07:27.9]} 10. Re1 {[%clk 0:08:15.8]} 10... Be6 {[%clk 0:06:52.3]} 11. Bxe4 {[%clk 0:08:06.5]} 11... fxe4 {[%clk 0:06:03.7]} 12. Qxe4 {[%clk 0:07:58.3]} 12... Qd6 {[%clk 0:05:49.5]} 13. Qxe6+ {[%clk 0:07:43.4]} 13... Kd8 {[%clk 0:05:22.5]} 14. Qe8# {[%clk 0:07:18.7]} 1-0\n",
+      "source": {
+        "url": "https://www.chess.com/game/live/186398442116",
+        "title": "matisiems1 × Gab0bu",
+        "platform": "Chess.com"
+      },
+      "title": "matisiems1 × Gab0bu",
+      "headers": {
+        "Event": "Live Chess",
+        "Site": "Chess.com",
+        "Date": "2026.11.02",
+        "Round": "-",
+        "White": "matisiems1",
+        "Black": "Gab0bu",
+        "Result": "1-0",
+        "CurrentPosition": "r2kQb1r/ppp3pp/3q4/8/3p4/8/PP1P1PPP/RNB1R1K1 b - - 2 14",
+        "Timezone": "UTC",
+        "ECO": "C67",
+        "ECOUrl": "https://www.chess.com/openings/Ruy-Lopez-Opening-Berlin-Rio-Gambit-Accepted-5.Qe2",
+        "UTCDate": "2026.11.02",
+        "UTCTime": "13:33:45",
+        "WhiteElo": "310",
+        "BlackElo": "291",
+        "TimeControl": "600",
+        "Termination": "matisiems1 won by checkmate",
+        "StartTime": "13:33:45",
+        "EndDate": "2026.11.02",
+        "EndTime": "13:41:16",
+        "Link": "https://www.chess.com/game/live/186398442116"
+      },
+      "moves": 27,
+      "depth": 16,
+      "savedAt": 1794843892002,
+      "qualities": {
+        "Melhor": 10,
+        "Excelente": 1,
+        "Imprecisão": 2,
+        "Erro": 3,
+        "Bom": 3,
+        "Grande lance": 5,
+        "Erro grave": 3
+      },
+      "results": [
+        {
+          "index": 0,
+          "label": "Posição inicial",
+          "turn": "w",
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "evaluation": "+0.3",
+          "best": "e4",
+          "bestMove": "e2e4",
+          "pvUci": "e2e4 e7e5 g1f3 g8f6 d2d4 f6e4 f1d3 d7d5 f3e5 f8d6 b1c3 e4c3 b2c3 e8g8",
+          "pv": "1. e4 e5 2. Nf3 Nf6 3. d4 Nxe4 4. Bd3 d5 5. Nxe5 Bd6 6. Nc3 Nxc3",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 28
+              },
+              "pv": "e2e4 e7e5 g1f3 g8f6 d2d4 f6e4 f1d3 d7d5 f3e5 f8d6 b1c3 e4c3 b2c3 e8g8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 20
+              },
+              "pv": "g1f3 g8f6 d2d4 e7e6 c2c4 b7b6 b1c3 c8b7 e2e3 f8b4 c1d2 b4c3 d2c3 f6e4 d1c2 e4c3 c2c3 b7f3 g2f3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 20
+              },
+              "pv": "d2d4 g8f6 c2c4 e7e6 g1f3 b7b6 b1c3 c8b7 e2e3 f8b4 c1d2 b4c3 d2c3 f6e4 d1c2 e4c3 c2c3"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 28
+          },
+          "depth": 16,
+          "playedMove": null
+        },
+        {
+          "index": 1,
+          "label": "Após 1. e4",
+          "turn": "b",
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+          "evaluation": "+0.3",
+          "best": "e5",
+          "bestMove": "e7e5",
+          "pvUci": "e7e5 g1f3 b8c6 d2d4 e5d4 f3d4 g8f6 d4c6 b7c6 f1d3 d7d5 e4e5 f6d7 e1g1 d7c5 b1c3 c5d3 c2d3 f8e7 d3d4",
+          "pv": "1… e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Nf6 5. Nxc6 bxc6 6. Bd3 d5 7. e5",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -32
+              },
+              "pv": "e7e5 g1f3 b8c6 d2d4 e5d4 f3d4 g8f6 d4c6 b7c6 f1d3 d7d5 e4e5 f6d7 e1g1 d7c5 b1c3 c5d3 c2d3 f8e7 d3d4"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -35
+              },
+              "pv": "c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 e7e5 d4b5 d7d6 b1c3 a7a6 b5a3 g8f6 a3c4 b7b5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -37
+              },
+              "pv": "b8c6 d2d4 d7d5 f1b5 e7e6 e4e5 c8d7 b5e2 f7f6 g1f3 f6e5 d4e5 g8e7"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -32
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "e4",
+            "moveNumber": 1,
+            "from": 52,
+            "to": 36,
+            "promotion": "",
+            "movingPiece": "P",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 1,
+              "san": "e4",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de e4, +0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-pawn",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "e4 ocupa o centro com um peão em e4."
+                },
+                {
+                  "id": "king-shield",
+                  "subject": "played",
+                  "polarity": "minus",
+                  "text": "e4 enfraquece a proteção do rei: peões à frente dele 3 → 2."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "Nf3",
+                  "uci": "g1f3",
+                  "evaluation": "+0.2"
+                },
+                {
+                  "san": "d4",
+                  "uci": "d2d4",
+                  "evaluation": "+0.2"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "center-pawn",
+                  "kind": "heuristic",
+                  "text": "e4 ocupa o centro com um peão em e4."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+0.3",
+                "playedText": "+0.3",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de e4, +0.3."
+              },
+              "lines": {
+                "played": "1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Nf6 5. Nxc6 bxc6 …",
+                "best": "1. e4 e5 2. Nf3 Nf6 3. d4 Nxe4 4. Bd3 d5 5. Nxe5 Bd6 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de e4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 2,
+          "label": "Após 1… e5",
+          "turn": "w",
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+          "evaluation": "+0.3",
+          "best": "Nf3",
+          "bestMove": "g1f3",
+          "pvUci": "g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f8e7 f1e1 b7b5 a4b3 e8g8 c2c3 d7d5 e4d5 f6d5 f3e5 c6e5 e1e5 c7c6 e5e1 e7d6 d2d4 d8h4 g2g3 h4h3 d1e2 c8g4",
+          "pv": "2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 O-O",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 32
+              },
+              "pv": "g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f8e7 f1e1 b7b5 a4b3 e8g8 c2c3 d7d5 e4d5 f6d5 f3e5 c6e5 e1e5 c7c6 e5e1 e7d6 d2d4 d8h4 g2g3 h4h3 d1e2 c8g4"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 1
+              },
+              "pv": "b1c3 g8f6 g1f3 b8c6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 e8g8 c1d2 d7d5 e1g1 b4c3 d2c3 f6e4 c3a5 d8f6 d3e4 d5e4 a5c3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "f1c4 g8f6 b1c3 b8c6 d2d3 c6a5 g1e2 c7c6 e1g1 a5c4 d3c4 f8e7 f2f4 e7c5 g1h1 d7d6 c3a4"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 32
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "e5",
+            "moveNumber": 1,
+            "from": 12,
+            "to": 28,
+            "promotion": "",
+            "movingPiece": "p",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 1,
+              "san": "e5",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.3; depois de e5, −0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-pawn",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "e5 ocupa o centro com um peão em e5."
+                },
+                {
+                  "id": "king-shield",
+                  "subject": "played",
+                  "polarity": "minus",
+                  "text": "e5 enfraquece a proteção do rei: peões à frente dele 3 → 2."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "c5",
+                  "uci": "c7c5",
+                  "evaluation": "−0.3"
+                },
+                {
+                  "san": "Nc6",
+                  "uci": "b8c6",
+                  "evaluation": "−0.4"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "center-pawn",
+                  "kind": "heuristic",
+                  "text": "e5 ocupa o centro com um peão em e5."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "−0.3",
+                "playedText": "−0.3",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.3; depois de e5, −0.3."
+              },
+              "lines": {
+                "played": "1… e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 …",
+                "best": "1… e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Nf6 5. Nxc6 bxc6 6. Bd3 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de e5. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 3,
+          "label": "Após 2. Nf3",
+          "turn": "b",
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+          "evaluation": "+0.3",
+          "best": "Nc6",
+          "bestMove": "b8c6",
+          "pvUci": "b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f6e4 d2d4 b7b5 a4b3 d7d5 d4e5 c8e6 c2c3 f8c5 b1d2 e8g8 b3c2 f7f5 e5f6 e4f6",
+          "pv": "2… Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 b5 7. Bb3 d5 8. dxe5",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -31
+              },
+              "pv": "b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f6e4 d2d4 b7b5 a4b3 d7d5 d4e5 c8e6 c2c3 f8c5 b1d2 e8g8 b3c2 f7f5 e5f6 e4f6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -42
+              },
+              "pv": "g8f6 f3e5 d7d6 e5f3 f6e4 d2d4 d6d5 f1d3 f8b4 c2c3 b4d6 e1g1 e8g8 c3c4 c7c6 f1e1 c8g4 d3e4 d5e4 e1e4 g4h5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -52
+              },
+              "pv": "d7d6 d2d4 b8d7 b1c3 g8f6 h2h3 a7a6 a2a4 f8e7 c1e3 c7c6 d1d2 e8g8"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -31
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Nf3",
+            "moveNumber": 2,
+            "from": 62,
+            "to": 45,
+            "promotion": "",
+            "movingPiece": "N",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 2,
+              "san": "Nf3",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de Nf3, +0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "develop",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nf3 desenvolve o cavalo (peças menores ainda na casa inicial: 4 → 3)."
+                },
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nf3 aumenta o controle do centro (casas centrais atacadas: 1 → 3 de 4)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "Nc3",
+                  "uci": "b1c3",
+                  "evaluation": "+0.0"
+                },
+                {
+                  "san": "Bc4",
+                  "uci": "f1c4",
+                  "evaluation": "0.0"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "develop",
+                  "kind": "heuristic",
+                  "text": "Nf3 desenvolve o cavalo (peças menores ainda na casa inicial: 4 → 3)."
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "Nf3 aumenta o controle do centro (casas centrais atacadas: 1 → 3 de 4)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+0.3",
+                "playedText": "+0.3",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de Nf3, +0.3."
+              },
+              "lines": {
+                "played": "2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 b5 …",
+                "best": "2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Nf3. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 4,
+          "label": "Após 2… Nc6",
+          "turn": "w",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+          "evaluation": "+0.3",
+          "best": "Bb5",
+          "bestMove": "f1b5",
+          "pvUci": "f1b5 a7a6 b5a4 g8f6 e1g1 f6e4 d2d4 e5d4 f1e1 d7d5 c1g5 f7f6 f3d4 f8c5 d4c6 c5f2 g1f1 d8d6 e1e4 d5e4 d1d6",
+          "pv": "3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 exd4 7. Re1 d5 8. Bg5 f6",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 29
+              },
+              "pv": "f1b5 a7a6 b5a4 g8f6 e1g1 f6e4 d2d4 e5d4 f1e1 d7d5 c1g5 f7f6 f3d4 f8c5 d4c6 c5f2 g1f1 d8d6 e1e4 d5e4 d1d6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 28
+              },
+              "pv": "d2d4 e5d4 f3d4 g8f6 d4c6 b7c6 e4e5 d8e7 d1e2 f6d5 c2c4 d5b6 b1c3 g7g6 c3e4 e7b4 e2d2 b4d2 c1d2"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 23
+              },
+              "pv": "f1c4 g8f6 d2d3 f8c5 b1c3 e8g8 e1g1 h7h6 h2h3 f8e8 c3d5 d7d6 c2c3"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 29
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Nc6",
+            "moveNumber": 2,
+            "from": 1,
+            "to": 18,
+            "promotion": "",
+            "movingPiece": "n",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 2,
+              "san": "Nc6",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.3; depois de Nc6, −0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "develop",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nc6 desenvolve o cavalo (peças menores ainda na casa inicial: 4 → 3)."
+                },
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nc6 aumenta o controle do centro (casas centrais atacadas: 1 → 2 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nc6 amplia a mobilidade do cavalo (lances legais disponíveis a ela: 2 → 5)."
+                }
+              ],
+              "uncertainty": [
+                "A variante após Nc6 termina com uma captura ainda pendente; por isso não afirmo o saldo final de material dela."
+              ],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "Nf6",
+                  "uci": "g8f6",
+                  "evaluation": "−0.4"
+                },
+                {
+                  "san": "d6",
+                  "uci": "d7d6",
+                  "evaluation": "−0.5"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "develop",
+                  "kind": "heuristic",
+                  "text": "Nc6 desenvolve o cavalo (peças menores ainda na casa inicial: 4 → 3)."
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "Nc6 aumenta o controle do centro (casas centrais atacadas: 1 → 2 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "kind": "heuristic",
+                  "text": "Nc6 amplia a mobilidade do cavalo (lances legais disponíveis a ela: 2 → 5)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "−0.3",
+                "playedText": "−0.3",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.3; depois de Nc6, −0.3."
+              },
+              "lines": {
+                "played": "2… Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 exd4 7. Re1 …",
+                "best": "2… Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 b5 7. Bb3 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Nc6. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 5,
+          "label": "Após 3. Bb5",
+          "turn": "b",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+          "evaluation": "+0.3",
+          "best": "Nf6",
+          "bestMove": "g8f6",
+          "pvUci": "g8f6 e1g1 f6e4 f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 b1c3 e7f6 e5e1 f8e8 c3d5 f6h4 d2d4 c7c6 d5f4 e8e1",
+          "pv": "3… Nf6 4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. Nc3",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -31
+              },
+              "pv": "g8f6 e1g1 f6e4 f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 b1c3 e7f6 e5e1 f8e8 c3d5 f6h4 d2d4 c7c6 d5f4 e8e1"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -36
+              },
+              "pv": "a7a6 b5a4 g8f6 e1g1 f8e7 d2d4 e5d4 f1e1 e8g8 e4e5 f6e8 c2c3 d7d6 a4c6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -49
+              },
+              "pv": "f8c5 e1g1 g8f6 c2c3 e8g8 d2d4 c5b6 f1e1 d7d6 h2h3 c6e7 b1d2 c7c6 b5f1 e7g6 a2a4 e5d4 c3d4 d6d5 e4e5"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -31
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Bb5",
+            "moveNumber": 3,
+            "from": 61,
+            "to": 25,
+            "promotion": "",
+            "movingPiece": "B",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 3,
+              "san": "Bb5",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de Bb5, +0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "develop",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Bb5 desenvolve o bispo (peças menores ainda na casa inicial: 3 → 2)."
+                }
+              ],
+              "uncertainty": [
+                "A variante após Bb5 termina com uma captura ainda pendente; por isso não afirmo o saldo final de material dela."
+              ],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "d4",
+                  "uci": "d2d4",
+                  "evaluation": "+0.3"
+                },
+                {
+                  "san": "Bc4",
+                  "uci": "f1c4",
+                  "evaluation": "+0.2"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "develop",
+                  "kind": "heuristic",
+                  "text": "Bb5 desenvolve o bispo (peças menores ainda na casa inicial: 3 → 2)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+0.3",
+                "playedText": "+0.3",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de Bb5, +0.3."
+              },
+              "lines": {
+                "played": "3. Bb5 Nf6 4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 …",
+                "best": "3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 exd4 7. Re1 d5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Bb5. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 6,
+          "label": "Após 3… Nf6",
+          "turn": "w",
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+          "evaluation": "+0.3",
+          "best": "O-O",
+          "bestMove": "e1g1",
+          "pvUci": "e1g1 f6e4 f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 d2d4 d6e8 d4d5 e7c5 h2h3 d7d6",
+          "pv": "4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 Ne8",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 28
+              },
+              "pv": "e1g1 f6e4 f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 d2d4 d6e8 d4d5 e7c5 h2h3 d7d6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 15
+              },
+              "pv": "d2d3 f8c5 c2c3 e8g8 e1g1 d7d5 b1d2 d5e4 d3e4 d8e7 b2b4 c5d6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 10
+              },
+              "pv": "b1c3 c6d4 f3d4 e5d4 e4e5 d4c3 e5f6 d8f6 d2c3 f6e5 b5e2 b7b6 e1g1 f8d6 g2g3 a7a6"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 28
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Nf6",
+            "moveNumber": 3,
+            "from": 6,
+            "to": 21,
+            "promotion": "",
+            "movingPiece": "n",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 3,
+              "san": "Nf6",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.3; depois de Nf6, −0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "develop",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nf6 desenvolve o cavalo (peças menores ainda na casa inicial: 3 → 2)."
+                },
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nf6 aumenta o controle do centro (casas centrais atacadas: 2 → 4 de 4)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "a6",
+                  "uci": "a7a6",
+                  "evaluation": "−0.4"
+                },
+                {
+                  "san": "Bc5",
+                  "uci": "f8c5",
+                  "evaluation": "−0.5"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "develop",
+                  "kind": "heuristic",
+                  "text": "Nf6 desenvolve o cavalo (peças menores ainda na casa inicial: 3 → 2)."
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "Nf6 aumenta o controle do centro (casas centrais atacadas: 2 → 4 de 4)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "−0.3",
+                "playedText": "−0.3",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.3; depois de Nf6, −0.3."
+              },
+              "lines": {
+                "played": "3… Nf6 4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 …",
+                "best": "3… Nf6 4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Nf6. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 7,
+          "label": "Após 4. O-O",
+          "turn": "b",
+          "fen": "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4",
+          "evaluation": "+0.2",
+          "best": "Nxe4",
+          "bestMove": "f6e4",
+          "pvUci": "f6e4 f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 d2d4 e7f6 e5e2 b7b6 c1f4 d6f5 c2c3 f6g5 d1d3 d7d5 f4g5 d8g5 b1d2",
+          "pv": "4… Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 Bf6 10. Re2",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -19
+              },
+              "pv": "f6e4 f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 d2d4 e7f6 e5e2 b7b6 c1f4 d6f5 c2c3 f6g5 d1d3 d7d5 f4g5 d8g5 b1d2"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -48
+              },
+              "pv": "f8e7 f1e1 d7d6 c2c3 e8g8 d2d4 c8d7 d4d5 c6b8 b5d3 a7a5 c3c4 b8a6 b1c3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -56
+              },
+              "pv": "f8c5 f3e5 c6e5 d2d4 c7c6 d4e5 f6e4 b5d3 d7d5 e5d6 e4f6 f1e1 c8e6 d3f5 d8d6 d1d6 c5d6 f5e6 f7e6 e1e6 e8d7"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -19
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "O-O",
+            "moveNumber": 4,
+            "from": 60,
+            "to": 62,
+            "promotion": "",
+            "movingPiece": "K",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 4,
+              "san": "O-O",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de O-O, +0.2.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "castle",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "O-O faz o roque: leva o rei para um canto mais protegido e aproxima a torre do jogo."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "d3",
+                  "uci": "d2d3",
+                  "evaluation": "+0.1"
+                },
+                {
+                  "san": "Nc3",
+                  "uci": "b1c3",
+                  "evaluation": "+0.1"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "castle",
+                  "kind": "heuristic",
+                  "text": "O-O faz o roque: leva o rei para um canto mais protegido e aproxima a torre do jogo."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+0.3",
+                "playedText": "+0.2",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de O-O, +0.2."
+              },
+              "lines": {
+                "played": "4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O …",
+                "best": "4. O-O Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de O-O. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 8,
+          "label": "Após 4… Nxe4",
+          "turn": "w",
+          "fen": "r1bqkb1r/pppp1ppp/2n5/1B2p3/4n3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 0 5",
+          "evaluation": "+0.3",
+          "best": "Re1",
+          "bestMove": "f1e1",
+          "pvUci": "f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 d2d4 e7f6 e5e1 f8e8 c1f4 e8e1 d1e1 d6e8 c2c3 d7d5 b1d2 c7c6 e1e3 c8f5 a1e1",
+          "pv": "5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 Bf6 10. Re1 Re8",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 29
+              },
+              "pv": "f1e1 e4d6 f3e5 f8e7 b5f1 c6e5 e1e5 e8g8 d2d4 e7f6 e5e1 f8e8 c1f4 e8e1 d1e1 d6e8 c2c3 d7d5 b1d2 c7c6 e1e3 c8f5 a1e1"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 9
+              },
+              "pv": "d2d4 e4d6 b5a4 e5e4 f3e5 f8e7 b1c3 e8g8 f1e1 d6f5 e1e4 c6e5 d4e5 d7d6 c1f4"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "d1e2 e4g5 f3g5 d8g5 d2d4 g5e7 d4e5 c6d4 e2d1 d4b5 a2a4 d7d6 a4b5 d6e5 b1c3 e7e6 c3d5 f8d6 f2f4 e8g8"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 29
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Nxe4",
+            "moveNumber": 4,
+            "from": 21,
+            "to": 36,
+            "promotion": "",
+            "movingPiece": "n",
+            "capturedPiece": "P"
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 4,
+              "san": "Nxe4",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.2; depois de Nxe4, −0.3.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "mobility",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Nxe4 amplia a mobilidade do cavalo (lances legais disponíveis a ela: 5 → 8)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "Be7",
+                  "uci": "f8e7",
+                  "evaluation": "−0.5"
+                },
+                {
+                  "san": "Bc5",
+                  "uci": "f8c5",
+                  "evaluation": "−0.6"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "mobility",
+                  "kind": "heuristic",
+                  "text": "Nxe4 amplia a mobilidade do cavalo (lances legais disponíveis a ela: 5 → 8)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "−0.2",
+                "playedText": "−0.3",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.2; depois de Nxe4, −0.3."
+              },
+              "lines": {
+                "played": "4… Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 …",
+                "best": "4… Nxe4 5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Nxe4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 9,
+          "label": "Após 5. Qe2",
+          "turn": "b",
+          "fen": "r1bqkb1r/pppp1ppp/2n5/1B2p3/4n3/5N2/PPPPQPPP/RNB2RK1 b kq - 1 5",
+          "evaluation": "−0.0",
+          "best": "Nd6",
+          "bestMove": "e4d6",
+          "pvUci": "e4d6 b5c6 d7c6 e2e5 d8e7 e5a5 e7d7 a5c3 f7f6 f1e1 e8d8 d2d4 d7f7 c1f4 c8f5",
+          "pv": "5… Nd6 6. Bxc6 dxc6 7. Qxe5+ Qe7 8. Qa5 Qd7 9. Qc3 f6 10. Re1+ Kd8 11. d4",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 1
+              },
+              "pv": "e4d6 b5c6 d7c6 e2e5 d8e7 e5a5 e7d7 a5c3 f7f6 f1e1 e8d8 d2d4 d7f7 c1f4 c8f5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "e4g5 f3g5 d8g5 d2d4 g5e7 d4e5 c6d4 e2d1 d4b5 a2a4 d7d6 a4b5 d6e5 b1c3 c8f5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -3
+              },
+              "pv": "e4f6 d2d4 e5e4 b1c3 d7d5 f3e5 c8d7 b5c6 d7c6 f2f3 f8e7 c1f4 e8g8 e5c6 b7c6 f3e4 d5e4"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 1
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Qe2",
+            "moveNumber": 5,
+            "from": 59,
+            "to": 52,
+            "promotion": "",
+            "movingPiece": "Q",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Excelente",
+            "kind": "excellent",
+            "loss": 0.014526301271053532,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 5,
+              "san": "Qe2",
+              "kind": "excellent",
+              "label": "Excelente",
+              "lossPoints": 1.5,
+              "headline": "Excelente. Lance aprovado pelo motor (1,5 pontos percentuais abaixo do melhor); verificado: Qe2 leva a uma variante com ganho de um peão (1 ponto).",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após Qe2 mantém um ganho de um peão (1 ponto). Capturas da variante: Bxc6, dxc6, Qxe5+.",
+                  "short": "leva a uma variante com ganho de um peão (1 ponto)",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "played-rank",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 20,
+                  "text": "Qe2 foi a 3ª melhor linha calculada pelo motor (0.0), contra +0.3 do melhor lance.",
+                  "short": "foi a 3ª melhor linha do motor",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de Qe2, −0.0.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Qe2 aumenta o controle do centro (casas centrais atacadas: 2 → 3 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Qe2 amplia a mobilidade da dama (lances legais disponíveis a ela: 2 → 6)."
+                },
+                {
+                  "id": "center-control",
+                  "subject": "best",
+                  "polarity": "plus",
+                  "text": "A alternativa Re1 aumenta o controle do centro (casas centrais atacadas: 2 → 3 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "subject": "best",
+                  "polarity": "plus",
+                  "text": "A alternativa Re1 amplia a mobilidade da torre (lances legais disponíveis a ela: 1 → 4)."
+                }
+              ],
+              "uncertainty": [
+                "A diferença para o melhor lance é pequena (1,5 pontos percentuais); em posições assim vários lances são razoáveis."
+              ],
+              "alternative": {
+                "san": "Re1",
+                "uci": "f1e1",
+                "line": "5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 Bf6 …",
+                "evaluation": "+0.3"
+              },
+              "equivalent": [
+                {
+                  "san": "d4",
+                  "uci": "d2d4",
+                  "evaluation": "+0.1"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de um peão (1 ponto)"
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "Qe2 aumenta o controle do centro (casas centrais atacadas: 2 → 3 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "kind": "heuristic",
+                  "text": "Qe2 amplia a mobilidade da dama (lances legais disponíveis a ela: 2 → 6)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+0.3",
+                "playedText": "−0.0",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +0.3; depois de Qe2, −0.0."
+              },
+              "lines": {
+                "played": "5. Qe2 Nd6 6. Bxc6 dxc6 7. Qxe5+ Qe7 8. Qa5 Qd7 9. Qc3 f6 …",
+                "best": "5. Re1 Nd6 6. Nxe5 Be7 7. Bf1 Nxe5 8. Rxe5 O-O 9. d4 Bf6 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Qe2. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Excelente. Lance aprovado pelo motor (1,5 pontos percentuais abaixo do melhor); verificado: Qe2 leva a uma variante com ganho de um peão (1 ponto)."
+          }
+        },
+        {
+          "index": 10,
+          "label": "Após 5… f5",
+          "turn": "w",
+          "fen": "r1bqkb1r/pppp2pp/2n5/1B2pp2/4n3/5N2/PPPPQPPP/RNB2RK1 w kq f6 0 6",
+          "evaluation": "+1.4",
+          "best": "d3",
+          "bestMove": "d2d3",
+          "pvUci": "d2d3 e4f6 b5c6 d7c6 f3e5 f8e7 f1e1 a7a5 b1c3 a8a6 c1g5 c6c5 g5f6 a6f6 e2h5 e8f8 e1e2 g7g6 h5h6 f8g8 e5f3 f6e6 a1e1 e7f8",
+          "pv": "6. d3 Nf6 7. Bxc6 dxc6 8. Nxe5 Be7 9. Re1 a5 10. Nc3 Ra6 11. Bg5 c5",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 141
+              },
+              "pv": "d2d3 e4f6 b5c6 d7c6 f3e5 f8e7 f1e1 a7a5 b1c3 a8a6 c1g5 c6c5 g5f6 a6f6 e2h5 e8f8 e1e2 g7g6 h5h6 f8g8 e5f3 f6e6 a1e1 e7f8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 136
+              },
+              "pv": "b5c6 d7c6 d2d3 e4f6 f3e5 f8e7 f1e1 a7a5 b1c3 a8a6 c1g5 c6c5 g5f6 a6f6 e2h5 e8f8 e1e2 g7g6 h5h6 f8g8 e5f3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 58
+              },
+              "pv": "b1c3 e4c3 b2c3 d8f6 f1e1 f8e7 b5c6 d7c6 e2e5 f6e5 f3e5 c8d7 a2a4 h8g8 e5d3 e8d8 c1a3 e7a3 a1a3"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 141
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "f5",
+            "moveNumber": 5,
+            "from": 13,
+            "to": 29,
+            "promotion": "",
+            "movingPiece": "p",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Imprecisão",
+            "kind": "inaccuracy",
+            "loss": 0.07056788993971513,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 5,
+              "san": "f5",
+              "kind": "inaccuracy",
+              "label": "Imprecisão",
+              "lossPoints": 7.1,
+              "headline": "Imprecisão (perda estimada de 7,1 pontos percentuais de chance). O motor prefere Nd6, mas as variantes calculadas não demonstram uma causa concreta.",
+              "theme": "positional",
+              "themeLabel": "Preferência posicional do motor",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +0.0; depois de f5, −1.4.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "f5 aumenta o controle do centro (casas centrais atacadas: 2 → 3 de 4)."
+                },
+                {
+                  "id": "king-shield",
+                  "subject": "played",
+                  "polarity": "minus",
+                  "text": "f5 enfraquece a proteção do rei: peões à frente dele 2 → 1."
+                },
+                {
+                  "id": "center-control",
+                  "subject": "best",
+                  "polarity": "plus",
+                  "text": "A alternativa Nd6 aumenta o controle do centro (casas centrais atacadas: 2 → 3 de 4)."
+                }
+              ],
+              "uncertainty": [
+                "A variante após f5 termina com uma captura ainda pendente; por isso não afirmo o saldo final de material dela.",
+                "f5 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele.",
+                "As variantes calculadas não demonstram uma causa concreta (material, xeque ou mate) para a diferença. A preferência do motor pode vir de fatores posicionais de longo prazo que este treinador não mede; os indícios abaixo são apenas sugestões."
+              ],
+              "alternative": {
+                "san": "Nd6",
+                "uci": "e4d6",
+                "line": "5… Nd6 6. Bxc6 dxc6 7. Qxe5+ Qe7 8. Qa5 Qd7 9. Qc3 f6 10. Re1+ …",
+                "evaluation": "+0.0"
+              },
+              "equivalent": [
+                {
+                  "san": "Ng5",
+                  "uci": "e4g5",
+                  "evaluation": "0.0"
+                },
+                {
+                  "san": "Nf6",
+                  "uci": "e4f6",
+                  "evaluation": "−0.0"
+                }
+              ],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "+0.0",
+                "playedText": "−1.4",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +0.0; depois de f5, −1.4."
+              },
+              "lines": {
+                "played": "5… f5 6. d3 Nf6 7. Bxc6 dxc6 8. Nxe5 Be7 9. Re1 a5 10. Nc3 …",
+                "best": "5… Nd6 6. Bxc6 dxc6 7. Qxe5+ Qe7 8. Qa5 Qd7 9. Qc3 f6 10. Re1+ …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Compare seu lance com as alternativas: qual peça ainda está mal colocada e que casas importantes cada lance controla?",
+                "review": "Volte uma jogada para a posição antes de f5. Lembre o que pretendia e então pergunte: Compare seu lance com as alternativas: qual peça ainda está mal colocada e que casas importantes cada lance controla?"
+              },
+              "takeaway": "Quando não há tática, compare planos: desenvolvimento, controle do centro, segurança do rei e atividade das peças."
+            },
+            "explanation": "Imprecisão (perda estimada de 7,1 pontos percentuais de chance). O motor prefere Nd6, mas as variantes calculadas não demonstram uma causa concreta."
+          }
+        },
+        {
+          "index": 11,
+          "label": "Após 6. Bd3",
+          "turn": "b",
+          "fen": "r1bqkb1r/pppp2pp/2n5/4pp2/4n3/3B1N2/PPPPQPPP/RNB2RK1 b kq - 1 6",
+          "evaluation": "−1.1",
+          "best": "d6",
+          "bestMove": "d7d6",
+          "pvUci": "d7d6 d3e4 f5e4 e2e4 f8e7 b1c3 e8g8 c3d5 f8f7 d2d3 h7h6 c1e3 c8f5 e4c4 f5e6",
+          "pv": "6… d6 7. Bxe4 fxe4 8. Qxe4 Be7 9. Nc3 O-O 10. Nd5 Rf7 11. d3 h6 12. Be3",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 112
+              },
+              "pv": "d7d6 d3e4 f5e4 e2e4 f8e7 b1c3 e8g8 c3d5 f8f7 d2d3 h7h6 c1e3 c8f5 e4c4 f5e6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 86
+              },
+              "pv": "f8e7 d3b5 d7d6 d2d4 e8g8 d4e5 c6e5 f3e5 d6e5 b1d2 e4d2 c1d2 e7d6 d2c3 d8e7 a1e1 e5e4 f2f3 a7a6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 76
+              },
+              "pv": "a7a6 d3e4 f5e4 e2e4 d7d5 e4e1 d8e7 b1c3 d5d4 c3e4 c8g4 e1e2 e7f7 d2d3 f8e7 c1g5 g4f3 e2f3 f7f3 g2f3 e8g8 f1e1 e7g5 e4g5"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 112
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Bd3",
+            "moveNumber": 6,
+            "from": 25,
+            "to": 43,
+            "promotion": "",
+            "movingPiece": "B",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Erro",
+            "kind": "mistake",
+            "loss": 0.12549069133916324,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 6,
+              "san": "Bd3",
+              "kind": "mistake",
+              "label": "Erro",
+              "lossPoints": 12.5,
+              "headline": "Erro (perda estimada de 12,5 pontos percentuais de chance). O motor prefere d3, mas as variantes calculadas não demonstram uma causa concreta.",
+              "theme": "positional",
+              "themeLabel": "Preferência posicional do motor",
+              "explanation": "unconfirmed",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +1.4; depois de Bd3, −1.1.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Bd3 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele.",
+                "As variantes calculadas não demonstram uma causa concreta (material, xeque ou mate) para a diferença. A preferência do motor pode vir de fatores posicionais de longo prazo que este treinador não mede; os indícios abaixo são apenas sugestões."
+              ],
+              "alternative": {
+                "san": "d3",
+                "uci": "d2d3",
+                "line": "6. d3 Nf6 7. Bxc6 dxc6 8. Nxe5 Be7 9. Re1 a5 10. Nc3 Ra6 …",
+                "evaluation": "+1.4"
+              },
+              "equivalent": [
+                {
+                  "san": "Bxc6",
+                  "uci": "b5c6",
+                  "evaluation": "+1.4"
+                }
+              ],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+1.4",
+                "playedText": "−1.1",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +1.4; depois de Bd3, −1.1."
+              },
+              "lines": {
+                "played": "6. Bd3 d6 7. Bxe4 fxe4 8. Qxe4 Be7 9. Nc3 O-O 10. Nd5 Rf7 …",
+                "best": "6. d3 Nf6 7. Bxc6 dxc6 8. Nxe5 Be7 9. Re1 a5 10. Nc3 Ra6 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Compare seu lance com as alternativas: qual peça ainda está mal colocada e que casas importantes cada lance controla?",
+                "review": "Volte uma jogada para a posição antes de Bd3. Lembre o que pretendia e então pergunte: Compare seu lance com as alternativas: qual peça ainda está mal colocada e que casas importantes cada lance controla?"
+              },
+              "takeaway": "Quando não há tática, compare planos: desenvolvimento, controle do centro, segurança do rei e atividade das peças."
+            },
+            "explanation": "Erro (perda estimada de 12,5 pontos percentuais de chance). O motor prefere d3, mas as variantes calculadas não demonstram uma causa concreta."
+          }
+        },
+        {
+          "index": 12,
+          "label": "Após 6… d5",
+          "turn": "w",
+          "fen": "r1bqkb1r/ppp3pp/2n5/3ppp2/4n3/3B1N2/PPPPQPPP/RNB2RK1 w kq d6 0 7",
+          "evaluation": "−0.4",
+          "best": "Bb5",
+          "bestMove": "d3b5",
+          "pvUci": "d3b5 f8c5 d2d3 e8g8 b5c6 b7c6 d3e4 f5e4 f3g5 a7a5 c1e3 c5e7 e2h5 c8f5 b1c3 d5d4 g5e4 d4e3 f2e3",
+          "pv": "7. Bb5 Bc5 8. d3 O-O 9. Bxc6 bxc6 10. dxe4 fxe4 11. Ng5 a5 12. Be3 Be7",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -41
+              },
+              "pv": "d3b5 f8c5 d2d3 e8g8 b5c6 b7c6 d3e4 f5e4 f3g5 a7a5 c1e3 c5e7 e2h5 c8f5 b1c3 d5d4 g5e4 d4e3 f2e3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -110
+              },
+              "pv": "c2c4 d5d4 d3e4 f5e4 e2e4 d8f6 d2d3 c8f5 e4e2 f8e7 c1g5 f6g6 g5e7 f5d3 f3e5 d3e2"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -165
+              },
+              "pv": "a2a3 f8d6 d3b5 e8g8 d2d3 c6d4 f3d4 e5d4 d3e4 f5e4 b1d2 d8e7 f1e1 e7e5 g2g3 e5f6 d2e4"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -41
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "d5",
+            "moveNumber": 6,
+            "from": 11,
+            "to": 27,
+            "promotion": "",
+            "movingPiece": "p",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Bom",
+            "kind": "good",
+            "loss": 0.035469476134669,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 6,
+              "san": "d5",
+              "kind": "good",
+              "label": "Bom",
+              "lossPoints": 3.5,
+              "headline": "Bom. Lance aprovado pelo motor (3,5 pontos percentuais abaixo do melhor); as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.1; depois de d5, +0.4.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-pawn",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "d5 ocupa o centro com um peão em d5."
+                }
+              ],
+              "uncertainty": [
+                "d5 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele.",
+                "A diferença para o melhor lance é pequena (3,5 pontos percentuais); em posições assim vários lances são razoáveis."
+              ],
+              "alternative": {
+                "san": "d6",
+                "uci": "d7d6",
+                "line": "6… d6 7. Bxe4 fxe4 8. Qxe4 Be7 9. Nc3 O-O 10. Nd5 Rf7 11. d3 …",
+                "evaluation": "+1.1"
+              },
+              "equivalent": [
+                {
+                  "san": "Be7",
+                  "uci": "f8e7",
+                  "evaluation": "+0.9"
+                },
+                {
+                  "san": "a6",
+                  "uci": "a7a6",
+                  "evaluation": "+0.8"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "center-pawn",
+                  "kind": "heuristic",
+                  "text": "d5 ocupa o centro com um peão em d5."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "+1.1",
+                "playedText": "+0.4",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.1; depois de d5, +0.4."
+              },
+              "lines": {
+                "played": "6… d5 7. Bb5 Bc5 8. d3 O-O 9. Bxc6 bxc6 10. dxe4 fxe4 11. Ng5 …",
+                "best": "6… d6 7. Bxe4 fxe4 8. Qxe4 Be7 9. Nc3 O-O 10. Nd5 Rf7 11. d3 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de d5. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Bom. Lance aprovado pelo motor (3,5 pontos percentuais abaixo do melhor); as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 13,
+          "label": "Após 7. c4",
+          "turn": "b",
+          "fen": "r1bqkb1r/ppp3pp/2n5/3ppp2/2P1n3/3B1N2/PP1PQPPP/RNB2RK1 b kq c3 0 7",
+          "evaluation": "−1.2",
+          "best": "d4",
+          "bestMove": "d5d4",
+          "pvUci": "d5d4 d3e4 f5e4 e2e4 d8f6 d2d3 c8f5 e4e2 f8e7 f1e1 f6g6 b1d2 e8c8 d2e4 f5g4",
+          "pv": "7… d4 8. Bxe4 fxe4 9. Qxe4 Qf6 10. d3 Bf5 11. Qe2 Be7 12. Re1 Qg6 13. Nbd2",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 121
+              },
+              "pv": "d5d4 d3e4 f5e4 e2e4 d8f6 d2d3 c8f5 e4e2 f8e7 f1e1 f6g6 b1d2 e8c8 d2e4 f5g4"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 94
+              },
+              "pv": "c8e6 b1c3 e4c3 d2c3 e5e4 f3g5 e6g8 d3c2 d8e7 c4d5 g8d5 g5h3 a7a6 c2b3 d5b3 a2b3 e7f7 f2f3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 51
+              },
+              "pv": "f8c5 c4d5 c6d4 f3d4 c5d4 d3e4 f5e4 b1c3 d8h4 e2e4 h4e4 c3e4 c8f5 d2d3"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 121
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "c4",
+            "moveNumber": 7,
+            "from": 50,
+            "to": 34,
+            "promotion": "",
+            "movingPiece": "P",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Bom",
+            "kind": "good",
+            "loss": 0.04001987195738815,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 7,
+              "san": "c4",
+              "kind": "good",
+              "label": "Bom",
+              "lossPoints": 4,
+              "headline": "Bom. Lance aprovado pelo motor (4 pontos percentuais abaixo do melhor); verificado: c4 leva a uma variante com ganho de um peão (1 ponto).",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após c4 mantém um ganho de um peão (1 ponto). Capturas da variante: Bxe4, fxe4, Qxe4.",
+                  "short": "leva a uma variante com ganho de um peão (1 ponto)",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "played-rank",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 20,
+                  "text": "c4 foi a 2ª melhor linha calculada pelo motor (−1.1), contra −0.4 do melhor lance.",
+                  "short": "foi a 2ª melhor linha do motor",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição −0.4; depois de c4, −1.2.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "c4 aumenta o controle do centro (casas centrais atacadas: 3 → 4 de 4)."
+                }
+              ],
+              "uncertainty": [
+                "A diferença para o melhor lance é pequena (4 pontos percentuais); em posições assim vários lances são razoáveis."
+              ],
+              "alternative": {
+                "san": "Bb5",
+                "uci": "d3b5",
+                "line": "7. Bb5 Bc5 8. d3 O-O 9. Bxc6 bxc6 10. dxe4 fxe4 11. Ng5 a5 …",
+                "evaluation": "−0.4"
+              },
+              "equivalent": [],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de um peão (1 ponto)"
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "c4 aumenta o controle do centro (casas centrais atacadas: 3 → 4 de 4)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "−0.4",
+                "playedText": "−1.2",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição −0.4; depois de c4, −1.2."
+              },
+              "lines": {
+                "played": "7. c4 d4 8. Bxe4 fxe4 9. Qxe4 Qf6 10. d3 Bf5 11. Qe2 Be7 …",
+                "best": "7. Bb5 Bc5 8. d3 O-O 9. Bxc6 bxc6 10. dxe4 fxe4 11. Ng5 a5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de c4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Bom. Lance aprovado pelo motor (4 pontos percentuais abaixo do melhor); verificado: c4 leva a uma variante com ganho de um peão (1 ponto)."
+          }
+        },
+        {
+          "index": 14,
+          "label": "Após 7… Nd4",
+          "turn": "w",
+          "fen": "r1bqkb1r/ppp3pp/8/3ppp2/2Pnn3/3B1N2/PP1PQPPP/RNB2RK1 w kq - 1 8",
+          "evaluation": "0.0",
+          "best": "Nxd4",
+          "bestMove": "f3d4",
+          "pvUci": "f3d4 e5d4 c4d5 f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 f8e8 d2d3 d8d5 b1c3 d5f7 c1d2 e7f8",
+          "pv": "8. Nxd4 exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 Re8",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "f3d4 e5d4 c4d5 f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 f8e8 d2d3 d8d5 b1c3 d5f7 c1d2 e7f8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -219
+              },
+              "pv": "e2d1 c8e6 f3e5 f8d6 c4d5 d6e5 d5e6 d8h4 g2g3 e4g3 f2g3 e5g3 h2g3 h4g3 g1h1 g3h3 h1g1 h3d3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -416
+              },
+              "pv": "e2e1 d4f3 g2f3 e4c5 d3c2 d5c4 b1a3 f8d6 a3c4 e8g8 c4e5"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 0
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Nd4",
+            "moveNumber": 7,
+            "from": 18,
+            "to": 35,
+            "promotion": "",
+            "movingPiece": "n",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Imprecisão",
+            "kind": "inaccuracy",
+            "loss": 0.059952919565793406,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 7,
+              "san": "Nd4",
+              "kind": "inaccuracy",
+              "label": "Imprecisão",
+              "lossPoints": 6,
+              "headline": "Imprecisão (perda estimada de 6 pontos percentuais de chance). Causa verificada: Nd4 termina a variante com um peão (1 ponto) a menos que d4.",
+              "theme": "tactic-allowed",
+              "themeLabel": "Tática permitida ao adversário",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "tactic-allowed",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 68,
+                  "text": "Comparando variantes na mesma profundidade (16): após Nd4, o saldo material demonstrado é −2 (capturas da variante: Nxd4, exd4, cxd5, Bxe4…); após d4, é −1 (capturas da variante: Bxe4, fxe4, Qxe4). A diferença é de um peão (1 ponto).",
+                  "short": "termina a variante com um peão (1 ponto) a menos que d4",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "piece-hanging",
+                  "source": "rules",
+                  "sourceLabel": "Regras do xadrez",
+                  "weight": 62,
+                  "text": "Depois do lance, o peão preto em e5 fica em risco: as brancas ganham um peão (1 ponto) com Nxe5; antes do lance essa peça não estava nessa situação.",
+                  "short": "deixa o peão em e5 em risco de captura",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "reply-capture",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 28,
+                  "text": "A resposta principal do motor, Nxd4, captura o cavalo que acabou de chegar a d4.",
+                  "short": "permite a captura Nxd4 em d4",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.2; depois de Nd4, 0.0.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Nd4 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele."
+              ],
+              "alternative": {
+                "san": "d4",
+                "uci": "d5d4",
+                "line": "7… d4 8. Bxe4 fxe4 9. Qxe4 Qf6 10. d3 Bf5 11. Qe2 Be7 12. Re1 …",
+                "evaluation": "+1.2"
+              },
+              "equivalent": [
+                {
+                  "san": "Be6",
+                  "uci": "c8e6",
+                  "evaluation": "+0.9"
+                }
+              ],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "+1.2",
+                "playedText": "0.0",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.2; depois de Nd4, 0.0."
+              },
+              "lines": {
+                "played": "7… Nd4 8. Nxd4 exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 …",
+                "best": "7… d4 8. Bxe4 fxe4 9. Qxe4 Qf6 10. d3 Bf5 11. Qe2 Be7 12. Re1 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Quais capturas e xeques o adversário ganha depois do seu lance? Calcule a resposta mais forçada até a última recaptura.",
+                "review": "Volte uma jogada para a posição antes de Nd4. Lembre o que pretendia e então pergunte: Quais capturas e xeques o adversário ganha depois do seu lance? Calcule a resposta mais forçada até a última recaptura."
+              },
+              "takeaway": "Depois do lance candidato, liste capturas e xeques do adversário e siga a sequência até a última recaptura."
+            },
+            "explanation": "Imprecisão (perda estimada de 6 pontos percentuais de chance). Causa verificada: Nd4 termina a variante com um peão (1 ponto) a menos que d4."
+          }
+        },
+        {
+          "index": 15,
+          "label": "Após 8. Nxd4",
+          "turn": "b",
+          "fen": "r1bqkb1r/ppp3pp/8/3ppp2/2PNn3/3B4/PP1PQPPP/RNB2RK1 b kq - 0 8",
+          "evaluation": "0.0",
+          "best": "exd4",
+          "bestMove": "e5d4",
+          "pvUci": "e5d4 c4d5 f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 f8e8 b1c3 e7d6 e3f3 d8h4 h2h3 e8f8 f3e3",
+          "pv": "8… exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 Re8 14. Nc3",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "e5d4 c4d5 f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 f8e8 b1c3 e7d6 e3f3 d8h4 h2h3 e8f8 f3e3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -356
+              },
+              "pv": "d5c4 d3e4 d8d4 e4c2 e5e4 f1d1 f8e7 b1c3 h7h5 b2b3 c8e6 c1b2"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -385
+              },
+              "pv": "f8d6 d4b5 e8g8 b5d6 d8d6 c4d5 e4g5 b1c3 e5e4 d3c4 f5f4 c3e4 f4f3 e4d6 f3e2 f1e1 f8f4"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 0
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Nxd4",
+            "moveNumber": 8,
+            "from": 45,
+            "to": 35,
+            "promotion": "",
+            "movingPiece": "N",
+            "capturedPiece": "n"
+          },
+          "quality": {
+            "label": "Grande lance",
+            "kind": "great",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 8,
+              "san": "Nxd4",
+              "kind": "great",
+              "label": "Grande lance",
+              "lossPoints": 0,
+              "headline": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: Nxd4 leva a uma variante com ganho de uma peça menor (3 pontos).",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após Nxd4 mantém um ganho de uma peça menor (3 pontos). Capturas da variante: Nxd4, exd4, cxd5, Bxe4….",
+                  "short": "leva a uma variante com ganho de uma peça menor (3 pontos)",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição 0.0; depois de Nxd4, 0.0.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de uma peça menor (3 pontos)"
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "0.0",
+                "playedText": "0.0",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição 0.0; depois de Nxd4, 0.0."
+              },
+              "lines": {
+                "played": "8. Nxd4 exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 …",
+                "best": "8. Nxd4 exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Nxd4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: Nxd4 leva a uma variante com ganho de uma peça menor (3 pontos). “Grande lance” é uma heurística baseada em três variantes: a segunda é claramente inferior."
+          }
+        },
+        {
+          "index": 16,
+          "label": "Após 8… exd4",
+          "turn": "w",
+          "fen": "r1bqkb1r/ppp3pp/8/3p1p2/2Ppn3/3B4/PP1PQPPP/RNB2RK1 w kq - 0 9",
+          "evaluation": "0.0",
+          "best": "cxd5",
+          "bestMove": "c4d5",
+          "pvUci": "c4d5 f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 f8e8 e3f3 e7d6 b1c3 d8h4 h2h3 g7g5",
+          "pv": "9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 Re8 14. Qf3 Bd6",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "c4d5 f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 f8e8 e3f3 e7d6 b1c3 d8h4 h2h3 g7g5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -27
+              },
+              "pv": "f2f3 d8e7 c4d5 e4c5 b2b4 e7e2 d3e2 c5a4 e2b5 c8d7 f1e1 e8d8 b5a4 d7a4 c1b2 d8c8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -99
+              },
+              "pv": "d3c2 f8d6 d2d3 e8g8 d3e4 f5e4 c2d1 d8h4 g2g3 h4f6 c4d5"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 0
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "exd4",
+            "moveNumber": 8,
+            "from": 28,
+            "to": 35,
+            "promotion": "",
+            "movingPiece": "p",
+            "capturedPiece": "N"
+          },
+          "quality": {
+            "label": "Grande lance",
+            "kind": "great",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 8,
+              "san": "exd4",
+              "kind": "great",
+              "label": "Grande lance",
+              "lossPoints": 0,
+              "headline": "Grande lance. Lance que o motor destaca como difícil de achar; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição 0.0; depois de exd4, 0.0.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-pawn",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "exd4 ocupa o centro com um peão em d4."
+                },
+                {
+                  "id": "doubled-pawns",
+                  "subject": "played",
+                  "polarity": "minus",
+                  "text": "exd4 cria peões dobrados (colunas com dois ou mais peões: 0 → 1)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [],
+              "positives": [
+                {
+                  "id": "center-pawn",
+                  "kind": "heuristic",
+                  "text": "exd4 ocupa o centro com um peão em d4."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "0.0",
+                "playedText": "0.0",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição 0.0; depois de exd4, 0.0."
+              },
+              "lines": {
+                "played": "8… exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 …",
+                "best": "8… exd4 9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de exd4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Grande lance. Lance que o motor destaca como difícil de achar; as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo. “Grande lance” é uma heurística baseada em três variantes: a segunda é claramente inferior."
+          }
+        },
+        {
+          "index": 17,
+          "label": "Após 9. cxd5",
+          "turn": "b",
+          "fen": "r1bqkb1r/ppp3pp/8/3P1p2/3pn3/3B4/PP1PQPPP/RNB2RK1 b kq - 0 9",
+          "evaluation": "0.0",
+          "best": "Be7",
+          "bestMove": "f8e7",
+          "pvUci": "f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 b7b5 b1c3 b5b4 c3b5 f8f7 d5d6 e7d6 b5d6 d8d6 e3g3 d6g3 h2g3",
+          "pv": "9… Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 b5 14. Nc3 b4 15. Nb5",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "f8e7 d3e4 f5e4 e2e4 e8g8 e4d4 c7c5 d4e3 b7b5 b1c3 b5b4 c3b5 f8f7 d5d6 e7d6 b5d6 d8d6 e3g3 d6g3 h2g3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -68
+              },
+              "pv": "d8e7 f1e1 e8d8 d3c4 e4d6 e2d1 e7f6 d2d3 g7g5 a2a4 f5f4"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -70
+              },
+              "pv": "e8f7 d3e4 f5e4 f2f3 e4e3 d2e3 d8d5 e3d4 f8d6 b1c3 d5d4 c1e3 d4h4 f3f4 h4h6"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 0
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "cxd5",
+            "moveNumber": 9,
+            "from": 34,
+            "to": 27,
+            "promotion": "",
+            "movingPiece": "P",
+            "capturedPiece": "p"
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 9,
+              "san": "cxd5",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; verificado: cxd5 leva a uma variante com ganho de dois peões (2 pontos).",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após cxd5 mantém um ganho de dois peões (2 pontos). Capturas da variante: cxd5, Bxe4, fxe4, Qxe4….",
+                  "short": "leva a uma variante com ganho de dois peões (2 pontos)",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição 0.0; depois de cxd5, 0.0.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-pawn",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "cxd5 ocupa o centro com um peão em d5."
+                },
+                {
+                  "id": "doubled-pawns",
+                  "subject": "played",
+                  "polarity": "minus",
+                  "text": "cxd5 cria peões dobrados (colunas com dois ou mais peões: 0 → 1)."
+                },
+                {
+                  "id": "isolated-pawn",
+                  "subject": "played",
+                  "polarity": "minus",
+                  "text": "cxd5 aumenta o número de peões isolados, sem peões amigos nas colunas vizinhas (0 → 2)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "f3",
+                  "uci": "f2f3",
+                  "evaluation": "−0.3"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de dois peões (2 pontos)"
+                },
+                {
+                  "id": "center-pawn",
+                  "kind": "heuristic",
+                  "text": "cxd5 ocupa o centro com um peão em d5."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "0.0",
+                "playedText": "0.0",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição 0.0; depois de cxd5, 0.0."
+              },
+              "lines": {
+                "played": "9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 b5 …",
+                "best": "9. cxd5 Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 Re8 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de cxd5. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; verificado: cxd5 leva a uma variante com ganho de dois peões (2 pontos)."
+          }
+        },
+        {
+          "index": 18,
+          "label": "Após 9… Qxd5",
+          "turn": "w",
+          "fen": "r1b1kb1r/ppp3pp/8/3q1p2/3pn3/3B4/PP1PQPPP/RNB2RK1 w kq - 0 10",
+          "evaluation": "+4.5",
+          "best": "f3",
+          "bestMove": "f2f3",
+          "pvUci": "f2f3 f8d6 f3e4 f5e4 e2e4 c8e6 e4d5 e6d5 b1a3",
+          "pv": "10. f3 Bd6 11. fxe4 fxe4 12. Qxe4+ Be6 13. Qxd5 Bxd5 14. Na3",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 451
+              },
+              "pv": "f2f3 f8d6 f3e4 f5e4 e2e4 c8e6 e4d5 e6d5 b1a3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 47
+              },
+              "pv": "d3c4 d4d3 c4d3 f8d6 b1c3 d5e5 g2g3 e4c3 e2e5 d6e5 b2c3 e8f7 a1b1 e5d6 d3c4 f7f6 f1e1"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 29
+              },
+              "pv": "d3c2 e8d8 d2d3 e4f6 c2b3 d5c6 b1d2 f8d6 d2f3 h8e8 e2d1 c8d7 f3d4 c6b6 d4f3 h7h6 c1e3 b6b5"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 451
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Qxd5",
+            "moveNumber": 9,
+            "from": 3,
+            "to": 27,
+            "promotion": "",
+            "movingPiece": "q",
+            "capturedPiece": "P"
+          },
+          "quality": {
+            "label": "Erro grave",
+            "kind": "blunder",
+            "loss": 0.22101048841779508,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 9,
+              "san": "Qxd5",
+              "kind": "blunder",
+              "label": "Erro grave",
+              "lossPoints": 22.1,
+              "headline": "Erro grave (perda estimada de 22,1 pontos percentuais de chance). Causa verificada: Qxd5 termina a variante com um peão (1 ponto) a menos que Be7.",
+              "theme": "tactic-allowed",
+              "themeLabel": "Tática permitida ao adversário",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "tactic-allowed",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 68,
+                  "text": "Comparando variantes na mesma profundidade (16): após Qxd5, o saldo material demonstrado é −2 (capturas da variante: Qxd5, fxe4, fxe4, Qxe4+…); após Be7, é −1 (capturas da variante: Bxe4, fxe4, Qxe4, Qxd4…). A diferença é de um peão (1 ponto).",
+                  "short": "termina a variante com um peão (1 ponto) a menos que Be7",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição 0.0; depois de Qxd5, −4.5.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Qxd5 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele."
+              ],
+              "alternative": {
+                "san": "Be7",
+                "uci": "f8e7",
+                "line": "9… Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 b5 14. Nc3 …",
+                "evaluation": "0.0"
+              },
+              "equivalent": [],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "0.0",
+                "playedText": "−4.5",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição 0.0; depois de Qxd5, −4.5."
+              },
+              "lines": {
+                "played": "9… Qxd5 10. f3 Bd6 11. fxe4 fxe4 12. Qxe4+ Be6 13. Qxd5 Bxd5 14. Na3",
+                "best": "9… Be7 10. Bxe4 fxe4 11. Qxe4 O-O 12. Qxd4 c5 13. Qe3 b5 14. Nc3 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Quais capturas e xeques o adversário ganha depois do seu lance? Calcule a resposta mais forçada até a última recaptura.",
+                "review": "Volte uma jogada para a posição antes de Qxd5. Lembre o que pretendia e então pergunte: Quais capturas e xeques o adversário ganha depois do seu lance? Calcule a resposta mais forçada até a última recaptura."
+              },
+              "takeaway": "Depois do lance candidato, liste capturas e xeques do adversário e siga a sequência até a última recaptura."
+            },
+            "explanation": "Erro grave (perda estimada de 22,1 pontos percentuais de chance). Causa verificada: Qxd5 termina a variante com um peão (1 ponto) a menos que Be7."
+          }
+        },
+        {
+          "index": 19,
+          "label": "Após 10. Re1",
+          "turn": "b",
+          "fen": "r1b1kb1r/ppp3pp/8/3q1p2/3pn3/3B4/PP1PQPPP/RNB1R1K1 b kq - 1 10",
+          "evaluation": "+0.5",
+          "best": "Kd8",
+          "bestMove": "e8d8",
+          "pvUci": "e8d8 d3c4 d4d3 c4d3 f8c5 d3e4 d5e4 e2e4 f5e4 b1c3 b7b6 c3e4 c5d4 d2d3 c7c5",
+          "pv": "10… Kd8 11. Bc4 d3 12. Bxd3 Bc5 13. Bxe4 Qxe4 14. Qxe4 fxe4 15. Nc3 b6 16. Nxe4",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -45
+              },
+              "pv": "e8d8 d3c4 d4d3 c4d3 f8c5 d3e4 d5e4 e2e4 f5e4 b1c3 b7b6 c3e4 c5d4 d2d3 c7c5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -59
+              },
+              "pv": "d5e5 d3c4 f8d6 g2g3 b7b5 c4b5 e8f7 f2f3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -62
+              },
+              "pv": "f8d6 d3c4 d5e5 g2g3 b7b5 c4b5 e8f7 b5c6 a8b8 d2d3 e5c5 c6a4 e4f6 b1a3 c8b7 c1f4 f7g6 a3c4 h7h5"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -45
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Re1",
+            "moveNumber": 10,
+            "from": 61,
+            "to": 60,
+            "promotion": "",
+            "movingPiece": "R",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Erro",
+            "kind": "mistake",
+            "loss": 0.19910673467558226,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 10,
+              "san": "Re1",
+              "kind": "mistake",
+              "label": "Erro",
+              "lossPoints": 19.9,
+              "headline": "Erro (perda estimada de 19,9 pontos percentuais de chance). Causa verificada: Re1 termina a variante com um peão (1 ponto) a menos que f3.",
+              "theme": "material-missed",
+              "themeLabel": "Material não aproveitado",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "material-missed",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "Comparando variantes na mesma profundidade (16): após Re1, o saldo material demonstrado é +2 (capturas da variante: Bxd3, Bxe4, Qxe4, Qxe4…); após f3, é +3 (capturas da variante: fxe4, fxe4, Qxe4+, Qxd5…). A diferença é de um peão (1 ponto).",
+                  "short": "termina a variante com um peão (1 ponto) a menos que f3",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +4.5; depois de Re1, +0.5.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Re1 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele."
+              ],
+              "alternative": {
+                "san": "f3",
+                "uci": "f2f3",
+                "line": "10. f3 Bd6 11. fxe4 fxe4 12. Qxe4+ Be6 13. Qxd5 Bxd5 14. Na3",
+                "evaluation": "+4.5"
+              },
+              "equivalent": [],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+4.5",
+                "playedText": "+0.5",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +4.5; depois de Re1, +0.5."
+              },
+              "lines": {
+                "played": "10. Re1 Kd8 11. Bc4 d3 12. Bxd3 Bc5 13. Bxe4 Qxe4 14. Qxe4 fxe4 …",
+                "best": "10. f3 Bd6 11. fxe4 fxe4 12. Qxe4+ Be6 13. Qxd5 Bxd5 14. Na3"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Quais capturas e ameaças você tem aqui? Alguma delas ganha material depois das recapturas?",
+                "review": "Volte uma jogada para a posição antes de Re1. Lembre o que pretendia e então pergunte: Quais capturas e ameaças você tem aqui? Alguma delas ganha material depois das recapturas?"
+              },
+              "takeaway": "Inclua as capturas entre os lances candidatos e calcule até a última recaptura, não só o primeiro lance."
+            },
+            "explanation": "Erro (perda estimada de 19,9 pontos percentuais de chance). Causa verificada: Re1 termina a variante com um peão (1 ponto) a menos que f3."
+          }
+        },
+        {
+          "index": 20,
+          "label": "Após 10… Be6",
+          "turn": "w",
+          "fen": "r3kb1r/ppp3pp/4b3/3q1p2/3pn3/3B4/PP1PQPPP/RNB1R1K1 w kq - 2 11",
+          "evaluation": "+1.2",
+          "best": "f3",
+          "bestMove": "f2f3",
+          "pvUci": "f2f3 d5e5 f3e4 f8d6 e2h5 g7g6 h5h4 f5f4 b1a3 h7h5 b2b3 g6g5 h4f2 g5g4 c1b2",
+          "pv": "11. f3 Qe5 12. fxe4 Bd6 13. Qh5+ g6 14. Qh4 f4 15. Na3 h5 16. b3 g5",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 122
+              },
+              "pv": "f2f3 d5e5 f3e4 f8d6 e2h5 g7g6 h5h4 f5f4 b1a3 h7h5 b2b3 g6g5 h4f2 g5g4 c1b2"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -10
+              },
+              "pv": "b2b3 e8f7 b1a3 f8c5 a3b5 c5b6 c1a3 h8e8 e2f3 f7g8 d3c4 d5d7 f3f5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -16
+              },
+              "pv": "d3c2 e4c5 d2d3 a7a5 b1d2 e8d7 d2c4 f8d6 c1d2 h8e8 c4d6 c7d6 e2h5 h7h6 h5g6 e8e7 b2b4 a5b4 d2b4 a8e8 c2b3 c5b3 a2b3"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 122
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Be6",
+            "moveNumber": 10,
+            "from": 2,
+            "to": 20,
+            "promotion": "",
+            "movingPiece": "b",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Bom",
+            "kind": "good",
+            "loss": 0.03855523171183023,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 10,
+              "san": "Be6",
+              "kind": "good",
+              "label": "Bom",
+              "lossPoints": 3.9,
+              "headline": "Bom. Lance aprovado pelo motor (3,9 pontos percentuais abaixo do melhor); as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "partial",
+              "facts": [
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.5; depois de Be6, −1.2.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "develop",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Be6 desenvolve o bispo (peças menores ainda na casa inicial: 2 → 1)."
+                },
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Be6 aumenta o controle do centro (casas centrais atacadas: 3 → 4 de 4)."
+                }
+              ],
+              "uncertainty": [
+                "Be6 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele.",
+                "A diferença para o melhor lance é pequena (3,9 pontos percentuais); em posições assim vários lances são razoáveis."
+              ],
+              "alternative": {
+                "san": "Kd8",
+                "uci": "e8d8",
+                "line": "10… Kd8 11. Bc4 d3 12. Bxd3 Bc5 13. Bxe4 Qxe4 14. Qxe4 fxe4 15. Nc3 …",
+                "evaluation": "−0.5"
+              },
+              "equivalent": [
+                {
+                  "san": "Qe5",
+                  "uci": "d5e5",
+                  "evaluation": "−0.6"
+                },
+                {
+                  "san": "Bd6",
+                  "uci": "f8d6",
+                  "evaluation": "−0.6"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "develop",
+                  "kind": "heuristic",
+                  "text": "Be6 desenvolve o bispo (peças menores ainda na casa inicial: 2 → 1)."
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "Be6 aumenta o controle do centro (casas centrais atacadas: 3 → 4 de 4)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "−0.5",
+                "playedText": "−1.2",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −0.5; depois de Be6, −1.2."
+              },
+              "lines": {
+                "played": "10… Be6 11. f3 Qe5 12. fxe4 Bd6 13. Qh5+ g6 14. Qh4 f4 15. Na3 …",
+                "best": "10… Kd8 11. Bc4 d3 12. Bxd3 Bc5 13. Bxe4 Qxe4 14. Qxe4 fxe4 15. Nc3 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Be6. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Bom. Lance aprovado pelo motor (3,9 pontos percentuais abaixo do melhor); as variantes calculadas não destacam um tema tático simples, e há indícios posicionais abaixo."
+          }
+        },
+        {
+          "index": 21,
+          "label": "Após 11. Bxe4",
+          "turn": "b",
+          "fen": "r3kb1r/ppp3pp/4b3/3q1p2/3pB3/8/PP1PQPPP/RNB1R1K1 b kq - 0 11",
+          "evaluation": "−1.5",
+          "best": "fxe4",
+          "bestMove": "f5e4",
+          "pvUci": "f5e4 d2d3 e8c8 d3e4 d5a5 c1d2 a5b6 d2f4 c8b8 e1c1 f8d6 f4d6 d8d6 b1d2 b6b2",
+          "pv": "11… fxe4 12. d3 O-O-O 13. dxe4 Qa5 14. Bd2 Qb6 15. Bf4 Kb8 16. Rc1 Bd6 17. Bxd6",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 149
+              },
+              "pv": "f5e4 d2d3 e8c8 d3e4 d5a5 c1d2 a5b6 d2f4 c8b8 e1c1 f8d6 f4d6 d8d6 b1d2 b6b2"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -456
+              },
+              "pv": "d5e4 e2h5 g7g6 e1e4 g6h5 e4e6 e8d7 e6e1 f8b4 g1f1 h8g8 b1a3 h5h4 a3c4 d7d8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -596
+              },
+              "pv": "e8c8 e4d5 e6d5 d2d3 f8c5 c1d2 h7h5 d2g5 d8d6 e2f1"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 149
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Bxe4",
+            "moveNumber": 11,
+            "from": 43,
+            "to": 36,
+            "promotion": "",
+            "movingPiece": "B",
+            "capturedPiece": "n"
+          },
+          "quality": {
+            "label": "Erro",
+            "kind": "mistake",
+            "loss": 0.13460740978467745,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 11,
+              "san": "Bxe4",
+              "kind": "mistake",
+              "label": "Erro",
+              "lossPoints": 13.5,
+              "headline": "Erro (perda estimada de 13,5 pontos percentuais de chance). Causa verificada: Bxe4 termina a variante com uma peça menor (3 pontos) a menos que f3.",
+              "theme": "material-missed",
+              "themeLabel": "Material não aproveitado",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "material-missed",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "Comparando variantes na mesma profundidade (16): após Bxe4, o saldo material demonstrado é 0 (capturas da variante: Bxe4, fxe4, dxe4, Bxd6…); após f3, é +3 (capturas da variante: fxe4). A diferença é de uma peça menor (3 pontos).",
+                  "short": "termina a variante com uma peça menor (3 pontos) a menos que f3",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "reply-capture",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 28,
+                  "text": "A resposta principal do motor, fxe4, captura o bispo que acabou de chegar a e4.",
+                  "short": "permite a captura fxe4 em e4",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +1.2; depois de Bxe4, −1.5.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Bxe4 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele."
+              ],
+              "alternative": {
+                "san": "f3",
+                "uci": "f2f3",
+                "line": "11. f3 Qe5 12. fxe4 Bd6 13. Qh5+ g6 14. Qh4 f4 15. Na3 h5 …",
+                "evaluation": "+1.2"
+              },
+              "equivalent": [],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+1.2",
+                "playedText": "−1.5",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +1.2; depois de Bxe4, −1.5."
+              },
+              "lines": {
+                "played": "11. Bxe4 fxe4 12. d3 O-O-O 13. dxe4 Qa5 14. Bd2 Qb6 15. Bf4 Kb8 …",
+                "best": "11. f3 Qe5 12. fxe4 Bd6 13. Qh5+ g6 14. Qh4 f4 15. Na3 h5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Quais capturas e ameaças você tem aqui? Alguma delas ganha material depois das recapturas?",
+                "review": "Volte uma jogada para a posição antes de Bxe4. Lembre o que pretendia e então pergunte: Quais capturas e ameaças você tem aqui? Alguma delas ganha material depois das recapturas?"
+              },
+              "takeaway": "Inclua as capturas entre os lances candidatos e calcule até a última recaptura, não só o primeiro lance."
+            },
+            "explanation": "Erro (perda estimada de 13,5 pontos percentuais de chance). Causa verificada: Bxe4 termina a variante com uma peça menor (3 pontos) a menos que f3."
+          }
+        },
+        {
+          "index": 22,
+          "label": "Após 11… fxe4",
+          "turn": "w",
+          "fen": "r3kb1r/ppp3pp/4b3/3q4/3pp3/8/PP1PQPPP/RNB1R1K1 w kq - 0 12",
+          "evaluation": "−1.5",
+          "best": "Qxe4",
+          "bestMove": "e2e4",
+          "pvUci": "e2e4 e8d7 d2d3 d5e4 e1e4 c7c5 b2b4 b7b6 b4c5 b6c5 b1d2 f8d6",
+          "pv": "12. Qxe4 Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 b6 16. bxc5 bxc5 17. Nd2 Bd6",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -148
+              },
+              "pv": "e2e4 e8d7 d2d3 d5e4 e1e4 c7c5 b2b4 b7b6 b4c5 b6c5 b1d2 f8d6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -173
+              },
+              "pv": "d2d3 e8c8 d3e4 d5a5 c1d2 a5b6 d2f4 f8c5 e1c1 d4d3 e2d2 h8f8 f4g3 f8f7 c1f1 b6b4 b1c3 c5d4 a1d1 d4c3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -260
+              },
+              "pv": "h2h3 e8c8 d2d3 e4e3 f2e3 d4e3 c1e3 d5d3 e2h5 d3f5 h5h4 e6d5 b1c3 d5c6 a1d1 f8c5 e3c5 f5c5 h4f2 c5f2 g1f2"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -148
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "fxe4",
+            "moveNumber": 11,
+            "from": 29,
+            "to": 36,
+            "promotion": "",
+            "movingPiece": "p",
+            "capturedPiece": "B"
+          },
+          "quality": {
+            "label": "Grande lance",
+            "kind": "great",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 11,
+              "san": "fxe4",
+              "kind": "great",
+              "label": "Grande lance",
+              "lossPoints": 0,
+              "headline": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: fxe4 leva a uma variante com ganho de dois peões (2 pontos).",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após fxe4 mantém um ganho de dois peões (2 pontos). Capturas da variante: fxe4, Qxe4, Qxe4, Rxe4….",
+                  "short": "leva a uma variante com ganho de dois peões (2 pontos)",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.5; depois de fxe4, +1.5.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-pawn",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "fxe4 ocupa o centro com um peão em e4."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de dois peões (2 pontos)"
+                },
+                {
+                  "id": "center-pawn",
+                  "kind": "heuristic",
+                  "text": "fxe4 ocupa o centro com um peão em e4."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "+1.5",
+                "playedText": "+1.5",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.5; depois de fxe4, +1.5."
+              },
+              "lines": {
+                "played": "11… fxe4 12. Qxe4 Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 b6 16. bxc5 …",
+                "best": "11… fxe4 12. d3 O-O-O 13. dxe4 Qa5 14. Bd2 Qb6 15. Bf4 Kb8 16. Rc1 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de fxe4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: fxe4 leva a uma variante com ganho de dois peões (2 pontos). “Grande lance” é uma heurística baseada em três variantes: a segunda é claramente inferior."
+          }
+        },
+        {
+          "index": 23,
+          "label": "Após 12. Qxe4",
+          "turn": "b",
+          "fen": "r3kb1r/ppp3pp/4b3/3q4/3pQ3/8/PP1P1PPP/RNB1R1K1 b kq - 0 12",
+          "evaluation": "−1.5",
+          "best": "Kd7",
+          "bestMove": "e8d7",
+          "pvUci": "e8d7 d2d3 d5e4 e1e4 c7c5 b2b4 c5b4 c1b2 f8c5 b1d2 h8c8 b2d4 c5f8 d2f3 a7a5 f3e5 d7d6 e4e2 g7g6",
+          "pv": "12… Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 cxb4 16. Bb2 Bc5 17. Nd2 Rhc8 18. Bxd4",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 151
+              },
+              "pv": "e8d7 d2d3 d5e4 e1e4 c7c5 b2b4 c5b4 c1b2 f8c5 b1d2 h8c8 b2d4 c5f8 d2f3 a7a5 f3e5 d7d6 e4e2 g7g6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 4
+              },
+              "pv": "d5e4 e1e4 e8f7 e4d4 f8d6 b1c3 a8d8 d4e4 e6f5 e4e3 c7c5 c3e4 b7b6 d2d3 d6b8 c1d2 f7g6"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 0
+              },
+              "pv": "e8f7 e4f4 f7g8 d2d3 f8d6 f4h4 a8f8 b1d2 f8f4 h4d8 f4f8"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 151
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Qxe4",
+            "moveNumber": 12,
+            "from": 52,
+            "to": 36,
+            "promotion": "",
+            "movingPiece": "Q",
+            "capturedPiece": "p"
+          },
+          "quality": {
+            "label": "Melhor",
+            "kind": "best",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 12,
+              "san": "Qxe4",
+              "kind": "best",
+              "label": "Melhor",
+              "lossPoints": 0,
+              "headline": "Melhor. Coincide com o melhor lance do motor; verificado: Qxe4 leva a uma variante com ganho de um peão (1 ponto).",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após Qxe4 mantém um ganho de um peão (1 ponto). Capturas da variante: Qxe4, Qxe4, Rxe4, cxb4….",
+                  "short": "leva a uma variante com ganho de um peão (1 ponto)",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição −1.5; depois de Qxe4, −1.5.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "center-control",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Qxe4 aumenta o controle do centro (casas centrais atacadas: 1 → 4 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Qxe4 amplia a mobilidade da dama (lances legais disponíveis a ela: 11 → 15)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [
+                {
+                  "san": "d3",
+                  "uci": "d2d3",
+                  "evaluation": "−1.7"
+                }
+              ],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de um peão (1 ponto)"
+                },
+                {
+                  "id": "center-control",
+                  "kind": "heuristic",
+                  "text": "Qxe4 aumenta o controle do centro (casas centrais atacadas: 1 → 4 de 4)."
+                },
+                {
+                  "id": "mobility",
+                  "kind": "heuristic",
+                  "text": "Qxe4 amplia a mobilidade da dama (lances legais disponíveis a ela: 11 → 15)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "−1.5",
+                "playedText": "−1.5",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição −1.5; depois de Qxe4, −1.5."
+              },
+              "lines": {
+                "played": "12. Qxe4 Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 cxb4 16. Bb2 Bc5 …",
+                "best": "12. Qxe4 Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 b6 16. bxc5 bxc5 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Qxe4. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Melhor. Coincide com o melhor lance do motor; verificado: Qxe4 leva a uma variante com ganho de um peão (1 ponto)."
+          }
+        },
+        {
+          "index": 24,
+          "label": "Após 12… Qd6",
+          "turn": "w",
+          "fen": "r3kb1r/ppp3pp/3qb3/8/3pQ3/8/PP1P1PPP/RNB1R1K1 w kq - 1 13",
+          "evaluation": "+5.6",
+          "best": "Qxe6+",
+          "bestMove": "e4e6",
+          "pvUci": "e4e6 d6e6 e1e6 e8d7 e6e4 f8d6 d2d3 c7c5 b1d2 a8e8 e4e8 h8e8 d2e4 e8e4 d3e4 d6f8",
+          "pv": "13. Qxe6+ Qxe6 14. Rxe6+ Kd7 15. Re4 Bd6 16. d3 c5 17. Nd2 Rae8 18. Rxe8 Rxe8",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": 564
+              },
+              "pv": "e4e6 d6e6 e1e6 e8d7 e6e4 f8d6 d2d3 c7c5 b1d2 a8e8 e4e8 h8e8 d2e4 e8e4 d3e4 d6f8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 196
+              },
+              "pv": "e4b7 a8d8 b1a3 e8f7 d2d3 e6d5 b7a7 f7g8 f2f3 h7h6 a3c4 d5c4 d3c4 h6h5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 148
+              },
+              "pv": "b1a3 e8d7 a3b5 d6d5 b5c7 d7c7 e4e6 d5e6 e1e6 f8d6 d2d3 h8e8 e6e8 a8e8 g1f1 a7a5 c1d2 a5a4 a1c1 c7d7"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": 564
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Qd6",
+            "moveNumber": 12,
+            "from": 27,
+            "to": 19,
+            "promotion": "",
+            "movingPiece": "q",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Erro grave",
+            "kind": "blunder",
+            "loss": 0.3436452890308912,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 12,
+              "san": "Qd6",
+              "kind": "blunder",
+              "label": "Erro grave",
+              "lossPoints": 34.4,
+              "headline": "Erro grave (perda estimada de 34,4 pontos percentuais de chance). Causa verificada: Qd6 não resolve a ameaça contra o bispo em e6.",
+              "theme": "threat-ignored",
+              "themeLabel": "Ameaça do adversário ignorada",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "threat-ignored",
+                  "source": "rules",
+                  "sourceLabel": "Regras do xadrez",
+                  "weight": 72,
+                  "text": "Antes do lance, o bispo preto em e6 já estava ameaçado: as brancas ganhariam uma peça menor (3 pontos) com Qxe6+. O lance não resolveu essa ameaça. O motor responde justamente com Qxe6+.",
+                  "short": "não resolve a ameaça contra o bispo em e6",
+                  "positive": false,
+                  "corroborated": true
+                },
+                {
+                  "id": "tactic-allowed",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 68,
+                  "text": "Comparando variantes na mesma profundidade (16): após Qd6, o saldo material demonstrado é −5 (capturas da variante: Qxe6+, Qxe6, Rxe6+, Rxe8…); após Kd7, é 0 (capturas da variante: Qxe4, Rxe4, cxb4, Bxd4). A diferença é de uma torre (5 pontos).",
+                  "short": "termina a variante com uma torre (5 pontos) a menos que Kd7",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "piece-hanging",
+                  "source": "rules",
+                  "sourceLabel": "Regras do xadrez",
+                  "weight": 62,
+                  "text": "Depois do lance, o peão preto em b7 fica em risco: as brancas ganham um peão (1 ponto) com Qxb7; antes do lance essa peça não estava nessa situação.",
+                  "short": "deixa o peão em b7 em risco de captura",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.5; depois de Qd6, −5.6.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Qd6 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele."
+              ],
+              "alternative": {
+                "san": "Kd7",
+                "uci": "e8d7",
+                "line": "12… Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 cxb4 16. Bb2 Bc5 17. Nd2 …",
+                "evaluation": "+1.5"
+              },
+              "equivalent": [],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "+1.5",
+                "playedText": "−5.6",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição +1.5; depois de Qd6, −5.6."
+              },
+              "lines": {
+                "played": "12… Qd6 13. Qxe6+ Qxe6 14. Rxe6+ Kd7 15. Re4 Bd6 16. d3 c5 17. Nd2 …",
+                "best": "12… Kd7 13. d3 Qxe4 14. Rxe4 c5 15. b4 cxb4 16. Bb2 Bc5 17. Nd2 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: O que o adversário ameaça capturar nesta posição? O seu lance trata essa ameaça?",
+                "review": "Volte uma jogada para a posição antes de Qd6. Lembre o que pretendia e então pergunte: O que o adversário ameaça capturar nesta posição? O seu lance trata essa ameaça?"
+              },
+              "takeaway": "A cada lance, pergunte primeiro “o que o adversário quer fazer?” e confirme que o seu lance responde a isso."
+            },
+            "explanation": "Erro grave (perda estimada de 34,4 pontos percentuais de chance). Causa verificada: Qd6 não resolve a ameaça contra o bispo em e6."
+          }
+        },
+        {
+          "index": 25,
+          "label": "Após 13. Qxe6+",
+          "turn": "b",
+          "fen": "r3kb1r/ppp3pp/3qQ3/8/3p4/8/PP1P1PPP/RNB1R1K1 b kq - 0 13",
+          "evaluation": "+5.6",
+          "best": "Qxe6",
+          "bestMove": "d6e6",
+          "pvUci": "d6e6 e1e6 e8d7 e6e4 c7c5 d2d3 f8d6 b1d2 a8e8 g1f1 d6h2 e4g4 g7g6 d2e4 e8e4 g4e4 h8f8 f1e2 a7a6 g2g3 h2g3 f2g3 h7h5",
+          "pv": "13… Qxe6 14. Rxe6+ Kd7 15. Re4 c5 16. d3 Bd6 17. Nd2 Rae8 18. Kf1 Bxh2 19. Rg4",
+          "variations": [
+            {
+              "score": {
+                "type": "cp",
+                "value": -562
+              },
+              "pv": "d6e6 e1e6 e8d7 e6e4 c7c5 d2d3 f8d6 b1d2 a8e8 g1f1 d6h2 e4g4 g7g6 d2e4 e8e4 g4e4 h8f8 f1e2 a7a6 g2g3 h2g3 f2g3 h7h5"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -589
+              },
+              "pv": "f8e7 d2d3 d6e6 e1e6 e8d7 e6e4 a8e8 b1d2 h8f8 g2g3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": -622
+              },
+              "pv": "d6e7 e6e4 e7e4 e1e4 f8e7 g2g3 e8g8 e4e7 c7c5 d2d3"
+            }
+          ],
+          "score": {
+            "type": "cp",
+            "value": -562
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Qxe6+",
+            "moveNumber": 13,
+            "from": 36,
+            "to": 20,
+            "promotion": "",
+            "movingPiece": "Q",
+            "capturedPiece": "b"
+          },
+          "quality": {
+            "label": "Grande lance",
+            "kind": "great",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 13,
+              "san": "Qxe6+",
+              "kind": "great",
+              "label": "Grande lance",
+              "lossPoints": 0,
+              "headline": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: Qxe6+ leva a uma variante com ganho de 6 pontos de material.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "won-material",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 60,
+                  "text": "A variante do motor após Qxe6+ mantém um ganho de 6 pontos de material. Capturas da variante: Qxe6+, Qxe6, Rxe6+, Bxh2….",
+                  "short": "leva a uma variante com ganho de 6 pontos de material",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +5.6; depois de Qxe6+, +5.6.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [
+                {
+                  "id": "mobility",
+                  "subject": "played",
+                  "polarity": "plus",
+                  "text": "Qxe6+ amplia a mobilidade da dama (lances legais disponíveis a ela: 17 → 20)."
+                }
+              ],
+              "uncertainty": [],
+              "alternative": null,
+              "equivalent": [],
+              "positives": [
+                {
+                  "id": "won-material",
+                  "kind": "fact",
+                  "text": "leva a uma variante com ganho de 6 pontos de material"
+                },
+                {
+                  "id": "mobility",
+                  "kind": "heuristic",
+                  "text": "Qxe6+ amplia a mobilidade da dama (lances legais disponíveis a ela: 17 → 20)."
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "+5.6",
+                "playedText": "+5.6",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição +5.6; depois de Qxe6+, +5.6."
+              },
+              "lines": {
+                "played": "13. Qxe6+ Qxe6 14. Rxe6+ Kd7 15. Re4 c5 16. d3 Bd6 17. Nd2 Rae8 …",
+                "best": "13. Qxe6+ Qxe6 14. Rxe6+ Kd7 15. Re4 Bd6 16. d3 c5 17. Nd2 Rae8 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Qxe6+. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: Qxe6+ leva a uma variante com ganho de 6 pontos de material. “Grande lance” é uma heurística baseada em três variantes: a segunda é claramente inferior."
+          }
+        },
+        {
+          "index": 26,
+          "label": "Após 13… Kd8",
+          "turn": "w",
+          "fen": "r2k1b1r/ppp3pp/3qQ3/8/3p4/8/PP1P1PPP/RNB1R1K1 w - - 1 14",
+          "evaluation": "+M1",
+          "best": "Qe8#",
+          "bestMove": "e6e8",
+          "pvUci": "e6e8",
+          "pv": "14. Qe8#",
+          "variations": [
+            {
+              "score": {
+                "type": "mate",
+                "value": 1
+              },
+              "pv": "e6e8"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 689
+              },
+              "pv": "e6e4 d6g6 e4d4 f8d6 d4h4 g6f6 h4f6 g7f6 g2g3 h7h5 b1c3"
+            },
+            {
+              "score": {
+                "type": "cp",
+                "value": 672
+              },
+              "pv": "e6e2 d6g6 d2d3 f8b4 b1d2 d8d7 e1f1 b4d2 c1d2"
+            }
+          ],
+          "score": {
+            "type": "mate",
+            "value": 1
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "b",
+            "san": "Kd8",
+            "moveNumber": 13,
+            "from": 4,
+            "to": 3,
+            "promotion": "",
+            "movingPiece": "k",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Erro grave",
+            "kind": "blunder",
+            "loss": 0.23231047097008123,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "b",
+              "moveNumber": 13,
+              "san": "Kd8",
+              "kind": "blunder",
+              "label": "Erro grave",
+              "lossPoints": 23.2,
+              "headline": "Erro grave (perda estimada de 23,2 pontos percentuais de chance). Causa verificada: Kd8 permite um mate demonstrado pela variante (13… Kd8 14. Qe8#).",
+              "theme": "mate-allowed",
+              "themeLabel": "Mate permitido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "mate-allowed",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 100,
+                  "text": "A variante do motor após Kd8 termina em xeque-mate contra as pretas: 13… Kd8 14. Qe8#.",
+                  "short": "permite um mate demonstrado pela variante (13… Kd8 14. Qe8#)",
+                  "positive": false,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −5.6; depois de Kd8, mate em 1 contra as pretas.",
+                  "short": "",
+                  "positive": false,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "Kd8 não está entre as 3 melhores linhas calculadas; não há avaliação direta dele na lista de alternativas, apenas a da posição depois dele."
+              ],
+              "alternative": {
+                "san": "Qxe6",
+                "uci": "d6e6",
+                "line": "13… Qxe6 14. Rxe6+ Kd7 15. Re4 c5 16. d3 Bd6 17. Nd2 Rae8 18. Kf1 …",
+                "evaluation": "−5.6"
+              },
+              "equivalent": [
+                {
+                  "san": "Be7",
+                  "uci": "f8e7",
+                  "evaluation": "−5.9"
+                }
+              ],
+              "positives": [],
+              "evaluation": {
+                "depth": 16,
+                "side": "b",
+                "bestText": "−5.6",
+                "playedText": "mate em 1 contra as pretas",
+                "text": "Avaliação do motor para as pretas (profundidade 16): melhor lance da posição −5.6; depois de Kd8, mate em 1 contra as pretas."
+              },
+              "lines": {
+                "played": "13… Kd8 14. Qe8#",
+                "best": "13… Qxe6 14. Rxe6+ Kd7 15. Re4 c5 16. d3 Bd6 17. Nd2 Rae8 18. Kf1 …"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Quais xeques o adversário tem depois do seu lance? Algum deles termina em mate?",
+                "review": "Volte uma jogada para a posição antes de Kd8. Lembre o que pretendia e então pergunte: Quais xeques o adversário tem depois do seu lance? Algum deles termina em mate?"
+              },
+              "takeaway": "Antes de confirmar, liste os xeques do adversário e confira se o seu rei tem casas de fuga ou defensores."
+            },
+            "explanation": "Erro grave (perda estimada de 23,2 pontos percentuais de chance). Causa verificada: Kd8 permite um mate demonstrado pela variante (13… Kd8 14. Qe8#)."
+          }
+        },
+        {
+          "index": 27,
+          "label": "Após 14. Qe8#",
+          "turn": "b",
+          "fen": "r2kQb1r/ppp3pp/3q4/8/3p4/8/PP1P1PPP/RNB1R1K1 b - - 2 14",
+          "evaluation": "M0",
+          "best": "Nenhum lance legal",
+          "bestMove": "(none)",
+          "pvUci": "",
+          "pv": "Linha principal indisponível.",
+          "variations": [],
+          "score": {
+            "type": "mate",
+            "value": 0
+          },
+          "depth": 16,
+          "playedMove": {
+            "side": "w",
+            "san": "Qe8#",
+            "moveNumber": 14,
+            "from": 20,
+            "to": 4,
+            "promotion": "",
+            "movingPiece": "Q",
+            "capturedPiece": "."
+          },
+          "quality": {
+            "label": "Grande lance",
+            "kind": "great",
+            "loss": 0,
+            "lesson": {
+              "version": 1,
+              "valid": true,
+              "mover": "w",
+              "moveNumber": 14,
+              "san": "Qe8#",
+              "kind": "great",
+              "label": "Grande lance",
+              "lossPoints": 0,
+              "headline": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: Qe8# inicia um mate forçado demonstrado pela variante.",
+              "theme": "sound",
+              "themeLabel": "Lance sólido",
+              "explanation": "verified",
+              "facts": [
+                {
+                  "id": "found-mate",
+                  "source": "line",
+                  "sourceLabel": "Variante do motor",
+                  "weight": 100,
+                  "text": "Este lance inicia um mate forçado demonstrado pela variante: 14. Qe8#.",
+                  "short": "inicia um mate forçado demonstrado pela variante",
+                  "positive": true,
+                  "corroborated": false
+                },
+                {
+                  "id": "evaluation",
+                  "source": "engine",
+                  "sourceLabel": "Avaliação do motor",
+                  "weight": 10,
+                  "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição mate em 1 a favor das brancas; depois de Qe8#, mate em 0 a favor das brancas.",
+                  "short": "",
+                  "positive": true,
+                  "corroborated": false
+                }
+              ],
+              "heuristics": [],
+              "uncertainty": [
+                "A variante do motor depois do lance é curta; não dá para seguir trocas além dela."
+              ],
+              "alternative": null,
+              "equivalent": [],
+              "positives": [
+                {
+                  "id": "found-mate",
+                  "kind": "fact",
+                  "text": "inicia um mate forçado demonstrado pela variante"
+                }
+              ],
+              "evaluation": {
+                "depth": 16,
+                "side": "w",
+                "bestText": "mate em 1 a favor das brancas",
+                "playedText": "mate em 0 a favor das brancas",
+                "text": "Avaliação do motor para as brancas (profundidade 16): melhor lance da posição mate em 1 a favor das brancas; depois de Qe8#, mate em 0 a favor das brancas."
+              },
+              "lines": {
+                "played": "14. Qe8#",
+                "best": "14. Qe8#"
+              },
+              "questions": {
+                "decision": "Lembre o que você pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?",
+                "review": "Volte uma jogada para a posição antes de Qe8#. Lembre o que pretendia e então pergunte: Qual ideia torna este lance útil aqui, e que resposta forte do adversário você calculou?"
+              },
+              "takeaway": "Continue conferindo as respostas forçadas do adversário: o motor aprovou este lance, mas o hábito é o que se repete."
+            },
+            "explanation": "Grande lance. Lance que o motor destaca como difícil de achar; verificado: Qe8# inicia um mate forçado demonstrado pela variante. “Grande lance” é uma heurística baseada em três variantes: a segunda é claramente inferior."
           }
         }
       ]
