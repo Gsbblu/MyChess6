@@ -16,7 +16,7 @@ concurrency:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 30
     steps:
       - name: Check out MyChess6
         uses: actions/checkout@v4

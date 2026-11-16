@@ -43,9 +43,7 @@ def read_browser_library(page) -> list[dict]:
 
 
 def archive_snapshot(page, url: str) -> tuple[list[dict], int]:
-    # A full depth-16 review can take well over 28 minutes on a hosted runner.
-    # Keep the browser alive for nearly the full Actions job window.
-    page.wait_for_function(ARCHIVE_FINISHED, arg=url, timeout=350 * 60 * 1000)
+    page.wait_for_function(ARCHIVE_FINISHED, arg=url, timeout=28 * 60 * 1000)
     state = page.evaluate("window.MyChess6Cloud?.archiveState || 'error'")
     status = page.locator("#chesscom-status").inner_text()
     if state == "error":
@@ -88,12 +86,13 @@ def main() -> None:
                 page.goto(url, wait_until="load", timeout=60_000)
 
                 options = page.locator("#chesscom-month option").evaluate_all(
-                    "items => items.map(item => item.value).filter(Boolean)")
+                    "items => items.map(item => item.value).filter(value => /^https:\\/\\/api\\.chess\\.com\\/pub\\/player\\/[^/]+\\/games\\/\\d{4}\\/\\d{2}$/.test(value))")
                 if not options:
-                    page.wait_for_function("""() => document.querySelectorAll('#chesscom-month option').length > 1 ||
+                    page.wait_for_function("""() => Array.from(document.querySelectorAll('#chesscom-month option')).some(item =>
+                      /^https:\/\/api\.chess\.com\/pub\/player\/[^/]+\/games\/\d{4}\/\d{2}$/.test(item.value)) ||
                       window.MyChess6Cloud?.archiveState === 'error'""", timeout=60_000)
                     options = page.locator("#chesscom-month option").evaluate_all(
-                        "items => items.map(item => item.value).filter(Boolean)")
+                        "items => items.map(item => item.value).filter(value => /^https:\\/\\/api\\.chess\\.com\\/pub\\/player\\/[^/]+\\/games\\/\\d{4}\\/\\d{2}$/.test(value))")
                 if not options:
                     raise RuntimeError(page.locator("#chesscom-status").inner_text())
 

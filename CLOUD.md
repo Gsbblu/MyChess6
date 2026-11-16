@@ -1,6 +1,6 @@
 # Análise automática na nuvem
 
-O workflow `.github/workflows/chesscom-cloud-analysis.yml` executa o MyChess6 a cada 15 minutos num navegador sem interface do GitHub Actions. Ele percorre os arquivos mensais públicos do perfil e analisa todas as partidas que ainda não estão em `cloud-data/games.json`, usando o Stockfish na profundidade equilibrada (16). Cada execução processa uma partida e guarda um cursor para continuar do arquivo em que parou; assim, também preenche o histórico existente por lotes. Uma partida longa pode levar mais de 28 minutos, então a execução pode durar até seis horas. Depois de alcançar o fim do histórico, continua verificando o mês atual e o anterior. Ao abrir o site publicado, o MyChess importa as análises para sua biblioteca.
+O workflow `.github/workflows/chesscom-cloud-analysis.yml` executa o MyChess6 a cada 15 minutos num navegador sem interface do GitHub Actions. Ele percorre os arquivos mensais públicos do perfil e analisa todas as partidas que ainda não estão em `cloud-data/games.json`, usando o Stockfish na profundidade equilibrada (16). Cada execução processa uma partida e guarda um cursor para continuar do arquivo em que parou; assim, também preenche o histórico existente por lotes. Depois de alcançar o fim do histórico, continua verificando o mês atual e o anterior. Ao abrir o site publicado, o MyChess importa as análises para sua biblioteca.
 
 ## Custo e visibilidade
 
