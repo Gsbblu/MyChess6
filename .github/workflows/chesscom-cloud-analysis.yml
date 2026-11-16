@@ -31,6 +31,7 @@ jobs:
       - name: Analyze unreviewed games in the public archives
         run: python scripts/cloud_analyze.py
       - name: Save analyses for the site
+        if: always()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

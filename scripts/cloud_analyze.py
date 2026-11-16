@@ -15,7 +15,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cloud-data" / "games.json"
-MAX_GAMES_PER_RUN = 5
+MAX_GAMES_PER_RUN = 1
 ARCHIVE_FINISHED = """url => window.MyChess6Cloud?.archiveUrl === url &&
   ['done', 'error'].includes(window.MyChess6Cloud?.archiveState)"""
 
@@ -81,7 +81,7 @@ def main() -> None:
                 page.add_init_script("""
                   localStorage.setItem('mychess6-auto-chesscom', 'on');
                   window.__MyChess6ScanAllArchives = true;
-                  window.__MyChess6MaxGamesPerArchive = 5;
+                  window.__MyChess6MaxGamesPerArchive = 1;
                 """)
                 page.goto(url, wait_until="load", timeout=60_000)
 
@@ -96,6 +96,7 @@ def main() -> None:
                     raise RuntimeError(page.locator("#chesscom-status").inner_text())
 
                 latest_url = options[0]
+                print(f"Verificando arquivo mais recente: {latest_url}", flush=True)
                 records, archive_remaining = archive_snapshot(page, latest_url)
                 records = valid_records(records)
                 new_count = sum(1 for record in records if record["id"] not in previous_ids)
@@ -133,6 +134,7 @@ def main() -> None:
                             next_cursor = options[index]
                             break
                         archive_url = options[index]
+                        print(f"Retropreenchendo arquivo: {archive_url}", flush=True)
                         page.evaluate("limit => { window.__MyChess6MaxGamesPerArchive = limit; }", remaining_budget)
                         page.select_option("#chesscom-month", value=archive_url)
                         records, archive_remaining = archive_snapshot(page, archive_url)
