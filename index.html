@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-filter-loading-1">
+    <link rel="stylesheet" href="styles.css?v=mychess6-cloud-trigger-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -66,6 +66,8 @@
             <div class="archive-pane-title"><h3 id="saved-title">Análises salvas</h3><span class="saved-count" id="saved-count">0</span></div>
             <p class="archive-status" id="saved-status">As análises completas ficam neste navegador. Exporte uma cópia para transferi-las.</p>
             <p class="archive-status cloud-progress-status" id="cloud-progress-status" role="status" aria-live="polite">Carregando o progresso das análises na nuvem…</p>
+            <a class="secondary-button cloud-analysis-trigger" href="https://github.com/Gsbblu/MyChess6/actions/workflows/chesscom-cloud-analysis.yml" target="_blank" rel="noopener noreferrer" title="Abre o GitHub Actions; clique em Run workflow para começar.">Iniciar análises na nuvem <span aria-hidden="true">↗</span></a>
+            <p class="archive-footnote cloud-analysis-hint">Abre o GitHub Actions. Na página, clique em <strong>Run workflow</strong> para iniciar.</p>
             <div class="saved-games-list" id="saved-games"></div>
           </section>
         </div>
