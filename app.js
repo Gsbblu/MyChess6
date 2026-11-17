@@ -2389,6 +2389,7 @@
     gameReviewContext.textContent = move
       ? `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}${history[historyIndex]?.clock ? ` · relógio ${history[historyIndex].clock}` : ''}`
       : 'ANÁLISE DA POSIÇÃO INICIAL';
+    gameReviewQuestion.hidden = true;
     if (result.quality) {
       gameReviewBadge.hidden = false;
       gameReviewBadge.className = `move-quality-badge quality-${result.quality.kind}`;
@@ -2396,8 +2397,6 @@
       gameReviewExplanation.textContent = result.quality.explanation;
       const previous = gameReviewResults[historyIndex - 1];
       if (previous && result.playedMove && result.quality.lesson) {
-        gameReviewQuestion.hidden = false;
-        gameReviewQuestion.textContent = result.quality.lesson.questions.review;
         renderLesson(result.quality.lesson, previousResult && result.playedMove ? { before: previousResult, after: result, playedMove: result.playedMove } : null);
       } else {
         gameReviewQuestion.hidden = true;
@@ -2896,6 +2895,7 @@
     exploreVariationButton.hidden = Boolean(variationSession || !gameReviewResults[historyIndex] || gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game' || analysisStopping);
     bestLineActions.hidden = Boolean(variationNeedsAnalysis || !gameReviewResults[historyIndex - 1]?.bestMove);
     gameReviewContext.textContent = `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${playedMove.moveNumber}${playedMove.side === 'w' ? '.' : '…'} ${playedMove.san}${entry.clock ? ` · relógio ${entry.clock}` : ''}`;
+    gameReviewQuestion.hidden = true;
     gameReviewDepth.textContent = `${source} · profundidade ${result.depth || selectedDepth} · calculada pelo Stockfish`;
 
     if (!previous?.score || previous.depth !== result.depth) {
@@ -2918,8 +2918,6 @@
     const quality = moveQuality(previous, reviewed, playedMove);
     currentBoardQuality = { fen: currentFen(position), move: playedMove, quality };
     renderBoardQualityMarker();
-    gameReviewQuestion.hidden = false;
-    gameReviewQuestion.textContent = quality.lesson ? quality.lesson.questions.review : '';
     gameReviewBadge.hidden = false;
     gameReviewBadge.className = `move-quality-badge quality-${quality.kind}`;
     gameReviewBadge.textContent = quality.label;
