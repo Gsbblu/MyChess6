@@ -145,8 +145,10 @@
   let autoChessComBusy = false;
   let autoChessComQueue = [];
   let selectedRatingMode = 'rapid';
+  let insightsVisible = false;
   let cloudLastSeenGameUrl = '';
   let cloudSnapshotKey = '';
+  let cloudRemoteRevision = '';
   let cloudImportBusy = false;
   window.MyChess6Cloud = {
     lastSeenGameUrl: '', backfillArchiveUrl: '', backfillComplete: false,
@@ -1315,6 +1317,19 @@
     });
   }
 
+  async function libraryPutMany(records) {
+    if (!records.length) return 0;
+    const db = await libraryDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('games', 'readwrite');
+      const store = tx.objectStore('games');
+      for (const record of records) store.put(record);
+      tx.oncomplete = () => resolve(records.length);
+      tx.onerror = () => reject(tx.error || new Error('Falha ao importar análises da nuvem.'));
+      tx.onabort = () => reject(tx.error || new Error('A importação das análises foi interrompida.'));
+    });
+  }
+
   function renderCloudProgress(data) {
     const games = Array.isArray(data.games) ? data.games : [];
     const cursor = (data.backfillArchiveUrl || '').match(/(\d{4}\/\d{2})$/)?.[1];
@@ -1333,9 +1348,11 @@
     cloudImportBusy = true;
     try {
       let response;
-      try { response = await fetch('cloud-data/games.json', { cache: 'no-store' }); }
+      try { response = await fetch('cloud-data/games.json', { cache: 'no-cache' }); }
       catch { return 0; }
       if (!response.ok) return 0;
+      const revision = response.headers.get('etag') || response.headers.get('last-modified') || '';
+      if (revision && revision === cloudRemoteRevision) return 0;
       let data;
       try { data = await response.json(); } catch { return 0; }
       const games = data.games;
@@ -1346,19 +1363,22 @@
       window.MyChess6Cloud.backfillArchiveUrl = typeof data.backfillArchiveUrl === 'string' ? data.backfillArchiveUrl : '';
       window.MyChess6Cloud.backfillComplete = data.backfillComplete === true;
       const latestSavedAt = games.reduce((latest, game) => Math.max(latest, Number(game?.savedAt) || 0), 0);
-      const snapshotKey = [games.length, data.backfillArchiveUrl || '', data.backfillComplete === true, data.lastSeenGameUrl || '', latestSavedAt].join('|');
+      const snapshotKey = [revision, games.length, data.backfillArchiveUrl || '', data.backfillComplete === true, data.lastSeenGameUrl || '', latestSavedAt].join('|');
       if (snapshotKey === cloudSnapshotKey) return 0;
-      let imported = 0;
+      const localRecords = await libraryRequest('readonly', 'all');
+      const localById = new Map(localRecords.map((record) => [record.id, record]));
+      const updates = [];
       for (const record of games) {
         if (!record || typeof record.id !== 'string' || typeof record.pgn !== 'string' || !Array.isArray(record.results)) continue;
-        const local = await libraryRequest('readonly', 'get', record.id);
+        const local = localById.get(record.id);
         if (!local || Number(record.depth || 0) > Number(local.depth || 0)) {
-          await libraryRequest('readwrite', 'put', record);
-          imported += 1;
+          updates.push(record);
         }
       }
+      await libraryPutMany(updates);
       cloudSnapshotKey = snapshotKey;
-      return imported;
+      cloudRemoteRevision = revision;
+      return updates.length;
     } finally { cloudImportBusy = false; }
   }
 
@@ -1810,8 +1830,10 @@
     try {
       const records = (await libraryRequest('readonly', 'all')).sort((a, b) =>
         recordRecency(b) - recordRecency(a) || (Number(b.savedAt) || 0) - (Number(a.savedAt) || 0));
-      try { renderInsights(records); }
-      catch (error) { insightsStatus.textContent = `Não consegui montar o resumo: ${error.message || 'erro nos dados salvos'}.`; }
+      if (insightsVisible) {
+        try { renderInsights(records); }
+        catch (error) { insightsStatus.textContent = `Não consegui montar o resumo: ${error.message || 'erro nos dados salvos'}.`; }
+      }
       savedCount.textContent = String(records.length);
       savedGamesList.replaceChildren();
       savedGamesList.scrollTop = 0;
@@ -2078,7 +2100,7 @@
 
   chessComMonth.addEventListener('change', () => { if (chessComMonth.value) loadChessComArchive(chessComMonth.value); });
   chessComTimeClass.addEventListener('change', () => { chessComShownGames = 24; renderChessComGames(); });
-  autoAnalyzeChessCom.checked = localStorage.getItem('mychess6-auto-chesscom') !== 'off';
+  autoAnalyzeChessCom.checked = localStorage.getItem('mychess6-auto-chesscom') === 'on';
   autoAnalyzeChessCom.addEventListener('change', () => {
     localStorage.setItem('mychess6-auto-chesscom', autoAnalyzeChessCom.checked ? 'on' : 'off');
     if (autoAnalyzeChessCom.checked) autoAnalyzeUnanalyzedChessComGames();
@@ -2111,6 +2133,7 @@
   });
 
   function selectLibraryTab(showInsights) {
+    insightsVisible = showInsights;
     libraryPanel.hidden = showInsights; insightsPanel.hidden = !showInsights;
     libraryTab.classList.toggle('selected', !showInsights); insightsTab.classList.toggle('selected', showInsights);
     libraryTab.setAttribute('aria-selected', String(!showInsights)); insightsTab.setAttribute('aria-selected', String(showInsights));
@@ -3571,9 +3594,9 @@
 
   window.addEventListener('pagehide', stopEngine);
   async function initializeMyChess() {
+    render();
     await importCloudLibrary();
     await renderSavedGames();
-    render();
     chessComSearch.requestSubmit();
   }
   initializeMyChess();
