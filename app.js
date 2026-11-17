@@ -14,6 +14,9 @@
   const rankLabels = document.querySelector('.rank-labels');
   const fileLabels = document.querySelector('.file-labels');
   const turnLabel = document.querySelector('#turn-indicator');
+  const gameClocks = document.querySelector('#game-clocks');
+  const whiteClock = document.querySelector('#white-clock');
+  const blackClock = document.querySelector('#black-clock');
   const moveCount = document.querySelector('#move-count');
   const moveDock = document.querySelector('#move-dock');
   const fenLabel = document.querySelector('#fen-label');
@@ -625,19 +628,12 @@
         button.dataset.moveIndex = String(item.index); button.dataset.moveNumber = String(group.number);
         button.dataset.moveSide = item.entry.side; button.dataset.moveSan = item.entry.san;
         const san = document.createElement('span'); san.className = 'move-entry-san'; san.textContent = item.entry.san;
-        let clock = null;
-        if (item.entry.clock) {
-          clock = document.createElement('span'); clock.className = 'move-entry-clock'; clock.textContent = item.entry.clock;
-          clock.title = `Tempo restante após ${group.number}${side === 'white' ? '.' : '…'} ${item.entry.san}`;
-        }
         const symbol = document.createElement('span'); symbol.className = `move-quality-symbol quality-mark-${mark.kind}`;
         const qualityIcon = createBoardQualityIcon(mark.kind);
         if (qualityIcon) symbol.append(qualityIcon); else symbol.textContent = mark.symbol;
         symbol.title = mark.title; symbol.setAttribute('aria-hidden', 'true');
-        button.append(san);
-        if (clock) button.append(clock);
-        button.append(symbol);
-        button.setAttribute('aria-label', `Ir para ${group.number}${side === 'white' ? ' brancas' : ' pretas'}: ${item.entry.san}.${item.entry.clock ? ` Tempo restante após o lance: ${item.entry.clock}.` : ''} Qualidade: ${mark.title}.`);
+        button.append(san, symbol);
+        button.setAttribute('aria-label', `Ir para ${group.number}${side === 'white' ? ' brancas' : ' pretas'}: ${item.entry.san}. Qualidade: ${mark.title}.`);
         button.setAttribute('aria-pressed', String(item.index === historyIndex));
         if (item.index === historyIndex) button.classList.add('current');
         button.addEventListener('click', () => goTo(item.index)); pair.append(button);
@@ -680,6 +676,24 @@
     });
     bestMovesMeta.textContent = candidates.length > 1 ? `${candidates.length} linhas · Stockfish` : 'Stockfish';
     bestMovesPanel.hidden = false;
+  }
+
+  function renderGameClocks() {
+    const hasClockData = history.some((entry) => entry.clock);
+    gameClocks.hidden = !hasClockData;
+    if (!hasClockData) return;
+    const initialTime = String(gameHeaders.TimeControl || '').split(':')[0].match(/(?:\d+\/)?(\d+)(?:\+\d+)?/)?.[1];
+    let whiteTime = initialTime ? formatClockAnnotation(`0:${initialTime}`) : '';
+    let blackTime = whiteTime;
+    for (const entry of history.slice(1, historyIndex + 1)) {
+      if (!entry.clock) continue;
+      if (entry.side === 'w') whiteTime = entry.clock;
+      else blackTime = entry.clock;
+    }
+    whiteClock.textContent = whiteTime || '—:——';
+    blackClock.textContent = blackTime || '—:——';
+    whiteClock.closest('.game-clock').classList.toggle('active', position.turn === 'w');
+    blackClock.closest('.game-clock').classList.toggle('active', position.turn === 'b');
   }
 
   function render() {
@@ -751,6 +765,7 @@
     document.body.classList.toggle('has-game', history.length >= 2);
     fenLabel.textContent = currentFen(position);
     variationBanner.hidden = !variationSession;
+    renderGameClocks();
     renderMoveList();
     navButtons.first.disabled = historyIndex === 0; navButtons.previous.disabled = historyIndex === 0;
     navButtons.next.disabled = historyIndex >= history.length - 1; navButtons.last.disabled = historyIndex >= history.length - 1;
@@ -2387,7 +2402,7 @@
     const move = result.playedMove;
     replayPlayedLineButton.hidden = !move || !result.pvUci || explainMoveButton.getAttribute('aria-expanded') !== 'true';
     gameReviewContext.textContent = move
-      ? `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}${history[historyIndex]?.clock ? ` · relógio ${history[historyIndex].clock}` : ''}`
+      ? `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}`
       : 'ANÁLISE DA POSIÇÃO INICIAL';
     gameReviewQuestion.hidden = true;
     if (result.quality) {
@@ -2894,7 +2909,7 @@
     gameReviewQuality.hidden = false;
     exploreVariationButton.hidden = Boolean(variationSession || !gameReviewResults[historyIndex] || gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game' || analysisStopping);
     bestLineActions.hidden = Boolean(variationNeedsAnalysis || !gameReviewResults[historyIndex - 1]?.bestMove);
-    gameReviewContext.textContent = `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${playedMove.moveNumber}${playedMove.side === 'w' ? '.' : '…'} ${playedMove.san}${entry.clock ? ` · relógio ${entry.clock}` : ''}`;
+    gameReviewContext.textContent = `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${playedMove.moveNumber}${playedMove.side === 'w' ? '.' : '…'} ${playedMove.san}`;
     gameReviewQuestion.hidden = true;
     gameReviewDepth.textContent = `${source} · profundidade ${result.depth || selectedDepth} · calculada pelo Stockfish`;
 

@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-move-clocks-1">
+    <link rel="stylesheet" href="styles.css?v=mychess6-board-clocks-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -100,6 +100,10 @@
           <div class="board-footer">
             <span class="turn-indicator" id="turn-indicator"><span></span> Vez das brancas</span>
             <span class="fen-label" hidden>FEN <b id="fen-label">posição inicial</b></span>
+          </div>
+          <div class="game-clocks" id="game-clocks" aria-label="Tempo restante na posição" hidden>
+            <div class="game-clock game-clock-white"><span>BRANCAS</span><strong id="white-clock">—:——</strong></div>
+            <div class="game-clock game-clock-black"><span>PRETAS</span><strong id="black-clock">—:——</strong></div>
           </div>
         </div>
 
@@ -219,6 +223,6 @@
     </dialog>
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
-    <script src="app.js?v=mychess6-move-clocks-2" defer></script>
+    <script src="app.js?v=mychess6-board-clocks-1" defer></script>
   </body>
 </html>
