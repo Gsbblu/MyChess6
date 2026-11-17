@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-saved-pane-fill-5">
+    <link rel="stylesheet" href="styles.css?v=mychess6-period-filter-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -45,7 +45,7 @@
           <button class="library-tab" type="button" role="tab" aria-selected="false" aria-controls="insights-panel" id="insights-tab">Visão geral</button>
         </div>
         <section class="insights-panel" id="insights-panel" role="tabpanel" aria-labelledby="insights-tab" hidden>
-          <div class="insights-heading"><div><p class="eyebrow">SEU DIAGNÓSTICO</p><h3>Visão geral do seu xadrez</h3><p>O que as suas análises salvas mostram, o que treinar primeiro e onde ver cada lance.</p></div><div class="insights-filters"><label>Período<select id="insights-period"><option value="all">Todo o período</option><option value="90">Últimos 90 dias</option><option value="30">Últimos 30 dias</option></select></label><label>Ritmo<select id="insights-speed"><option value="all">Todos</option><option value="bullet">Bullet</option><option value="blitz">Blitz</option><option value="rapid">Rápidas</option><option value="daily">Por correspondência</option></select></label></div></div>
+          <div class="insights-heading"><div><p class="eyebrow">SEU DIAGNÓSTICO</p><h3>Visão geral do seu xadrez</h3><p>O que as suas análises salvas mostram, o que treinar primeiro e onde ver cada lance.</p></div><div class="insights-filters"><label>Período<select id="insights-period"><option value="all">Todo o período</option><option value="90">Últimos 90 dias</option><option value="30">Últimos 30 dias</option><option value="15">Últimos 15 dias</option><option value="7">Últimos 7 dias</option><option value="custom">Personalizado</option></select></label><label id="insights-custom-period-wrap" hidden>Dias<input id="insights-custom-period" type="number" min="1" max="3650" step="1" value="30" inputmode="numeric" aria-label="Quantidade de dias do período personalizado"></label><label>Ritmo<select id="insights-speed"><option value="all">Todos</option><option value="bullet">Bullet</option><option value="blitz">Blitz</option><option value="rapid">Rápidas</option><option value="daily">Por correspondência</option></select></label></div></div>
           <p class="insights-status" id="insights-status" role="status" aria-live="polite"></p>
           <div class="insights-body" id="insights-body"></div>
           <p class="archive-footnote" id="insights-footnote">Tudo é calculado neste navegador a partir das análises salvas, sem enviar dados a lugar nenhum. A precisão é uma estimativa (fórmula aberta do Lichess aplicada aos pontos esperados do app), não a nota de nenhum site. Temas vêm do treinador; sugestões de treino são conselhos gerais, não medições.</p>
@@ -217,6 +217,6 @@
     </dialog>
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
-    <script src="app.js?v=mychess6-performance-2" defer></script>
+    <script src="app.js?v=mychess6-period-filter-1" defer></script>
   </body>
 </html>

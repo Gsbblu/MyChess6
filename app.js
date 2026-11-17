@@ -39,6 +39,8 @@
   const libraryPanel = document.querySelector('#library-panel');
   const insightsPanel = document.querySelector('#insights-panel');
   const insightsPeriod = document.querySelector('#insights-period');
+  const insightsCustomPeriodWrap = document.querySelector('#insights-custom-period-wrap');
+  const insightsCustomPeriod = document.querySelector('#insights-custom-period');
   const insightsStatus = document.querySelector('#insights-status');
   const insightsSpeed = document.querySelector('#insights-speed');
   const insightsBody = document.querySelector('#insights-body');
@@ -1697,11 +1699,14 @@
   function renderInsights(records) {
     const byId = new Map(records.map((record) => [record.id, record]));
     insightsBody.replaceChildren();
+    const periodDays = insightsPeriod.value === 'custom'
+      ? Math.min(3650, Math.max(1, Number.parseInt(insightsCustomPeriod.value, 10) || 30))
+      : Number(insightsPeriod.value) || 0;
     const report = insightsEngine.compute(records, {
-      profile: chessComUsername.value, periodDays: Number(insightsPeriod.value) || 0, speed: insightsSpeed.value, themes: coach.themes,
+      profile: chessComUsername.value, periodDays, speed: insightsSpeed.value, themes: coach.themes,
       expected: (score, turn, side, rating) => expectedPoints(score, turn, side, rating)
     });
-    const ratingPanel = ratingHistoryPanel(records, chessComUsername.value, Number(insightsPeriod.value) || 0);
+    const ratingPanel = ratingHistoryPanel(records, chessComUsername.value, periodDays);
     const openMove = (reference) => { const record = byId.get(reference.recordId); if (record) { openSavedRecord(record, reference.index); } };
     const moveButton = (reference, label) => {
       const button = node('button', 'secondary-button insight-link', label || `Ver ${reference.text}`); button.type = 'button';
@@ -2194,7 +2199,11 @@
   }
   libraryTab.addEventListener('click', () => selectLibraryTab(false));
   insightsTab.addEventListener('click', () => selectLibraryTab(true));
-  insightsPeriod.addEventListener('change', () => renderSavedGames());
+  insightsPeriod.addEventListener('change', () => {
+    insightsCustomPeriodWrap.hidden = insightsPeriod.value !== 'custom';
+    renderSavedGames();
+  });
+  insightsCustomPeriod.addEventListener('input', () => renderSavedGames());
   insightsSpeed.addEventListener('change', () => renderSavedGames());
 
   function loadPgn(source) {
