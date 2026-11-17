@@ -149,7 +149,17 @@
   let cloudLastSeenGameUrl = '';
   let cloudSnapshotKey = '';
   let cloudRemoteRevision = '';
+  let cloudRemoteGameIds = [];
+  let cloudRemoteSummary = null;
   let cloudImportBusy = false;
+  let savedGamesShown = 40;
+  try {
+    cloudRemoteRevision = localStorage.getItem('mychess6-cloud-revision') || '';
+    const cachedIds = JSON.parse(localStorage.getItem('mychess6-cloud-game-ids') || '[]');
+    cloudRemoteGameIds = Array.isArray(cachedIds) ? cachedIds.filter((id) => typeof id === 'string') : [];
+    const cachedSummary = JSON.parse(localStorage.getItem('mychess6-cloud-summary') || 'null');
+    cloudRemoteSummary = cachedSummary && typeof cachedSummary === 'object' ? cachedSummary : null;
+  } catch { /* o site continua funcionando se o armazenamento local estiver indisponível */ }
   window.MyChess6Cloud = {
     lastSeenGameUrl: '', backfillArchiveUrl: '', backfillComplete: false,
     archiveUrl: '', archiveState: 'idle', archiveRemaining: 0
@@ -1309,6 +1319,7 @@
     return new Promise((resolve, reject) => {
       const tx = db.transaction('games', mode);
       const request = action === 'all' ? tx.objectStore('games').getAll()
+        : action === 'keys' ? tx.objectStore('games').getAllKeys()
         : action === 'get' ? tx.objectStore('games').get(value)
           : action === 'delete' ? tx.objectStore('games').delete(value)
             : tx.objectStore('games').put(value);
@@ -1332,15 +1343,16 @@
 
   function renderCloudProgress(data) {
     const games = Array.isArray(data.games) ? data.games : [];
+    const gameCount = Number(data.gameCount) || games.length;
     const cursor = (data.backfillArchiveUrl || '').match(/(\d{4}\/\d{2})$/)?.[1];
-    const latestSavedAt = games.reduce((latest, game) => Math.max(latest, Number(game?.savedAt) || 0), 0);
+    const latestSavedAt = Number(data.latestSavedAt) || games.reduce((latest, game) => Math.max(latest, Number(game?.savedAt) || 0), 0);
     const lastUpdate = latestSavedAt ? ` · último lote ${new Date(latestSavedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : '';
     const progress = data.backfillComplete
       ? 'Retropreenchimento de 2026 concluído'
       : `Retropreenchimento em andamento${cursor ? ` · arquivo ${cursor}` : ''}`;
     const pending = Number(data.pendingInArchive) || 0;
     const pendingLabel = !data.backfillComplete && pending > 0 ? ` · ${pending} partidas restantes neste arquivo` : '';
-    cloudProgressStatus.textContent = `${games.length} análises publicadas na nuvem · ${progress}${pendingLabel}${lastUpdate}.`;
+    cloudProgressStatus.textContent = `${gameCount} análises publicadas na nuvem · ${progress}${pendingLabel}${lastUpdate}.`;
   }
 
   async function importCloudLibrary() {
@@ -1352,7 +1364,17 @@
       catch { return 0; }
       if (!response.ok) return 0;
       const revision = response.headers.get('etag') || response.headers.get('last-modified') || '';
-      if (revision && revision === cloudRemoteRevision) return 0;
+      if (revision && revision === cloudRemoteRevision && cloudRemoteGameIds.length && cloudRemoteSummary) {
+        const localKeys = new Set(await libraryRequest('readonly', 'keys'));
+        if (cloudRemoteGameIds.every((id) => localKeys.has(id))) {
+          renderCloudProgress(cloudRemoteSummary);
+          cloudLastSeenGameUrl = cloudRemoteSummary.lastSeenGameUrl || '';
+          window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
+          window.MyChess6Cloud.backfillArchiveUrl = cloudRemoteSummary.backfillArchiveUrl || '';
+          window.MyChess6Cloud.backfillComplete = cloudRemoteSummary.backfillComplete === true;
+          return 0;
+        }
+      }
       let data;
       try { data = await response.json(); } catch { return 0; }
       const games = data.games;
@@ -1364,7 +1386,10 @@
       window.MyChess6Cloud.backfillComplete = data.backfillComplete === true;
       const latestSavedAt = games.reduce((latest, game) => Math.max(latest, Number(game?.savedAt) || 0), 0);
       const snapshotKey = [revision, games.length, data.backfillArchiveUrl || '', data.backfillComplete === true, data.lastSeenGameUrl || '', latestSavedAt].join('|');
-      if (snapshotKey === cloudSnapshotKey) return 0;
+      if (snapshotKey === cloudSnapshotKey && cloudRemoteGameIds.length) {
+        const localKeys = new Set(await libraryRequest('readonly', 'keys'));
+        if (cloudRemoteGameIds.every((id) => localKeys.has(id))) return 0;
+      }
       const localRecords = await libraryRequest('readonly', 'all');
       const localById = new Map(localRecords.map((record) => [record.id, record]));
       const updates = [];
@@ -1376,8 +1401,22 @@
         }
       }
       await libraryPutMany(updates);
+      const cloudIds = games.filter((record) => record && typeof record.id === 'string'
+        && typeof record.pgn === 'string' && Array.isArray(record.results)).map((record) => record.id);
+      const summary = {
+        gameCount: games.length, backfillArchiveUrl: data.backfillArchiveUrl || '',
+        backfillComplete: data.backfillComplete === true, pendingInArchive: Number(data.pendingInArchive) || 0,
+        lastSeenGameUrl: data.lastSeenGameUrl || '', latestSavedAt
+      };
       cloudSnapshotKey = snapshotKey;
       cloudRemoteRevision = revision;
+      cloudRemoteGameIds = cloudIds;
+      cloudRemoteSummary = summary;
+      try {
+        localStorage.setItem('mychess6-cloud-revision', revision);
+        localStorage.setItem('mychess6-cloud-game-ids', JSON.stringify(cloudIds));
+        localStorage.setItem('mychess6-cloud-summary', JSON.stringify(summary));
+      } catch { /* o cache remoto é uma otimização, não um requisito */ }
       return updates.length;
     } finally { cloudImportBusy = false; }
   }
@@ -1840,7 +1879,8 @@
       savedGamesList.scrollTop = 0;
       if (!records.length) { savedStatus.textContent = 'Suas análises aparecerão aqui quando uma análise de partida terminar.'; return; }
       savedStatus.textContent = `${records.length} análise${records.length === 1 ? '' : 's'} guardada${records.length === 1 ? '' : 's'} neste navegador.`;
-      for (const record of records) {
+      const visibleRecords = records.slice(0, savedGamesShown);
+      for (const record of visibleRecords) {
         const card = document.createElement('article'); card.className = 'saved-game-card';
         const title = document.createElement('strong'); title.textContent = recordTitle(record);
         const outcome = getPlayerOutcome(record.headers, record.headers?.Result);
@@ -1855,6 +1895,18 @@
         const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Excluir'; remove.className = 'text-button';
         remove.addEventListener('click', async () => { await libraryRequest('readwrite', 'delete', record.id); renderSavedGames(); });
         actions.append(open, remove); card.append(title, details, actions); savedGamesList.append(card);
+      }
+      if (records.length > visibleRecords.length) {
+        const remaining = records.length - visibleRecords.length;
+        const more = document.createElement('button'); more.type = 'button'; more.className = 'secondary-button archive-more';
+        more.textContent = `Mostrar mais ${Math.min(40, remaining)} (${remaining} restantes)`;
+        more.addEventListener('click', async () => {
+          const scrollTop = savedGamesList.scrollTop;
+          savedGamesShown += 40;
+          await renderSavedGames();
+          savedGamesList.scrollTop = scrollTop;
+        });
+        savedGamesList.append(more);
       }
     } catch (error) { savedStatus.textContent = error.message || 'A biblioteca local não está disponível neste navegador.'; }
   }
@@ -3595,6 +3647,7 @@
 
   window.addEventListener('pagehide', stopEngine);
   async function initializeMyChess() {
+    if (cloudRemoteSummary) renderCloudProgress(cloudRemoteSummary);
     render();
     await importCloudLibrary();
     await renderSavedGames();
