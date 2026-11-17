@@ -1447,29 +1447,58 @@
 
   function enableChartDragging(wrap) {
     wrap.setAttribute('role', 'region'); wrap.setAttribute('tabindex', '0');
+    let inertiaFrame = 0;
     let dragStart = null;
     wrap.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
-      dragStart = { pointerId: event.pointerId, x: event.clientX, scrollLeft: wrap.scrollLeft };
+      if (inertiaFrame) cancelAnimationFrame(inertiaFrame);
+      inertiaFrame = 0;
+      wrap.classList.remove('is-gliding');
+      dragStart = { pointerId: event.pointerId, x: event.clientX, lastX: event.clientX,
+        lastTime: performance.now(), scrollLeft: wrap.scrollLeft, velocity: 0, moved: false };
       wrap.setPointerCapture(event.pointerId);
     });
     wrap.addEventListener('pointermove', (event) => {
       if (!dragStart || dragStart.pointerId !== event.pointerId) return;
       const distance = event.clientX - dragStart.x;
-      if (Math.abs(distance) > 3) wrap.classList.add('is-dragging');
+      if (Math.abs(distance) > 3) { dragStart.moved = true; wrap.classList.add('is-dragging'); }
       if (wrap.classList.contains('is-dragging')) {
         event.preventDefault();
         wrap.scrollLeft = dragStart.scrollLeft - distance;
+        const now = performance.now(), elapsed = Math.max(1, now - dragStart.lastTime);
+        const instantVelocity = -(event.clientX - dragStart.lastX) / elapsed;
+        dragStart.velocity = dragStart.velocity * 0.65 + instantVelocity * 0.35;
+        dragStart.lastX = event.clientX; dragStart.lastTime = now;
       }
     });
-    const endDrag = (event) => {
+    const stopInertia = () => {
+      if (inertiaFrame) cancelAnimationFrame(inertiaFrame);
+      inertiaFrame = 0; wrap.classList.remove('is-gliding');
+    };
+    const startInertia = (velocity) => {
+      if (Math.abs(velocity) < 0.08) return;
+      wrap.classList.add('is-gliding');
+      let previousTime = performance.now();
+      const glide = (now) => {
+        const elapsed = Math.min(32, now - previousTime); previousTime = now;
+        const previousScroll = wrap.scrollLeft;
+        wrap.scrollLeft += velocity * elapsed;
+        velocity *= Math.pow(0.94, elapsed / 16);
+        if (wrap.scrollLeft === previousScroll || Math.abs(velocity) < 0.025) stopInertia();
+        else inertiaFrame = requestAnimationFrame(glide);
+      };
+      inertiaFrame = requestAnimationFrame(glide);
+    };
+    const endDrag = (event, cancelled = false) => {
       if (!dragStart || dragStart.pointerId !== event.pointerId) return;
+      const { velocity, moved } = dragStart;
       dragStart = null;
       wrap.classList.remove('is-dragging');
+      if (!cancelled && moved) startInertia(velocity);
     };
-    wrap.addEventListener('pointerup', endDrag);
-    wrap.addEventListener('pointercancel', endDrag);
-    wrap.addEventListener('lostpointercapture', endDrag);
+    wrap.addEventListener('pointerup', (event) => endDrag(event));
+    wrap.addEventListener('pointercancel', (event) => endDrag(event, true));
+    wrap.addEventListener('lostpointercapture', (event) => endDrag(event, true));
   }
 
   function ratingHistoryFor(records, profile, periodDays, speedFilter) {
@@ -1552,7 +1581,7 @@
     const groups = ratingHistoryFor(records, profile, periodDays, speedFilter);
     const names = { bullet: 'Bullet', blitz: 'Blitz', rapid: 'Rápidas', daily: 'Diárias' };
     const panels = [...groups.entries()].filter(([, points]) => points.length);
-    const box = insightsBox('Rating no Chess.com', 'evolução por modo · cada ponto é uma partida analisada');
+    const box = insightsBox('Rating no Chess.com', 'cada ponto é uma partida · arraste com o botão esquerdo e solte para deslizar');
     if (!panels.length) {
       box.append(node('p', 'insights-empty', 'Não encontrei ratings nas partidas do Chess.com neste filtro.'));
       return box;
@@ -1591,7 +1620,7 @@
     enableChartDragging(wrap);
     const container = node('div', 'insight-spark-container');
     container.append(wrap);
-    if (width > 480) container.append(node('span', 'insight-spark-hint', 'Role o gráfico para ver as partidas anteriores.'));
+    if (width > 480) container.append(node('span', 'insight-spark-hint', 'Arraste com o botão esquerdo e solte para o gráfico deslizar.'));
     requestAnimationFrame(() => { wrap.scrollLeft = wrap.scrollWidth; });
     return container;
   }
