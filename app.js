@@ -1546,14 +1546,15 @@
       if (!groups.has(speed)) continue;
       const rating = Number(headers[playerSide === 'w' ? 'WhiteElo' : 'BlackElo']);
       if (!Number.isFinite(rating) || rating < 1) continue;
-      groups.get(speed).push({ rating, time, outcome: headers.Result || '*', id: record.id });
+      const opponent = String(playerSide === 'w' ? headers.Black : headers.White).trim() || 'adversário';
+      groups.get(speed).push({ rating, time, opponent, id: record.id });
     }
     for (const points of groups.values()) points.sort((a, b) => a.time - b.time);
     return groups;
   }
 
   function ratingChart(mode, points) {
-    const namespace = 'http://www.w3.org/2000/svg', height = 340, left = 66, right = 24, top = 36, bottom = 278;
+    const namespace = 'http://www.w3.org/2000/svg', height = 340, left = 66, right = 32, top = 36, bottom = 278;
     const width = Math.max(720, left + right + Math.max(0, points.length - 1) * 72);
     const values = points.map((point) => point.rating), rawStep = (Math.max(...values) - Math.min(...values)) / 4;
     const tickStep = [10, 25, 50, 100, 200, 500, 1000].find((step) => step >= rawStep) || 1000;
@@ -1583,13 +1584,13 @@
       points: points.map((point, index) => `${x(index).toFixed(1)},${y(point.rating).toFixed(1)}`).join(' '),
       class: 'rating-history-line', stroke: colors[mode]
     }));
-    const dateIndexes = new Set([0, Math.floor((points.length - 1) / 3), Math.floor(2 * (points.length - 1) / 3), points.length - 1]);
+    svg.append(make('text', { x: 8, y: 316, class: 'rating-axis-title' }, 'Data'));
     points.forEach((point, index) => {
       const px = x(index), py = y(point.rating), date = new Date(point.time);
       const dot = make('circle', { cx: px, cy: py, r: 5, class: 'rating-history-dot', fill: colors[mode] });
-      dot.append(make('title', {}, `${date.toLocaleDateString('pt-BR')} · rating ${point.rating}`)); svg.append(dot);
+      dot.append(make('title', {}, `${date.toLocaleDateString('pt-BR')} · vs. ${point.opponent} · rating ${point.rating}`)); svg.append(dot);
       svg.append(make('text', { x: px, y: py - 11, 'text-anchor': 'middle', class: 'rating-point-label' }, String(point.rating)));
-      if (dateIndexes.has(index)) svg.append(make('text', { x: px, y: 316, 'text-anchor': 'middle', class: 'rating-date-label' }, date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })));
+      svg.append(make('text', { x: px, y: 316, 'text-anchor': 'middle', class: 'rating-date-label' }, date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })));
     });
     const wrap = node('div', 'insight-spark-wrap rating-chart-scroll');
     wrap.setAttribute('aria-label', `Histórico de rating ${mode}; arraste para ver outras partidas.`);
@@ -1601,7 +1602,7 @@
   function ratingHistoryPanel(records, profile, periodDays) {
     const groups = ratingHistoryFor(records, profile, periodDays);
     const names = { bullet: 'Bullet', blitz: 'Blitz', rapid: 'Rápidas', daily: 'Diárias' };
-    const box = insightsBox('Rating no Chess.com', `${names[selectedRatingMode]} · cada ponto é uma partida · arraste com o botão esquerdo e solte para deslizar`);
+    const box = insightsBox('Rating no Chess.com', `${names[selectedRatingMode]} · rating acima e data abaixo de cada ponto · arraste com o botão esquerdo e solte para deslizar`);
     const controls = node('div', 'rating-mode-switch');
     controls.setAttribute('role', 'group'); controls.setAttribute('aria-label', 'Modo do rating');
     for (const [mode, points] of groups) {
