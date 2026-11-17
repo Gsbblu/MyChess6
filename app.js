@@ -357,17 +357,39 @@
   }
 
   function cleanMovetext(text) {
-    let output = '', braceDepth = 0, variationDepth = 0, lineComment = false;
+    let output = '', braceDepth = 0, variationDepth = 0, lineComment = false, comment = '', commentVariationDepth = 0;
     for (const char of text) {
       if (lineComment) { if (char === '\n') { lineComment = false; output += ' '; } continue; }
-      if (braceDepth) { if (char === '{') braceDepth += 1; else if (char === '}') braceDepth -= 1; continue; }
-      if (char === '{') { braceDepth = 1; output += ' '; continue; }
+      if (braceDepth) {
+        if (char === '{') braceDepth += 1;
+        else if (char === '}') {
+          braceDepth -= 1;
+          if (!braceDepth) {
+            const clock = comment.match(/\[%clk\s+([^\]]+)\]/i)?.[1]?.trim();
+            if (clock && commentVariationDepth === 0) output += ` __CLOCK__${clock.replace(/\s+/g, '')} `;
+            comment = '';
+          }
+        } else comment += char;
+        continue;
+      }
+      if (char === '{') { braceDepth = 1; comment = ''; commentVariationDepth = variationDepth; output += ' '; continue; }
       if (char === ';') { lineComment = true; continue; }
       if (char === '(') { variationDepth += 1; continue; }
       if (char === ')' && variationDepth) { variationDepth -= 1; continue; }
       if (!variationDepth) output += char;
     }
     return output.replace(/\$\d+/g, ' ');
+  }
+
+  function formatClockAnnotation(value) {
+    const parts = String(value || '').split(':');
+    if (parts.length < 2 || parts.length > 3 || parts.some((part) => !/^\d+(?:\.\d+)?$/.test(part))) return '';
+    const seconds = Math.floor(parts.length === 3
+      ? Number(parts[0]) * 3600 + Number(parts[1]) * 60 + Number(parts[2])
+      : Number(parts[0]) * 60 + Number(parts[1]));
+    if (!Number.isFinite(seconds) || seconds < 0) return '';
+    const hours = Math.floor(seconds / 3600), minutes = Math.floor(seconds % 3600 / 60), remainder = seconds % 60;
+    return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(remainder).padStart(2, '0')}` : `${minutes}:${String(remainder).padStart(2, '0')}`;
   }
 
   function sanToMove(pos, san) {
@@ -451,6 +473,11 @@
     const parsedHistory = [{ position: clone(startPosition), move: null, san: '', side: startPosition.turn, moveNumber: startPosition.fullmove }];
     let current = clone(startPosition), result = headers.Result || '*', ply = 0;
     for (const rawToken of tokens) {
+      if (rawToken.startsWith('__CLOCK__')) {
+        const clock = formatClockAnnotation(rawToken.slice('__CLOCK__'.length));
+        if (clock && parsedHistory.length > 1) parsedHistory.at(-1).clock = clock;
+        continue;
+      }
       let token = rawToken.replace(/^\d+(?:\.{1,3}|…)/, '');
       if (!token || /^\d+(?:\.{1,3}|…)$/.test(token)) continue;
       if (/^e\.p\.$/i.test(token)) continue;
@@ -598,12 +625,19 @@
         button.dataset.moveIndex = String(item.index); button.dataset.moveNumber = String(group.number);
         button.dataset.moveSide = item.entry.side; button.dataset.moveSan = item.entry.san;
         const san = document.createElement('span'); san.className = 'move-entry-san'; san.textContent = item.entry.san;
+        let clock = null;
+        if (item.entry.clock) {
+          clock = document.createElement('span'); clock.className = 'move-entry-clock'; clock.textContent = item.entry.clock;
+          clock.title = `Tempo restante após ${group.number}${side === 'white' ? '.' : '…'} ${item.entry.san}`;
+        }
         const symbol = document.createElement('span'); symbol.className = `move-quality-symbol quality-mark-${mark.kind}`;
         const qualityIcon = createBoardQualityIcon(mark.kind);
         if (qualityIcon) symbol.append(qualityIcon); else symbol.textContent = mark.symbol;
         symbol.title = mark.title; symbol.setAttribute('aria-hidden', 'true');
-        button.append(san, symbol);
-        button.setAttribute('aria-label', `Ir para ${group.number}${side === 'white' ? ' brancas' : ' pretas'}: ${item.entry.san}. Qualidade: ${mark.title}.`);
+        button.append(san);
+        if (clock) button.append(clock);
+        button.append(symbol);
+        button.setAttribute('aria-label', `Ir para ${group.number}${side === 'white' ? ' brancas' : ' pretas'}: ${item.entry.san}.${item.entry.clock ? ` Tempo restante após o lance: ${item.entry.clock}.` : ''} Qualidade: ${mark.title}.`);
         button.setAttribute('aria-pressed', String(item.index === historyIndex));
         if (item.index === historyIndex) button.classList.add('current');
         button.addEventListener('click', () => goTo(item.index)); pair.append(button);
@@ -2353,7 +2387,7 @@
     const move = result.playedMove;
     replayPlayedLineButton.hidden = !move || !result.pvUci || explainMoveButton.getAttribute('aria-expanded') !== 'true';
     gameReviewContext.textContent = move
-      ? `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}`
+      ? `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}${history[historyIndex]?.clock ? ` · relógio ${history[historyIndex].clock}` : ''}`
       : 'ANÁLISE DA POSIÇÃO INICIAL';
     if (result.quality) {
       gameReviewBadge.hidden = false;
@@ -2861,7 +2895,7 @@
     gameReviewQuality.hidden = false;
     exploreVariationButton.hidden = Boolean(variationSession || !gameReviewResults[historyIndex] || gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game' || analysisStopping);
     bestLineActions.hidden = Boolean(variationNeedsAnalysis || !gameReviewResults[historyIndex - 1]?.bestMove);
-    gameReviewContext.textContent = `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${playedMove.moveNumber}${playedMove.side === 'w' ? '.' : '…'} ${playedMove.san}`;
+    gameReviewContext.textContent = `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${playedMove.moveNumber}${playedMove.side === 'w' ? '.' : '…'} ${playedMove.san}${entry.clock ? ` · relógio ${entry.clock}` : ''}`;
     gameReviewDepth.textContent = `${source} · profundidade ${result.depth || selectedDepth} · calculada pelo Stockfish`;
 
     if (!previous?.score || previous.depth !== result.depth) {

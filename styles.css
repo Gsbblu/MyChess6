@@ -376,6 +376,7 @@ body.has-game .page-shell{padding-bottom:100px}
 .punishment-step-button:disabled{opacity:.65;cursor:default}
 .board-quality-marker{position:absolute;z-index:9;top:2px;right:2px;width:clamp(19px,2.2vw,25px);height:clamp(19px,2.2vw,25px);display:grid;place-items:center;border:1.5px solid #f4f7ed;border-radius:50%;box-shadow:0 1px 5px #000b;font:800 clamp(10px,1.25vw,14px)/1 Arial,sans-serif;text-shadow:0 1px 2px #0008;pointer-events:none}
 .game-review-quality>#game-review-explanation{margin:12px 0 9px;padding:12px 14px;border:1px solid #3d523f;border-left:3px solid #b7e181;border-radius:6px;background:linear-gradient(135deg,#202d22,#19231c);box-shadow:inset 0 1px #ffffff08,0 4px 14px #0002;color:#edf4e8;font-size:15px;line-height:1.65}
+.move-entry-clock{padding:1px 4px;border:1px solid #344a37;border-radius:4px;background:#1c2a20;color:#aecd93;font-size:9px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .square.quality-reviewed-square{z-index:9}
 .board-quality-marker.quality-best,.board-quality-marker.quality-excellent,.board-quality-marker.quality-good,.board-quality-marker.quality-great{background:#78ad55;color:#fff}
 .board-quality-marker.quality-brilliant{background:#49a9a5;color:#fff}
