@@ -2060,7 +2060,9 @@
       const card = document.createElement('article'); card.className = 'external-game-card';
       const info = document.createElement('div'); info.className = 'external-game-info';
       const heading = document.createElement('strong'); heading.textContent = `vs. ${item.opponent?.username || 'adversário'}`;
-      const meta = document.createElement('span'); meta.textContent = `${item.date} · ${game.time_class || game.time_control || 'xadrez'} · ${item.outcome}${item.player?.rating ? ` · ${item.player.rating}` : ''}`;
+      const ownRating = Number(item.player?.rating), opponentRating = Number(item.opponent?.rating);
+      const ratings = [Number.isFinite(ownRating) && ownRating > 0 ? `você ${ownRating}` : '', Number.isFinite(opponentRating) && opponentRating > 0 ? `adversário ${opponentRating}` : ''].filter(Boolean).join(' · ');
+      const meta = document.createElement('span'); meta.textContent = `${item.date} · ${game.time_class || game.time_control || 'xadrez'} · ${item.outcome}${ratings ? ` · ${ratings}` : ''}`;
       if (item.outcomeKey) meta.append(createOutcomeBadge(item.outcomeKey));
       info.append(heading, meta);
       const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Analisar'; button.className = 'secondary-button';
