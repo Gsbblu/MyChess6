@@ -44,6 +44,8 @@
   const insightsStatus = document.querySelector('#insights-status');
   const insightsSpeed = document.querySelector('#insights-speed');
   const insightsBody = document.querySelector('#insights-body');
+  let insightsRefreshTimer = 0;
+  let insightsRefreshId = 0;
   const analyzeButton = document.querySelector('#analyze-position');
   const cancelAnalysisButton = document.querySelector('#cancel-analysis');
   const engineStatusText = document.querySelector('#engine-status-text');
@@ -1916,6 +1918,23 @@
     } catch (error) { savedStatus.textContent = error.message || 'A biblioteca local não está disponível neste navegador.'; }
   }
 
+  function refreshInsightsForFilters() {
+    const refreshId = ++insightsRefreshId;
+    clearTimeout(insightsRefreshTimer);
+    insightsStatus.classList.add('is-loading');
+    insightsStatus.textContent = 'Atualizando estatísticas para o período selecionado…';
+    insightsPanel.setAttribute('aria-busy', 'true');
+    insightsRefreshTimer = setTimeout(async () => {
+      try { await renderSavedGames(); }
+      finally {
+        if (refreshId === insightsRefreshId) {
+          insightsStatus.classList.remove('is-loading');
+          insightsPanel.removeAttribute('aria-busy');
+        }
+      }
+    }, 120);
+  }
+
   async function saveCurrentAnalysis() {
     if (!loadedPgnGame || !loadedPgnSource || !gameReviewResults.length || variationSession) return;
     try {
@@ -2201,10 +2220,10 @@
   insightsTab.addEventListener('click', () => selectLibraryTab(true));
   insightsPeriod.addEventListener('change', () => {
     insightsCustomPeriodWrap.hidden = insightsPeriod.value !== 'custom';
-    renderSavedGames();
+    refreshInsightsForFilters();
   });
-  insightsCustomPeriod.addEventListener('input', () => renderSavedGames());
-  insightsSpeed.addEventListener('change', () => renderSavedGames());
+  insightsCustomPeriod.addEventListener('input', () => refreshInsightsForFilters());
+  insightsSpeed.addEventListener('change', () => refreshInsightsForFilters());
 
   function loadPgn(source) {
     try {

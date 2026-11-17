@@ -423,6 +423,7 @@ body.has-game .page-shell{padding-bottom:100px}
 .insights-heading select{min-width:140px;padding:9px 11px;border:1px solid #354138;border-radius:7px;background:#171e19;color:#dce5d9}
 .insights-heading input[type=number]{width:100px;padding:9px 11px;border:1px solid #354138;border-radius:7px;background:#171e19;color:#dce5d9;font:inherit;font-size:14px}
 .insights-status{min-height:18px;color:#aeb8ac;font-size:12px;line-height:1.5;margin:12px 0}
+.insights-status.is-loading{display:flex;align-items:center;gap:8px;color:#c5d9ba}.insights-status.is-loading::before{content:"";width:13px;height:13px;flex:none;border:2px solid #66805e;border-top-color:#c1e695;border-radius:50%;animation:insights-spin .75s linear infinite}@keyframes insights-spin{to{transform:rotate(360deg)}}
 .insights-body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .insights-box{border:1px solid #303a32;border-radius:10px;background:#171e19;padding:16px}
 .insights-box-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 14px}
