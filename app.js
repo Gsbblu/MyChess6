@@ -144,6 +144,7 @@
   let chessComShownGames = 24;
   let autoChessComBusy = false;
   let autoChessComQueue = [];
+  let selectedRatingMode = 'rapid';
   let cloudLastSeenGameUrl = '';
   let cloudSnapshotKey = '';
   let cloudImportBusy = false;
@@ -1501,7 +1502,7 @@
     wrap.addEventListener('lostpointercapture', (event) => endDrag(event, true));
   }
 
-  function ratingHistoryFor(records, profile, periodDays, speedFilter) {
+  function ratingHistoryFor(records, profile, periodDays) {
     const groups = new Map([['bullet', []], ['blitz', []], ['rapid', []], ['daily', []]]);
     const cutoff = periodDays ? Date.now() - periodDays * 86400000 : 0;
     const username = String(profile || '').trim().toLowerCase();
@@ -1522,7 +1523,7 @@
       if (cutoff && time < cutoff) continue;
       const speed = ['bullet', 'blitz', 'rapid', 'daily'].includes(source.timeClass)
         ? source.timeClass : insightsEngine.parseTimeControl(headers.TimeControl).speed;
-      if (!groups.has(speed) || (speedFilter !== 'all' && speed !== speedFilter)) continue;
+      if (!groups.has(speed)) continue;
       const rating = Number(headers[playerSide === 'w' ? 'WhiteElo' : 'BlackElo']);
       if (!Number.isFinite(rating) || rating < 1) continue;
       groups.get(speed).push({ rating, time, outcome: headers.Result || '*', id: record.id });
@@ -1532,8 +1533,8 @@
   }
 
   function ratingChart(mode, points) {
-    const namespace = 'http://www.w3.org/2000/svg', height = 240, left = 54, right = 20, top = 30, bottom = 196;
-    const width = Math.max(440, left + right + Math.max(0, points.length - 1) * 58);
+    const namespace = 'http://www.w3.org/2000/svg', height = 340, left = 66, right = 24, top = 36, bottom = 278;
+    const width = Math.max(720, left + right + Math.max(0, points.length - 1) * 72);
     const values = points.map((point) => point.rating), rawStep = (Math.max(...values) - Math.min(...values)) / 4;
     const tickStep = [10, 25, 50, 100, 200, 500, 1000].find((step) => step >= rawStep) || 1000;
     const minRating = Math.floor(Math.min(...values) / tickStep) * tickStep - tickStep;
@@ -1551,11 +1552,11 @@
       if (content !== undefined) element.textContent = content;
       return element;
     };
-    svg.append(make('text', { x: 8, y: 16, class: 'rating-axis-title' }, 'Rating'));
+    svg.append(make('text', { x: 8, y: 18, class: 'rating-axis-title' }, 'Rating Chess.com'));
     for (let value = minRating; value <= maxRating; value += tickStep) {
       const py = y(value);
       svg.append(make('line', { x1: left, x2: width - right, y1: py, y2: py, class: 'rating-grid-line' }));
-      svg.append(make('text', { x: left - 8, y: py + 4, 'text-anchor': 'end', class: 'rating-axis-label' }, String(value)));
+      svg.append(make('text', { x: left - 10, y: py + 5, 'text-anchor': 'end', class: 'rating-axis-label' }, String(value)));
     }
     svg.append(make('line', { x1: left, x2: left, y1: top, y2: bottom, class: 'rating-axis-line' }));
     svg.append(make('polyline', {
@@ -1565,10 +1566,10 @@
     const dateIndexes = new Set([0, Math.floor((points.length - 1) / 3), Math.floor(2 * (points.length - 1) / 3), points.length - 1]);
     points.forEach((point, index) => {
       const px = x(index), py = y(point.rating), date = new Date(point.time);
-      const dot = make('circle', { cx: px, cy: py, r: 4.2, class: 'rating-history-dot', fill: colors[mode] });
+      const dot = make('circle', { cx: px, cy: py, r: 5, class: 'rating-history-dot', fill: colors[mode] });
       dot.append(make('title', {}, `${date.toLocaleDateString('pt-BR')} · rating ${point.rating}`)); svg.append(dot);
-      svg.append(make('text', { x: px, y: py - 9, 'text-anchor': 'middle', class: 'rating-point-label' }, String(point.rating)));
-      if (dateIndexes.has(index)) svg.append(make('text', { x: px, y: 222, 'text-anchor': 'middle', class: 'rating-date-label' }, date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })));
+      svg.append(make('text', { x: px, y: py - 11, 'text-anchor': 'middle', class: 'rating-point-label' }, String(point.rating)));
+      if (dateIndexes.has(index)) svg.append(make('text', { x: px, y: 316, 'text-anchor': 'middle', class: 'rating-date-label' }, date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })));
     });
     const wrap = node('div', 'insight-spark-wrap rating-chart-scroll');
     wrap.setAttribute('aria-label', `Histórico de rating ${mode}; arraste para ver outras partidas.`);
@@ -1577,23 +1578,31 @@
     return wrap;
   }
 
-  function ratingHistoryPanel(records, profile, periodDays, speedFilter) {
-    const groups = ratingHistoryFor(records, profile, periodDays, speedFilter);
+  function ratingHistoryPanel(records, profile, periodDays) {
+    const groups = ratingHistoryFor(records, profile, periodDays);
     const names = { bullet: 'Bullet', blitz: 'Blitz', rapid: 'Rápidas', daily: 'Diárias' };
-    const panels = [...groups.entries()].filter(([, points]) => points.length);
-    const box = insightsBox('Rating no Chess.com', 'cada ponto é uma partida · arraste com o botão esquerdo e solte para deslizar');
-    if (!panels.length) {
+    const box = insightsBox('Rating no Chess.com', `${names[selectedRatingMode]} · cada ponto é uma partida · arraste com o botão esquerdo e solte para deslizar`);
+    const controls = node('div', 'rating-mode-switch');
+    controls.setAttribute('role', 'group'); controls.setAttribute('aria-label', 'Modo do rating');
+    for (const [mode, points] of groups) {
+      const button = node('button', `rating-mode-button${mode === selectedRatingMode ? ' selected' : ''}`, `${names[mode]} · ${points.length}`);
+      button.type = 'button'; button.dataset.ratingMode = mode;
+      button.setAttribute('aria-pressed', String(mode === selectedRatingMode));
+      button.addEventListener('click', () => {
+        selectedRatingMode = mode;
+        const replacement = ratingHistoryPanel(records, profile, periodDays);
+        box.replaceWith(replacement);
+        replacement.querySelector(`[data-rating-mode="${mode}"]`)?.focus();
+      });
+      controls.append(button);
+    }
+    box.append(controls);
+    const points = groups.get(selectedRatingMode) || [];
+    if (!points.length) {
       box.append(node('p', 'insights-empty', 'Não encontrei ratings nas partidas do Chess.com neste filtro.'));
       return box;
     }
-    const grid = node('div', 'rating-chart-grid');
-    for (const [mode, points] of panels) {
-      const card = node('section', 'rating-chart-card');
-      const heading = node('div', 'rating-chart-heading');
-      heading.append(node('h5', '', names[mode]), node('span', '', `${points.length} partidas`));
-      card.append(heading, ratingChart(mode, points)); grid.append(card);
-    }
-    box.append(grid);
+    box.append(ratingChart(selectedRatingMode, points));
     return box;
   }
 
@@ -1632,7 +1641,7 @@
       profile: chessComUsername.value, periodDays: Number(insightsPeriod.value) || 0, speed: insightsSpeed.value, themes: coach.themes,
       expected: (score, turn, side, rating) => expectedPoints(score, turn, side, rating)
     });
-    const ratingPanel = ratingHistoryPanel(records, chessComUsername.value, Number(insightsPeriod.value) || 0, insightsSpeed.value);
+    const ratingPanel = ratingHistoryPanel(records, chessComUsername.value, Number(insightsPeriod.value) || 0);
     const openMove = (reference) => { const record = byId.get(reference.recordId); if (record) { openSavedRecord(record, reference.index); } };
     const moveButton = (reference, label) => {
       const button = node('button', 'secondary-button insight-link', label || `Ver ${reference.text}`); button.type = 'button';
