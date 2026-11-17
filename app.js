@@ -1445,27 +1445,8 @@
     return box;
   }
 
-  function sparkline(series) {
-    const height = 78, pad = 8, pointSpacing = 16, width = Math.max(320, (series.length - 1) * pointSpacing + pad * 2), svgNs = 'http://www.w3.org/2000/svg';
-    const wrap = node('div', 'insight-spark-wrap');
-    const svg = document.createElementNS(svgNs, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('width', String(width)); svg.setAttribute('height', String(height)); svg.setAttribute('class', 'insight-spark'); svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', `Precisão estimada nas ${series.length} partidas, da mais antiga à mais recente: ${series.map((item) => Math.round(item.accuracy)).join(', ')}.`);
-    const values = series.map((item) => item.accuracy), low = Math.max(0, Math.min(...values) - 6), high = Math.min(100, Math.max(...values) + 6);
-    const x = (i) => (series.length === 1 ? width / 2 : pad + i * (width - 2 * pad) / (series.length - 1));
-    const y = (value) => height - pad - (high === low ? 0.5 : (value - low) / (high - low)) * (height - 2 * pad);
-    const line = document.createElementNS(svgNs, 'polyline');
-    line.setAttribute('points', series.map((item, i) => `${x(i).toFixed(1)},${y(item.accuracy).toFixed(1)}`).join(' ')); line.setAttribute('class', 'insight-spark-line');
-    svg.append(line);
-    series.forEach((item, i) => {
-      const dot = document.createElementNS(svgNs, 'circle');
-      dot.setAttribute('cx', x(i).toFixed(1)); dot.setAttribute('cy', y(item.accuracy).toFixed(1)); dot.setAttribute('r', '4'); dot.setAttribute('class', `insight-spark-dot outcome-${item.outcome || 'none'}`);
-      const tip = document.createElementNS(svgNs, 'title'); tip.textContent = `${new Date(item.time).toLocaleDateString('pt-BR')} · ${item.outcome ? OUTCOME_NAMES[item.outcome] : 'sem resultado'} · ${decimal(item.accuracy)}%`;
-      dot.append(tip); svg.append(dot);
-    });
-    wrap.append(svg);
+  function enableChartDragging(wrap) {
     wrap.setAttribute('role', 'region'); wrap.setAttribute('tabindex', '0');
-    wrap.setAttribute('aria-label', `Gráfico rolável com ${series.length} partidas, da mais antiga à mais recente.`);
     let dragStart = null;
     wrap.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
@@ -1489,6 +1470,125 @@
     wrap.addEventListener('pointerup', endDrag);
     wrap.addEventListener('pointercancel', endDrag);
     wrap.addEventListener('lostpointercapture', endDrag);
+  }
+
+  function ratingHistoryFor(records, profile, periodDays, speedFilter) {
+    const groups = new Map([['bullet', []], ['blitz', []], ['rapid', []], ['daily', []]]);
+    const cutoff = periodDays ? Date.now() - periodDays * 86400000 : 0;
+    const username = String(profile || '').trim().toLowerCase();
+    for (const record of records) {
+      const headers = record.headers || {}, source = record.source || {};
+      if (source.platform !== 'Chess.com' && !/chess\.com\/game\//i.test(source.url || '')) continue;
+      const white = String(headers.White || '').trim().toLowerCase();
+      const black = String(headers.Black || '').trim().toLowerCase();
+      const playerSide = white === username ? 'w' : black === username ? 'b' : null;
+      if (!playerSide) continue;
+      let time = Number(record.savedAt) || 0;
+      const dateText = [headers.UTCDate, headers.Date, headers.EndDate].find((value) => /^\d{4}\.\d{2}\.\d{2}$/.test(value || ''));
+      if (dateText) {
+        const [year, month, day] = dateText.split('.').map(Number);
+        const clock = /^(\d{1,2}):(\d{2}):(\d{2})/.exec(headers.UTCTime || headers.EndTime || '');
+        time = Date.UTC(year, month - 1, day, clock ? Number(clock[1]) : 12, clock ? Number(clock[2]) : 0, clock ? Number(clock[3]) : 0);
+      }
+      if (cutoff && time < cutoff) continue;
+      const speed = ['bullet', 'blitz', 'rapid', 'daily'].includes(source.timeClass)
+        ? source.timeClass : insightsEngine.parseTimeControl(headers.TimeControl).speed;
+      if (!groups.has(speed) || (speedFilter !== 'all' && speed !== speedFilter)) continue;
+      const rating = Number(headers[playerSide === 'w' ? 'WhiteElo' : 'BlackElo']);
+      if (!Number.isFinite(rating) || rating < 1) continue;
+      groups.get(speed).push({ rating, time, outcome: headers.Result || '*', id: record.id });
+    }
+    for (const points of groups.values()) points.sort((a, b) => a.time - b.time);
+    return groups;
+  }
+
+  function ratingChart(mode, points) {
+    const namespace = 'http://www.w3.org/2000/svg', height = 240, left = 54, right = 20, top = 30, bottom = 196;
+    const width = Math.max(440, left + right + Math.max(0, points.length - 1) * 58);
+    const values = points.map((point) => point.rating), rawStep = (Math.max(...values) - Math.min(...values)) / 4;
+    const tickStep = [10, 25, 50, 100, 200, 500, 1000].find((step) => step >= rawStep) || 1000;
+    const minRating = Math.floor(Math.min(...values) / tickStep) * tickStep - tickStep;
+    const maxRating = Math.ceil(Math.max(...values) / tickStep) * tickStep + tickStep;
+    const x = (index) => points.length === 1 ? (left + width - right) / 2 : left + index * (width - left - right) / (points.length - 1);
+    const y = (rating) => top + (maxRating - rating) / (maxRating - minRating) * (bottom - top);
+    const colors = { bullet: '#8dc8ed', blitz: '#b5d985', rapid: '#e0bd72', daily: '#c7a4ef' };
+    const svg = document.createElementNS(namespace, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('width', String(width)); svg.setAttribute('height', String(height));
+    svg.setAttribute('class', 'rating-chart-svg'); svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', `Rating ${mode} em ${points.length} partidas, de ${points[0].rating} a ${points.at(-1).rating}.`);
+    const make = (tag, attrs, content) => {
+      const element = document.createElementNS(namespace, tag);
+      for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, String(value));
+      if (content !== undefined) element.textContent = content;
+      return element;
+    };
+    svg.append(make('text', { x: 8, y: 16, class: 'rating-axis-title' }, 'Rating'));
+    for (let value = minRating; value <= maxRating; value += tickStep) {
+      const py = y(value);
+      svg.append(make('line', { x1: left, x2: width - right, y1: py, y2: py, class: 'rating-grid-line' }));
+      svg.append(make('text', { x: left - 8, y: py + 4, 'text-anchor': 'end', class: 'rating-axis-label' }, String(value)));
+    }
+    svg.append(make('line', { x1: left, x2: left, y1: top, y2: bottom, class: 'rating-axis-line' }));
+    svg.append(make('polyline', {
+      points: points.map((point, index) => `${x(index).toFixed(1)},${y(point.rating).toFixed(1)}`).join(' '),
+      class: 'rating-history-line', stroke: colors[mode]
+    }));
+    const dateIndexes = new Set([0, Math.floor((points.length - 1) / 3), Math.floor(2 * (points.length - 1) / 3), points.length - 1]);
+    points.forEach((point, index) => {
+      const px = x(index), py = y(point.rating), date = new Date(point.time);
+      const dot = make('circle', { cx: px, cy: py, r: 4.2, class: 'rating-history-dot', fill: colors[mode] });
+      dot.append(make('title', {}, `${date.toLocaleDateString('pt-BR')} · rating ${point.rating}`)); svg.append(dot);
+      svg.append(make('text', { x: px, y: py - 9, 'text-anchor': 'middle', class: 'rating-point-label' }, String(point.rating)));
+      if (dateIndexes.has(index)) svg.append(make('text', { x: px, y: 222, 'text-anchor': 'middle', class: 'rating-date-label' }, date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })));
+    });
+    const wrap = node('div', 'insight-spark-wrap rating-chart-scroll');
+    wrap.setAttribute('aria-label', `Histórico de rating ${mode}; arraste para ver outras partidas.`);
+    enableChartDragging(wrap); wrap.append(svg);
+    requestAnimationFrame(() => { wrap.scrollLeft = wrap.scrollWidth; });
+    return wrap;
+  }
+
+  function ratingHistoryPanel(records, profile, periodDays, speedFilter) {
+    const groups = ratingHistoryFor(records, profile, periodDays, speedFilter);
+    const names = { bullet: 'Bullet', blitz: 'Blitz', rapid: 'Rápidas', daily: 'Diárias' };
+    const panels = [...groups.entries()].filter(([, points]) => points.length);
+    const box = insightsBox('Rating no Chess.com', 'evolução por modo · cada ponto é uma partida analisada');
+    if (!panels.length) {
+      box.append(node('p', 'insights-empty', 'Não encontrei ratings nas partidas do Chess.com neste filtro.'));
+      return box;
+    }
+    const grid = node('div', 'rating-chart-grid');
+    for (const [mode, points] of panels) {
+      const card = node('section', 'rating-chart-card');
+      const heading = node('div', 'rating-chart-heading');
+      heading.append(node('h5', '', names[mode]), node('span', '', `${points.length} partidas`));
+      card.append(heading, ratingChart(mode, points)); grid.append(card);
+    }
+    box.append(grid);
+    return box;
+  }
+
+  function sparkline(series) {
+    const height = 78, pad = 8, pointSpacing = 16, width = Math.max(320, (series.length - 1) * pointSpacing + pad * 2), svgNs = 'http://www.w3.org/2000/svg';
+    const wrap = node('div', 'insight-spark-wrap');
+    const svg = document.createElementNS(svgNs, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('width', String(width)); svg.setAttribute('height', String(height)); svg.setAttribute('class', 'insight-spark'); svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', `Precisão estimada nas ${series.length} partidas, da mais antiga à mais recente: ${series.map((item) => Math.round(item.accuracy)).join(', ')}.`);
+    const values = series.map((item) => item.accuracy), low = Math.max(0, Math.min(...values) - 6), high = Math.min(100, Math.max(...values) + 6);
+    const x = (i) => (series.length === 1 ? width / 2 : pad + i * (width - 2 * pad) / (series.length - 1));
+    const y = (value) => height - pad - (high === low ? 0.5 : (value - low) / (high - low)) * (height - 2 * pad);
+    const line = document.createElementNS(svgNs, 'polyline');
+    line.setAttribute('points', series.map((item, i) => `${x(i).toFixed(1)},${y(item.accuracy).toFixed(1)}`).join(' ')); line.setAttribute('class', 'insight-spark-line');
+    svg.append(line);
+    series.forEach((item, i) => {
+      const dot = document.createElementNS(svgNs, 'circle');
+      dot.setAttribute('cx', x(i).toFixed(1)); dot.setAttribute('cy', y(item.accuracy).toFixed(1)); dot.setAttribute('r', '4'); dot.setAttribute('class', `insight-spark-dot outcome-${item.outcome || 'none'}`);
+      const tip = document.createElementNS(svgNs, 'title'); tip.textContent = `${new Date(item.time).toLocaleDateString('pt-BR')} · ${item.outcome ? OUTCOME_NAMES[item.outcome] : 'sem resultado'} · ${decimal(item.accuracy)}%`;
+      dot.append(tip); svg.append(dot);
+    });
+    wrap.append(svg);
+    wrap.setAttribute('aria-label', `Gráfico rolável com ${series.length} partidas, da mais antiga à mais recente.`);
+    enableChartDragging(wrap);
     const container = node('div', 'insight-spark-container');
     container.append(wrap);
     if (width > 480) container.append(node('span', 'insight-spark-hint', 'Role o gráfico para ver as partidas anteriores.'));
@@ -1503,6 +1603,7 @@
       profile: chessComUsername.value, periodDays: Number(insightsPeriod.value) || 0, speed: insightsSpeed.value, themes: coach.themes,
       expected: (score, turn, side, rating) => expectedPoints(score, turn, side, rating)
     });
+    const ratingPanel = ratingHistoryPanel(records, chessComUsername.value, Number(insightsPeriod.value) || 0, insightsSpeed.value);
     const openMove = (reference) => { const record = byId.get(reference.recordId); if (record) { openSavedRecord(record, reference.index); } };
     const moveButton = (reference, label) => {
       const button = node('button', 'secondary-button insight-link', label || `Ver ${reference.text}`); button.type = 'button';
@@ -1518,7 +1619,7 @@
       empty.append(node('p', 'insights-empty', report.counts.stored
         ? 'Mude o período ou o ritmo, ou analise mais partidas. Só entram partidas com lances classificados.'
         : 'Na aba Partidas, escolha uma partida sua e clique em Analisar. Quando a análise terminar ela é salva aqui e esta aba mostra precisão, padrões de erro, aberturas, tempo e o que treinar primeiro.'));
-      insightsBody.append(empty);
+      insightsBody.append(ratingPanel, empty);
       return;
     }
 
@@ -1553,7 +1654,7 @@
     addFact('Perda média', `${decimal(overview.avgLoss * 100)}%`, 'de chance esperada por lance');
     results.append(facts);
     hero.append(results);
-    insightsBody.append(hero);
+    insightsBody.append(hero, ratingPanel);
 
     // 2. O que treinar primeiro
     const training = insightsBox('O que treinar primeiro', 'ordem estimada por impacto');
@@ -1828,7 +1929,7 @@
       const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Analisar'; button.className = 'secondary-button';
       button.addEventListener('click', () => {
         if (!game.pgn) { chessComStatus.textContent = 'O Chess.com não forneceu PGN para esta partida.'; return; }
-        const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com' };
+        const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com', timeClass: game.time_class || '' };
         if (loadPgn(game.pgn)) { activeGameSource = source; document.querySelector('.moves-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); requestGameAnalysis(); }
       });
       card.append(info, button); chessComGames.append(card);
@@ -1915,7 +2016,7 @@
   }
 
   function startAutoChessComGame(game) {
-    const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com' };
+    const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com', timeClass: game.time_class || '' };
     if (!loadPgn(game.pgn)) {
       autoChessComBusy = false; autoChessComQueue = [];
       window.MyChess6Cloud.archiveState = 'error';
