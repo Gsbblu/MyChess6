@@ -68,6 +68,10 @@
   const gameReviewContext = document.querySelector('#game-review-context');
   const gameReviewBadge = document.querySelector('#game-review-badge');
   const gameReviewExplanation = document.querySelector('#game-review-explanation');
+  const superAnalysisActions = document.querySelector('#super-analysis-actions');
+  const openSuperAnalysisButton = document.querySelector('#open-super-analysis');
+  const copySuperAnalysisButton = document.querySelector('#copy-super-analysis');
+  const superAnalysisStatus = document.querySelector('#super-analysis-status');
   const gameReviewQuestion = document.querySelector('#game-review-question');
   const exerciseFeedback = document.querySelector('#exercise-feedback');
   const revealExerciseButton = document.querySelector('#reveal-exercise');
@@ -2377,6 +2381,7 @@
     revealExerciseButton.hidden = true; exerciseFeedback.hidden = true;
     punishmentWalkthrough.hidden = true;
     gameReviewQuality.hidden = true;
+    superAnalysisActions.hidden = true; superAnalysisStatus.textContent = '';
     gameReviewQuestion.hidden = true;
     bestLineActions.hidden = true;
     replayPlayedLineButton.hidden = true;
@@ -2400,6 +2405,7 @@
 
   function renderGameReviewAtCurrentPosition() {
     const result = gameReviewResults[historyIndex];
+    updateSuperAnalysisActions();
     visibleArrowAnalysis = result || null;
     renderBestMoves(result);
     renderBoardQualityMarker();
@@ -2622,6 +2628,63 @@
     const pawns = whiteScore / 100;
     return pawns > 0 ? `+${pawns.toFixed(1)}` : pawns < 0 ? `−${Math.abs(pawns).toFixed(1)}` : '0.0';
   }
+
+  function superAnalysisPrompt() {
+    const entry = history[historyIndex], before = gameReviewResults[historyIndex - 1], after = gameReviewResults[historyIndex];
+    if (!entry?.move || !before?.score || !after?.score || !before.pv || !after.pv || before.depth !== after.depth) return '';
+    const move = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'} ${entry.san}`;
+    const quality = after.quality;
+    const loss = Number.isFinite(quality?.loss) ? `Perda estimada pelo app: ${(quality.loss * 100).toFixed(1)} pontos percentuais de chance.` : '';
+    const players = [gameHeaders.White, gameHeaders.Black].filter((name) => name && name !== '?').join(' × ');
+    return [
+      'Faça uma super análise didática deste lance de xadrez usando as evidências do Stockfish abaixo.',
+      'Explique a causa concreta da qualidade do lance. Verifique as sequências pelas posições e linhas fornecidas; não invente peças, ameaças ou motivos estratégicos. Diferencie o que a linha demonstra de uma hipótese. Se os dados não provarem uma causa, diga isso claramente.',
+      'Compare o lance jogado com a melhor alternativa do motor. Se houver uma tática, mostre a sequência exata que a comprova. Não use apenas “perde material” ou a diferença numérica de avaliação como explicação.',
+      '',
+      `Partida: ${players || 'jogadores não informados'} · resultado ${gameResult || '*'}`,
+      `Lance analisado: ${move} · ${entry.side === 'w' ? 'brancas' : 'pretas'}${entry.clock ? ` · relógio após o lance ${entry.clock}` : ''}`,
+      `Classificação do app: ${quality?.label || 'indisponível'}. ${loss}`,
+      `Profundidade Stockfish: ${before.depth}. Avaliações abaixo são do ponto de vista das brancas.`,
+      '',
+      `FEN antes do lance: ${currentFen(history[historyIndex - 1].position)}`,
+      `FEN depois do lance: ${currentFen(entry.position)}`,
+      `Avaliação antes do lance: ${resultEvaluation(before.score, before.turn)} · melhor lance ${before.best || 'indisponível'}`,
+      `Linha principal antes do lance: ${before.pv}`,
+      `Avaliação depois do lance: ${resultEvaluation(after.score, after.turn)} · melhor resposta ${after.best || 'indisponível'}`,
+      `Linha principal depois do lance: ${after.pv}`,
+      '',
+      'Responda em português, de forma curta e didática, nesta ordem: ideia do melhor lance; o que muda com o lance jogado; linha que prova o motivo; confiança da explicação. Stockfish calcula variantes e avaliações, mas não fornece por si só uma explicação humana.'
+    ].filter(Boolean).join('\n');
+  }
+
+  function updateSuperAnalysisActions() {
+    const prompt = superAnalysisPrompt();
+    superAnalysisActions.hidden = !prompt || Boolean(variationSession || exerciseActiveHere());
+    if (superAnalysisActions.hidden) superAnalysisStatus.textContent = '';
+  }
+
+  function openSuperAnalysis() {
+    const prompt = superAnalysisPrompt();
+    if (!prompt) { superAnalysisStatus.textContent = 'Faça uma análise completa do lance antes de abrir a super análise.'; return; }
+    const url = new URL('https://chatgpt.com/');
+    url.searchParams.set('q', prompt);
+    window.open(url.toString(), '_blank', 'noopener,noreferrer');
+    superAnalysisStatus.textContent = 'Abri o ChatGPT. Se o pedido não aparecer preenchido, clique em “Copiar prompt” e cole na conversa.';
+  }
+
+  async function copySuperAnalysisPrompt() {
+    const prompt = superAnalysisPrompt();
+    if (!prompt) { superAnalysisStatus.textContent = 'Faça uma análise completa do lance antes de copiar o pedido.'; return; }
+    try {
+      await navigator.clipboard.writeText(prompt);
+      superAnalysisStatus.textContent = 'Pedido copiado. Cole-o no ChatGPT para fazer a super análise.';
+    } catch {
+      superAnalysisStatus.textContent = 'Não consegui acessar a área de transferência. Abra o ChatGPT pelo botão e tente novamente.';
+    }
+  }
+
+  openSuperAnalysisButton.addEventListener('click', openSuperAnalysis);
+  copySuperAnalysisButton.addEventListener('click', copySuperAnalysisPrompt);
 
   function scoreForSide(score, rootTurn, side) {
     if (!score) return null;
@@ -2906,10 +2969,12 @@
     const previousEntry = history[historyIndex - 1];
     if (!entry?.move || !previousEntry) {
       gameReviewQuality.hidden = true;
+      superAnalysisActions.hidden = true;
       gameReviewQuestion.hidden = true;
       hideDidacticMoveExplanation();
       return;
     }
+    updateSuperAnalysisActions();
 
     const previous = gameReviewResults[historyIndex - 1];
     const playedMove = {
