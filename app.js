@@ -395,6 +395,25 @@
     return hours ? `${hours}:${String(minutes).padStart(2, '0')}:${String(remainder).padStart(2, '0')}` : `${minutes}:${String(remainder).padStart(2, '0')}`;
   }
 
+  function formatGameDateTime(date) {
+    if (!(date instanceof Date) || !Number.isFinite(date.getTime())) return '';
+    const day = date.toLocaleDateString('pt-BR');
+    const time = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return `${day} às ${time}`;
+  }
+
+  function pgnGameDateTime(headers) {
+    const utcDate = /^(\d{4})\.(\d{2})\.(\d{2})$/.exec(headers?.UTCDate || '');
+    const utcTime = /^(\d{2}):(\d{2})(?::(\d{2}))?/.exec(headers?.UTCTime || '');
+    if (utcDate && utcTime) {
+      const [, year, month, day] = utcDate.map(Number);
+      const [, hour, minute, second = '0'] = utcTime;
+      const timestamp = new Date(Date.UTC(year, month - 1, day, Number(hour), Number(minute), Number(second)));
+      if (timestamp.getUTCFullYear() === year && timestamp.getUTCMonth() === month - 1 && timestamp.getUTCDate() === day) return formatGameDateTime(timestamp);
+    }
+    return headers?.Date && headers.Date !== '????.??.??' ? headers.Date.replaceAll('.', '-') : '';
+  }
+
   function sanToMove(pos, san) {
     let token = san.normalize('NFKC').trim().replace(/[‐‑‒–—−]/g, '-').replace(/[!?+#]+$/g, '').replace(/e\.p\.$/i, '').trim();
     const castleToken = token.toUpperCase().replace(/0/g, 'O').replace(/-/g, '');
@@ -1942,7 +1961,7 @@
         const outcome = getPlayerOutcome(record.headers, record.headers?.Result);
         if (outcome) title.append(createOutcomeBadge(outcome));
         const details = document.createElement('span');
-        const date = record.headers?.Date && record.headers.Date !== '????.??.??' ? record.headers.Date.replaceAll('.', '-') : new Date(record.savedAt).toLocaleDateString('pt-BR');
+        const date = pgnGameDateTime(record.headers) || new Date(record.savedAt).toLocaleDateString('pt-BR');
         const classes = Object.entries(record.qualities || {}).map(([name, count]) => `${count} ${name.toLowerCase()}`).join(' · ');
         details.textContent = `${date} · ${record.moves || 0} lances · prof. ${record.depth || '—'}${classes ? ` · ${classes}` : ''}`;
         const actions = document.createElement('div'); actions.className = 'saved-game-actions';
@@ -2095,7 +2114,7 @@
     const opponent = player === game.white ? game.black : game.white;
     const outcome = player?.result === 'win' ? 'Vitória' : ['agreed', 'repetition', 'stalemate', 'insufficient'].includes(player?.result) ? 'Empate' : player?.result ? 'Derrota' : 'Resultado —';
     const outcomeKey = player?.result === 'win' ? 'win' : ['agreed', 'repetition', 'stalemate', 'insufficient'].includes(player?.result) ? 'draw' : player?.result ? 'loss' : null;
-    const date = game.end_time ? new Date(game.end_time * 1000).toLocaleDateString('pt-BR') : 'Data —';
+    const date = game.end_time ? formatGameDateTime(new Date(game.end_time * 1000)) : 'Data —';
     return { game, player, opponent, outcome, outcomeKey, date };
   }
 
