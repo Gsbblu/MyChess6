@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-super-analysis-1">
+    <link rel="stylesheet" href="styles.css?v=mychess6-cloudflare-super-analysis-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -124,9 +124,12 @@
               <div class="game-review-quality-heading"><span id="game-review-context">REVISÃO DA PARTIDA</span><strong class="move-quality-badge" id="game-review-badge"></strong></div>
               <p id="game-review-explanation"></p>
               <div class="super-analysis-actions" id="super-analysis-actions" hidden>
-                <button class="secondary-button" id="open-super-analysis" type="button">Super análise com IA <span aria-hidden="true">↗</span></button>
+                <button class="secondary-button" id="run-site-super-analysis" type="button" hidden>Analisar aqui <span aria-hidden="true">✦</span></button>
+                <button class="secondary-button" id="open-super-analysis" type="button">Abrir no ChatGPT <span aria-hidden="true">↗</span></button>
                 <button class="text-button" id="copy-super-analysis" type="button">Copiar prompt</button>
-                <small>Envia ao ChatGPT a posição, as linhas do Stockfish e os nomes da partida. A análise usa sua conta e os limites do plano escolhido.</small>
+                <small>Ao modelo vão a posição, o lance e as linhas do Stockfish, sem nomes da partida. A Cloudflare também processa dados técnicos, como o IP, para verificar e limitar pedidos. A análise depende da cota gratuita.</small>
+                <div class="super-analysis-challenge" id="super-analysis-challenge" hidden></div>
+                <div class="super-analysis-result" id="super-analysis-result" hidden aria-live="polite"></div>
                 <span class="super-analysis-status" id="super-analysis-status" role="status" aria-live="polite"></span>
               </div>
               <p class="coach-question" id="game-review-question" hidden></p>
@@ -229,6 +232,7 @@
     </dialog>
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
-    <script src="app.js?v=mychess6-super-analysis-1" defer></script>
+    <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
+    <script src="app.js?v=mychess6-cloudflare-super-analysis-1" defer></script>
   </body>
 </html>

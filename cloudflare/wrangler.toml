@@ -1,0 +1,19 @@
+name = "mychess6-super-analysis"
+main = "worker.js"
+compatibility_date = "2026-11-19"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGIN = "https://gsbblu.github.io"
+ALLOWED_HOSTNAME = "gsbblu.github.io"
+
+[ai]
+binding = "AI"
+
+[[ratelimits]]
+name = "SUPER_ANALYSIS_LIMITER"
+namespace_id = "6281192026"
+
+[ratelimits.simple]
+limit = 3
+period = 60

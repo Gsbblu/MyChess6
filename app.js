@@ -69,8 +69,11 @@
   const gameReviewBadge = document.querySelector('#game-review-badge');
   const gameReviewExplanation = document.querySelector('#game-review-explanation');
   const superAnalysisActions = document.querySelector('#super-analysis-actions');
+  const runSiteSuperAnalysisButton = document.querySelector('#run-site-super-analysis');
   const openSuperAnalysisButton = document.querySelector('#open-super-analysis');
   const copySuperAnalysisButton = document.querySelector('#copy-super-analysis');
+  const superAnalysisChallenge = document.querySelector('#super-analysis-challenge');
+  const superAnalysisResult = document.querySelector('#super-analysis-result');
   const superAnalysisStatus = document.querySelector('#super-analysis-status');
   const gameReviewQuestion = document.querySelector('#game-review-question');
   const exerciseFeedback = document.querySelector('#exercise-feedback');
@@ -143,6 +146,11 @@
   let analysisSerial = 0;
   let gameBatch = null;
   let gameReviewResults = [];
+  let siteSuperAnalysisResultKey = '';
+  let siteSuperAnalysisRequestId = 0;
+  let siteSuperAnalysisTurnstileWidget = null;
+  let siteSuperAnalysisBusy = false;
+  let siteSuperAnalysisAbortController = null;
   let currentBoardQuality = null;
   let gameSummaryRenderedCount = -1;
   let variationSession = null;
@@ -2382,6 +2390,9 @@
     punishmentWalkthrough.hidden = true;
     gameReviewQuality.hidden = true;
     superAnalysisActions.hidden = true; superAnalysisStatus.textContent = '';
+    superAnalysisChallenge.hidden = true; superAnalysisResult.hidden = true;
+    siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
+    siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
     gameReviewQuestion.hidden = true;
     bestLineActions.hidden = true;
     replayPlayedLineButton.hidden = true;
@@ -2629,20 +2640,20 @@
     return pawns > 0 ? `+${pawns.toFixed(1)}` : pawns < 0 ? `−${Math.abs(pawns).toFixed(1)}` : '0.0';
   }
 
-  function superAnalysisPrompt() {
+  function superAnalysisPrompt({ includeMatchDetails = false } = {}) {
     const entry = history[historyIndex], before = gameReviewResults[historyIndex - 1], after = gameReviewResults[historyIndex];
     if (!entry?.move || !before?.score || !after?.score || !before.pv || !after.pv || before.depth !== after.depth) return '';
     const move = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'} ${entry.san}`;
     const quality = after.quality;
     const loss = Number.isFinite(quality?.loss) ? `Perda estimada pelo app: ${(quality.loss * 100).toFixed(1)} pontos percentuais de chance.` : '';
-    const players = [gameHeaders.White, gameHeaders.Black].filter((name) => name && name !== '?').join(' × ');
+    const players = includeMatchDetails ? [gameHeaders.White, gameHeaders.Black].filter((name) => name && name !== '?').join(' × ') : '';
     return [
       'Faça uma super análise didática deste lance de xadrez usando as evidências do Stockfish abaixo.',
       'Explique a causa concreta da qualidade do lance. Verifique as sequências pelas posições e linhas fornecidas; não invente peças, ameaças ou motivos estratégicos. Diferencie o que a linha demonstra de uma hipótese. Se os dados não provarem uma causa, diga isso claramente.',
       'Compare o lance jogado com a melhor alternativa do motor. Se houver uma tática, mostre a sequência exata que a comprova. Não use apenas “perde material” ou a diferença numérica de avaliação como explicação.',
       '',
-      `Partida: ${players || 'jogadores não informados'} · resultado ${gameResult || '*'}`,
-      `Lance analisado: ${move} · ${entry.side === 'w' ? 'brancas' : 'pretas'}${entry.clock ? ` · relógio após o lance ${entry.clock}` : ''}`,
+      includeMatchDetails ? `Partida: ${players || 'jogadores não informados'} · resultado ${gameResult || '*'}` : '',
+      `Lance analisado: ${move} · ${entry.side === 'w' ? 'brancas' : 'pretas'}${includeMatchDetails && entry.clock ? ` · relógio após o lance ${entry.clock}` : ''}`,
       `Classificação do app: ${quality?.label || 'indisponível'}. ${loss}`,
       `Profundidade Stockfish: ${before.depth}. Avaliações abaixo são do ponto de vista das brancas.`,
       '',
@@ -2660,7 +2671,123 @@
   function updateSuperAnalysisActions() {
     const prompt = superAnalysisPrompt();
     superAnalysisActions.hidden = !prompt || Boolean(variationSession || exerciseActiveHere());
+    const config = window.MYCHESS_SUPER_ANALYSIS || {};
+    runSiteSuperAnalysisButton.hidden = !config.endpoint || !config.turnstileSiteKey;
+    const currentKey = prompt ? `${currentFen(history[historyIndex - 1].position)}|${currentFen(history[historyIndex].position)}` : '';
+    if (siteSuperAnalysisResultKey !== currentKey) {
+      siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
+      siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
+      siteSuperAnalysisResultKey = currentKey;
+      superAnalysisResult.hidden = true;
+      superAnalysisResult.textContent = '';
+      superAnalysisChallenge.hidden = true;
+      superAnalysisStatus.textContent = '';
+    }
     if (superAnalysisActions.hidden) superAnalysisStatus.textContent = '';
+  }
+
+  let turnstileScriptPromise = null;
+
+  function loadTurnstileScript() {
+    if (window.turnstile) return Promise.resolve(window.turnstile);
+    if (turnstileScriptPromise) return turnstileScriptPromise;
+    turnstileScriptPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      script.onload = () => window.turnstile ? resolve(window.turnstile) : reject(new Error('Não consegui carregar a verificação de segurança.'));
+      script.onerror = () => reject(new Error('Não consegui carregar a verificação de segurança.'));
+      document.head.append(script);
+    }).catch((error) => { turnstileScriptPromise = null; throw error; });
+    return turnstileScriptPromise;
+  }
+
+  function inSiteSuperAnalysisErrorMessage(status, detail = '') {
+    if (status === 401 || status === 403) return 'A verificação foi recusada. Atualize a página e tente novamente.';
+    if (status === 429) return 'Muitos pedidos em sequência. Aguarde um minuto e tente novamente.';
+    if (status === 503) return 'O modelo está indisponível ou a cota gratuita do dia acabou.';
+    return detail || 'Não foi possível concluir a super análise. Tente novamente.';
+  }
+
+  async function requestSiteSuperAnalysis(turnstileToken) {
+    const config = window.MYCHESS_SUPER_ANALYSIS || {};
+    const prompt = superAnalysisPrompt({ includeMatchDetails: false });
+    if (!prompt || !config.endpoint) {
+      superAnalysisStatus.textContent = 'A integração da super análise ainda não está configurada.';
+      return;
+    }
+    siteSuperAnalysisBusy = true;
+    runSiteSuperAnalysisButton.disabled = true;
+    superAnalysisStatus.textContent = 'Analisando a posição…';
+    const requestId = ++siteSuperAnalysisRequestId;
+    const resultKey = siteSuperAnalysisResultKey;
+    siteSuperAnalysisAbortController = new AbortController();
+    try {
+      const response = await fetch(config.endpoint, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, turnstileToken }),
+        signal: siteSuperAnalysisAbortController.signal
+      });
+      let payload = {};
+      try { payload = await response.json(); } catch {}
+      if (!response.ok) throw new Error(inSiteSuperAnalysisErrorMessage(response.status, payload.error));
+      const answer = typeof payload.answer === 'string' ? payload.answer.trim() : '';
+      if (!answer) throw new Error('O modelo não retornou uma análise. Tente novamente.');
+      if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisResultKey) {
+        superAnalysisResult.textContent = answer;
+        superAnalysisResult.hidden = false;
+        superAnalysisStatus.textContent = 'Análise concluída.';
+      }
+    } catch (error) {
+      if (requestId === siteSuperAnalysisRequestId) superAnalysisStatus.textContent = error.message || 'Falha de conexão. Tente novamente.';
+    } finally {
+      if (requestId === siteSuperAnalysisRequestId) {
+        siteSuperAnalysisAbortController = null;
+        siteSuperAnalysisBusy = false;
+        runSiteSuperAnalysisButton.disabled = false;
+      }
+    }
+  }
+
+  async function runSiteSuperAnalysis() {
+    if (siteSuperAnalysisBusy) return;
+    const config = window.MYCHESS_SUPER_ANALYSIS || {};
+    if (!config.endpoint || !config.turnstileSiteKey) {
+      superAnalysisStatus.textContent = 'A análise integrada ainda não está configurada.';
+      return;
+    }
+    superAnalysisChallenge.hidden = false;
+    siteSuperAnalysisBusy = true;
+    runSiteSuperAnalysisButton.disabled = true;
+    superAnalysisStatus.textContent = 'Carregando verificação de segurança…';
+    const requestedKey = siteSuperAnalysisResultKey;
+    try {
+      const turnstile = await loadTurnstileScript();
+      if (requestedKey !== siteSuperAnalysisResultKey) return;
+      if (siteSuperAnalysisTurnstileWidget !== null) {
+        turnstile.remove(siteSuperAnalysisTurnstileWidget);
+        siteSuperAnalysisTurnstileWidget = null;
+      }
+      superAnalysisChallenge.replaceChildren();
+      superAnalysisStatus.textContent = 'Confirme a verificação para iniciar a análise.';
+      siteSuperAnalysisTurnstileWidget = turnstile.render(superAnalysisChallenge, {
+        sitekey: config.turnstileSiteKey,
+        action: 'mychess-super-analysis',
+        theme: 'dark',
+        callback: (token) => { if (requestedKey === siteSuperAnalysisResultKey) requestSiteSuperAnalysis(token); },
+        'expired-callback': () => { if (!siteSuperAnalysisBusy) superAnalysisStatus.textContent = 'A verificação expirou. Clique em “Analisar aqui” para tentar novamente.'; },
+        'error-callback': () => { superAnalysisStatus.textContent = 'A verificação falhou. Confira sua conexão e tente novamente.'; }
+      });
+      siteSuperAnalysisBusy = false;
+      runSiteSuperAnalysisButton.disabled = false;
+    } catch (error) {
+      superAnalysisStatus.textContent = error.message || 'Não consegui iniciar a verificação de segurança.';
+      siteSuperAnalysisBusy = false;
+      runSiteSuperAnalysisButton.disabled = false;
+    }
   }
 
   function openSuperAnalysis() {
@@ -2685,6 +2812,7 @@
 
   openSuperAnalysisButton.addEventListener('click', openSuperAnalysis);
   copySuperAnalysisButton.addEventListener('click', copySuperAnalysisPrompt);
+  runSiteSuperAnalysisButton.addEventListener('click', runSiteSuperAnalysis);
 
   function scoreForSide(score, rootTurn, side) {
     if (!score) return null;
