@@ -2703,9 +2703,9 @@
   }
 
   function inSiteSuperAnalysisErrorMessage(status, detail = '') {
-    if (status === 401 || status === 403) return 'A verificação foi recusada. Atualize a página e tente novamente.';
+    if (status === 401 || status === 403) return detail || 'A verificação foi recusada. Atualize a página e tente novamente.';
     if (status === 429) return 'Muitos pedidos em sequência. Aguarde um minuto e tente novamente.';
-    if (status === 503) return 'O modelo está indisponível ou a cota gratuita do dia acabou.';
+    if (status === 503) return detail || 'O modelo está indisponível ou a cota gratuita do dia acabou.';
     return detail || 'Não foi possível concluir a super análise. Tente novamente.';
   }
 

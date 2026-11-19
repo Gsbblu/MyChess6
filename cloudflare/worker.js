@@ -18,7 +18,8 @@ function json(body, status, origin) {
 }
 
 async function validTurnstile(token, request, env) {
-  if (!token || token.length > 2_048 || !env.TURNSTILE_SECRET_KEY) return false;
+  if (!env.TURNSTILE_SECRET_KEY) return { ok: false, reason: 'missing-secret' };
+  if (!token || token.length > 2_048) return { ok: false, reason: 'invalid-token' };
   const form = new URLSearchParams({
     secret: env.TURNSTILE_SECRET_KEY,
     response: token
@@ -31,11 +32,18 @@ async function validTurnstile(token, request, env) {
     body: form,
     headers: { 'content-type': 'application/x-www-form-urlencoded' }
   });
-  if (!response.ok) return false;
+  if (!response.ok) return { ok: false, reason: 'siteverify-http-error' };
   const result = await response.json();
-  return result.success === true
-    && result.hostname === env.ALLOWED_HOSTNAME
-    && result.action === 'mychess-super-analysis';
+  if (result.success !== true) {
+    return { ok: false, reason: 'siteverify-rejected', codes: result['error-codes'] || [] };
+  }
+  if (result.hostname !== env.ALLOWED_HOSTNAME) {
+    return { ok: false, reason: 'hostname-mismatch', hostname: result.hostname || '' };
+  }
+  if (result.action !== 'mychess-super-analysis') {
+    return { ok: false, reason: 'action-mismatch', action: result.action || '' };
+  }
+  return { ok: true };
 }
 
 export default {
@@ -70,7 +78,18 @@ export default {
     }
 
     try {
-      if (!await validTurnstile(body.turnstileToken, request, env)) {
+      const verification = await validTurnstile(body.turnstileToken, request, env);
+      if (!verification.ok) {
+        // These fields are safe to log; never log the token, secret, prompt, or client IP.
+        console.warn('Turnstile verification failed', {
+          reason: verification.reason,
+          codes: verification.codes,
+          hostname: verification.hostname,
+          action: verification.action
+        });
+        if (verification.reason === 'missing-secret') {
+          return json({ error: 'A verificação de segurança não está configurada no Worker.' }, 503, origin);
+        }
         return json({ error: 'A verificação de segurança expirou ou não foi aprovada.' }, 403, origin);
       }
     } catch {

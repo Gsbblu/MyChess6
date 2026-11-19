@@ -11,6 +11,7 @@ A integração foi preparada e publicada. O Worker já está implantado pela int
 - Endpoint: `https://mychess6-super-analysis.gsbblu.workers.dev/analyze`.
 - Modelo: `@cf/google/gemma-4-26b-a4b-it`, por meio da binding `AI`.
 - Binding de controle de frequência: `SUPER_ANALYSIS_LIMITER`.
+- O `wrangler.toml` define `ALLOWED_ORIGIN` para CORS e `ALLOWED_HOSTNAME` para a validação da resposta do Turnstile; ambos precisam permanecer configurados.
 - Turnstile: widget criado para `gsbblu.github.io`; a secret key foi cadastrada no Worker com o nome `TURNSTILE_SECRET_KEY`.
 - A configuração pública `super-analysis-config.js` contém o endpoint e a site key. A site key é pública; a secret key não deve ser colocada no repositório ou enviada em mensagens.
 - A publicação do site após configurar o endpoint terminou com sucesso: <https://github.com/Gsbblu/MyChess6/actions/runs/44528929207>.
@@ -45,7 +46,7 @@ Não marcar a funcionalidade como validada antes desse teste. A secret key não 
 ### Worker via Cloudflare Workers Builds
 
 1. No Cloudflare, **Workers & Pages → Create application → GitHub** e conecte `Gsbblu/MyChess6`.
-2. Use o nome `mychess6-super-analysis`, branch `main`, diretório raiz `cloudflare`, build command vazio e deploy command `npx wrangler deploy`.
+2. Use o nome `mychess6-super-analysis`, branch `main`, diretório raiz `cloudflare`, build command vazio e deploy command `npx wrangler deploy`. Mantenha as variáveis `ALLOWED_ORIGIN` e `ALLOWED_HOSTNAME` declaradas em `wrangler.toml`; a segunda é comparada com o hostname devolvido pelo Siteverify.
 3. A configuração versionada em `cloudflare/wrangler.toml` declara a binding Workers AI, o modelo é escolhido em `cloudflare/worker.js`, e o deploy deve manter o endereço `workers.dev` habilitado.
 4. Depois do primeiro deploy, configure o segredo em **Worker → Settings → Variables and Secrets → Add → Secret**:
    - Variable name: `TURNSTILE_SECRET_KEY`
