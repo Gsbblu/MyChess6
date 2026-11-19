@@ -88,7 +88,7 @@ export default {
           action: verification.action
         });
         if (verification.reason === 'missing-secret') {
-          return json({ error: 'A verificação de segurança não está configurada no Worker.' }, 503, origin);
+          return json({ error: 'O secret do Turnstile não está disponível na versão ativa do Worker. Publique uma nova versão após salvar a configuração.' }, 503, origin);
         }
         return json({ error: 'A verificação de segurança expirou ou não foi aprovada.' }, 403, origin);
       }

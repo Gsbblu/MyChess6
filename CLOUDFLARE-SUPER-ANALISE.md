@@ -53,6 +53,8 @@ Não marcar a funcionalidade como validada antes desse teste. A secret key não 
    - Value: secret key do widget Turnstile
 5. Salve e faça Deploy. Nunca grave esse valor em `wrangler.toml`, `super-analysis-config.js` ou no GitHub.
 
+Se o secret aparecer em **Variables and Secrets**, mas o painel continuar dizendo que ele não está disponível, confirme que foi salvo no ambiente **Production** e publique uma nova versão. Este Worker usa Workers Builds conectado à branch `main`; um novo commit na pasta `cloudflare/` inicia o build e deploy, preservando secrets que não estejam no arquivo de configuração.
+
 ### Turnstile
 
 O widget deve ser do tipo Managed e permitir o hostname `gsbblu.github.io`. O valor público da site key fica em `super-analysis-config.js`; a secret key fica somente no secret do Worker.
