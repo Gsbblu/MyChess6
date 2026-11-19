@@ -1,38 +1,70 @@
 # Super análise integrada com Cloudflare
 
-O Worker usa Workers AI com a cota gratuita do plano Cloudflare Workers Free. A chave do modelo não fica no site. A página envia somente FEN, lance, avaliação e variantes do Stockfish; nomes, resultado e relógios da partida são omitidos. A Cloudflare também processa o IP para verificação Turnstile e controle de frequência.
+## Estado atual — 19/11/2026
 
-## Configuração inicial
+A integração foi preparada e publicada. O Worker já está implantado pela integração GitHub do Cloudflare Workers Builds e a configuração do GitHub Pages aponta para ele. Falta concluir o teste ponta a ponta pelo navegador.
 
-1. Crie uma conta Cloudflare e permaneça no plano **Workers Free**. Habilite Workers AI sem migrar para um plano pago.
-2. Em Turnstile, crie um widget do tipo gerenciado para o hostname `gsbblu.github.io`. Guarde a **site key** e a **secret key**.
-3. Instale Node.js e, na raiz deste repositório, execute:
+- Repositório conectado: `Gsbblu/MyChess6`, branch `main`.
+- Raiz do Worker dentro do repositório: `cloudflare/`.
+- Worker: `mychess6-super-analysis`.
+- URL pública: `https://mychess6-super-analysis.gsbblu.workers.dev`.
+- Endpoint: `https://mychess6-super-analysis.gsbblu.workers.dev/analyze`.
+- Modelo: `@cf/google/gemma-4-26b-a4b-it`, por meio da binding `AI`.
+- Binding de controle de frequência: `SUPER_ANALYSIS_LIMITER`.
+- Turnstile: widget criado para `gsbblu.github.io`; a secret key foi cadastrada no Worker com o nome `TURNSTILE_SECRET_KEY`.
+- A configuração pública `super-analysis-config.js` contém o endpoint e a site key. A site key é pública; a secret key não deve ser colocada no repositório ou enviada em mensagens.
+- A publicação do site após configurar o endpoint terminou com sucesso: <https://github.com/Gsbblu/MyChess6/actions/runs/44528929207>.
 
-   ```sh
-   npx wrangler login
-   npx wrangler deploy --config cloudflare/wrangler.toml
-   npx wrangler secret put TURNSTILE_SECRET_KEY --config cloudflare/wrangler.toml
-   ```
+### Próximo passo
 
-   Ao publicar, o Wrangler mostrará uma URL `https://mychess6-super-analysis.<sua-conta>.workers.dev`.
+1. Recarregar <https://gsbblu.github.io/MyChess6/> com `Ctrl+Shift+R`.
+2. Abrir uma partida já analisada e selecionar um lance.
+3. Clicar em **Analisar aqui**, concluir o Turnstile e confirmar que a resposta aparece no painel.
+4. Se falhar, registrar o status exibido e consultar **Workers & Pages → mychess6-super-analysis → Deployments/Observability**. Conferir também se o secret `TURNSTILE_SECRET_KEY` está configurado e se o build/deploy do Worker terminou com sucesso.
 
-4. Edite `super-analysis-config.js` com a URL terminada em `/analyze` e a site key pública do Turnstile:
+Não marcar a funcionalidade como validada antes desse teste. A secret key não deve ser pedida ao usuário nem exibida em logs, documentação pública ou mensagens. Se ela precisar ser trocada, o usuário deve cadastrar a nova diretamente nas configurações do Worker.
 
-   ```js
-   window.MYCHESS_SUPER_ANALYSIS = Object.freeze({
-     endpoint: 'https://mychess6-super-analysis.<sua-conta>.workers.dev/analyze',
-     turnstileSiteKey: 'SUA_SITE_KEY'
-   });
-   ```
+## Como a integração funciona
 
-5. Publique essa configuração no GitHub Pages. O botão **Analisar aqui** aparecerá nas posições com análise completa do Stockfish.
+- O painel prepara um prompt usando FEN antes/depois do lance, SAN, classificação, avaliação e linhas do Stockfish.
+- Nomes, resultado e relógios da partida são omitidos do prompt enviado à IA. O Worker/Turnstile processa dados técnicos como o IP para validar e limitar pedidos.
+- O navegador carrega o widget Turnstile quando o usuário clica **Analisar aqui** e envia o token junto do prompt.
+- O Worker permite a origem do GitHub Pages, valida o token pelo Siteverify, aplica limite aproximado de 3 pedidos por IP por minuto e rejeita prompts excessivamente longos.
+- O resultado do modelo é exibido como texto simples no painel; HTML gerado não é interpretado.
+- Se a análise integrada ainda não estiver configurada, o botão fica oculto e as opções de abrir o ChatGPT/copy prompt continuam disponíveis.
 
-## Limites e proteção
+## Plano gratuito e limites
 
-- O modelo `@cf/google/gemma-4-26b-a4b-it` é executado pela binding privada `env.AI`; nenhum token de conta vai para o navegador.
-- O Worker permite requisições de navegador com a origem do GitHub Pages, verifica o Turnstile e limita cada IP a 3 pedidos por minuto. A checagem de origem não é autenticação; a validação do Turnstile e o limite reduzem o abuso.
-- A limitação por localização da Cloudflare é aproximada. O Turnstile reduz abuso, mas não transforma uma API pública em privada.
-- A cota gratuita atual de Workers AI é de 10 mil Neurons por dia, compartilhada na conta, e reseta diariamente. Se acabar, o Worker retorna erro e não tenta habilitar cobrança nem migrar o plano.
-- A resposta é exibida como texto simples dentro do painel, sem interpretar HTML gerado pelo modelo.
+- Usar **Workers Free** e a cota gratuita do Workers AI. A cota documentada atualmente é 10 mil Neurons por dia por conta; é compartilhada com outros usos e pode mudar.
+- Não ativar um plano pago para exceder a cota. O código não inicia uma cobrança; se o limite for atingido, a análise deve retornar uma falha até a cota renovar.
+- Turnstile e o rate limiter reduzem abuso, mas a rota é pública e os limites de frequência são aproximados por localidade.
+- As explicações da IA complementam as variantes e avaliações do Stockfish; elas não substituem a verificação das linhas nem garantem que a causa estratégica inferida seja correta.
 
-As cotas, os modelos e os termos do plano gratuito podem mudar. Nunca coloque a secret key do Turnstile, tokens Cloudflare ou outra credencial em `super-analysis-config.js`.
+## Recriar ou revisar a configuração
+
+### Worker via Cloudflare Workers Builds
+
+1. No Cloudflare, **Workers & Pages → Create application → GitHub** e conecte `Gsbblu/MyChess6`.
+2. Use o nome `mychess6-super-analysis`, branch `main`, diretório raiz `cloudflare`, build command vazio e deploy command `npx wrangler deploy`.
+3. A configuração versionada em `cloudflare/wrangler.toml` declara a binding Workers AI, o modelo é escolhido em `cloudflare/worker.js`, e o deploy deve manter o endereço `workers.dev` habilitado.
+4. Depois do primeiro deploy, configure o segredo em **Worker → Settings → Variables and Secrets → Add → Secret**:
+   - Variable name: `TURNSTILE_SECRET_KEY`
+   - Value: secret key do widget Turnstile
+5. Salve e faça Deploy. Nunca grave esse valor em `wrangler.toml`, `super-analysis-config.js` ou no GitHub.
+
+### Turnstile
+
+O widget deve ser do tipo Managed e permitir o hostname `gsbblu.github.io`. O valor público da site key fica em `super-analysis-config.js`; a secret key fica somente no secret do Worker.
+
+### Frontend
+
+`super-analysis-config.js` deve conter somente configurações públicas:
+
+```js
+window.MYCHESS_SUPER_ANALYSIS = Object.freeze({
+  endpoint: 'https://mychess6-super-analysis.gsbblu.workers.dev/analyze',
+  turnstileSiteKey: 'SITE_KEY_PUBLICA'
+});
+```
+
+Depois de alterar esse arquivo, publique no branch `main` para atualizar o GitHub Pages.

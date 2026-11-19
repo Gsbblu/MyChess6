@@ -8,6 +8,27 @@ Use este arquivo para dar contexto a outro assistente ou continuar o trabalho em
 - Site publicado: <https://gsbblu.github.io/MyChess6/>
 - Perfil Chess.com monitorado: <https://www.chess.com/member/Gab0bu>
 
+## Estado de continuidade — 19/11/2026
+
+O trabalho mais recente é integrar a **Super análise com IA** ao painel da partida para que a explicação apareça no MyChess, sem precisar sair para outro site. A integração foi publicada no GitHub e o Worker Cloudflare está implantado; falta confirmar o teste completo pelo navegador e corrigir qualquer erro que apareça.
+
+- Worker Cloudflare: `https://mychess6-super-analysis.gsbblu.workers.dev`; endpoint usado pelo site: `/analyze`.
+- Worker conectado ao GitHub pelo Cloudflare Workers Builds, repositório `Gsbblu/MyChess6`, branch `main`, diretório raiz `/cloudflare`, sem comando de build e comando de deploy `npx wrangler deploy`.
+- A configuração do Worker mostra as bindings `AI` (Workers AI) e `SUPER_ANALYSIS_LIMITER`. O modelo é `@cf/google/gemma-4-26b-a4b-it`.
+- Widget Turnstile criado com hostname `gsbblu.github.io`. A secret key foi adicionada pelo usuário no Worker como secret `TURNSTILE_SECRET_KEY`; ela não deve ser pedida, copiada para o repositório nem incluída em mensagens. A site key pública e o endpoint estão em `super-analysis-config.js`.
+- GitHub Pages concluiu com sucesso o deploy do commit `9d8aba7` (execução: <https://github.com/Gsbblu/MyChess6/actions/runs/44528929207>).
+- Próximo passo: pedir ao usuário para recarregar o site com `Ctrl+Shift+R`, abrir uma partida já analisada, selecionar um lance e clicar em **Analisar aqui**, concluir o Turnstile e relatar o resultado. Não afirmar que a integração funciona até esse teste passar.
+- Se houver falha, registrar o texto exato do status no site e conferir **Workers & Pages → mychess6-super-analysis → Deployments/Observability**. Verificar também se o secret `TURNSTILE_SECRET_KEY` continua configurado e se o Workers Build não falhou.
+
+### Funcionamento e limites da Super análise
+
+- O botão aparece quando a posição tem resultados do Stockfish antes e depois do lance, fora de linhas hipotéticas e exercícios. Também permanecem as opções de abrir o ChatGPT e copiar o prompt.
+- O navegador envia FEN, lance, classificação, avaliação e variantes do Stockfish ao Worker. O prompt enviado à IA não inclui nomes, resultado nem relógios da partida. Cloudflare/Turnstile processam dados técnicos, incluindo IP, para validação e controle de frequência.
+- O Worker valida o Turnstile, aceita a origem do GitHub Pages, limita aproximadamente cada IP a 3 pedidos por minuto e limita o tamanho do prompt. A resposta é inserida como texto simples.
+- A integração usa a cota gratuita atual do Workers AI (10 mil Neurons por dia compartilhados na conta). O código não ativa um plano pago; se a cota acabar, a análise deve falhar até a renovação. Cotas/modelos gratuitos podem mudar.
+- Não colocar tokens ou secrets em `super-analysis-config.js`, no GitHub, em logs ou mensagens. A site key é pública; `TURNSTILE_SECRET_KEY` é privada.
+- Arquivos principais: `cloudflare/worker.js`, `cloudflare/wrangler.toml`, `super-analysis-config.js`, `CLOUDFLARE-SUPER-ANALISE.md`, além da integração visual em `app.js`, `index.html` e `styles.css`.
+
 ## O que o projeto faz
 
 O MyChess6 importa partidas públicas de xadrez padrão do perfil Gab0bu e gera análises com Stockfish na profundidade equilibrada (16). A análise automática roda no GitHub Actions, sem precisar deixar o site ou o laptop ligado. Os resultados são publicados em `cloud-data/games.json`; quando o site é aberto, ele importa essas análises para a biblioteca IndexedDB daquele navegador. Assim, diferentes dispositivos podem receber a mesma biblioteca do repositório, embora cada navegador mantenha sua própria cópia local.
@@ -43,4 +64,4 @@ Uma falha anterior fez o script confundir a opção inicial “Busque um jogador
 
 ## Resumo para colar em outra conversa
 
-> Estou continuando o projeto MyChess6. O repositório público é <https://github.com/Gsbblu/MyChess6> e o site é <https://gsbblu.github.io/MyChess6/>. Antes de alterar algo, leia `CONTEXTO-PROJETO.md` e confira o estado atual do GitHub Actions. O sistema analisa automaticamente partidas públicas de xadrez padrão do Chess.com para Gab0bu com Stockfish em profundidade 16. O cron roda a cada 15 minutos; cada execução repete lotes de até cinco partidas até concluir o retropreenchimento ou atingir o limite seguro de tempo, publicando `games.json` após cada lote. Se ainda houver partidas, inicia outra execução automaticamente. A interface sincroniza a nuvem a cada minuto e mostra o total publicado e o cursor. A busca está limitada a arquivos de 2026 em diante. Os resultados são publicados em `cloud-data/games.json` e importados pelo site para IndexedDB de cada navegador. A biblioteca do site deve mostrar as partidas jogadas mais recentemente no topo.
+> Estou continuando o projeto MyChess6. O repositório público é <https://github.com/Gsbblu/MyChess6> e o site é <https://gsbblu.github.io/MyChess6/>. Antes de alterar algo, leia `CONTEXTO-PROJETO.md`, `CLOUDFLARE-SUPER-ANALISE.md` e confira o estado atual de GitHub Actions e Cloudflare Workers Builds. A tarefa em andamento é verificar a Super análise com IA diretamente na tela: Worker `https://mychess6-super-analysis.gsbblu.workers.dev/analyze`, modelo Workers AI Gemma 4, widget Turnstile e cota gratuita; a configuração está publicada, mas a validação ponta a ponta pelo usuário ainda está pendente. Não peça nem exponha a secret `TURNSTILE_SECRET_KEY`. O sistema também analisa automaticamente partidas públicas de xadrez padrão do Chess.com para Gab0bu com Stockfish em profundidade 16. O cron roda a cada 15 minutos; cada execução repete lotes de até cinco partidas, publica `cloud-data/games.json` após cada lote e inicia outra execução se ainda houver partidas, respeitando o limite seguro de tempo. A sincronização da biblioteca ocorre a cada minuto. A busca automática é limitada a arquivos de 2026 em diante; os dados públicos são importados para IndexedDB em cada navegador.
