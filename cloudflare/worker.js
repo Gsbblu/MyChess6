@@ -105,6 +105,7 @@ export default {
           },
           { role: 'user', content: body.prompt }
         ],
+        chat_template_kwargs: { enable_thinking: false },
         max_tokens: 700,
         temperature: 0.2
       });
