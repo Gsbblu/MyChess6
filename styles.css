@@ -614,6 +614,6 @@ body.has-game .page-shell{padding-bottom:100px}
 .super-analysis-result code{padding:1px 4px;border-radius:3px;background:#111914;color:#d9e9c8;font-family:monospace}
 .super-analysis-result pre{overflow:auto;padding:8px;border-radius:4px;background:#111914;white-space:pre-wrap}
 
-@media (min-width:651px) and (min-height:680px){
+@media (min-width:651px){
   .workspace>.board-card{position:sticky;top:14px;align-self:start}
 }
