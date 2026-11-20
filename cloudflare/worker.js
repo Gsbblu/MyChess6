@@ -109,8 +109,19 @@ export default {
         max_tokens: 700,
         temperature: 0.2
       });
-      const answer = typeof result?.response === 'string' ? result.response.trim() : '';
-      if (!answer) return json({ error: 'O modelo não retornou uma resposta.' }, 503, origin);
+      const answer = [
+        result?.response,
+        result?.choices?.[0]?.message?.content,
+        result?.output_text
+      ].find((text) => typeof text === 'string' && text.trim())?.trim() || '';
+      if (!answer) {
+        console.warn('Workers AI returned no user-facing text', {
+          resultKeys: result && typeof result === 'object' ? Object.keys(result) : [],
+          choiceCount: Array.isArray(result?.choices) ? result.choices.length : 0,
+          finishReason: result?.choices?.[0]?.finish_reason || null
+        });
+        return json({ error: 'O modelo não retornou uma resposta.' }, 503, origin);
+      }
       return json({ answer }, 200, origin);
     } catch {
       return json({ error: 'O modelo está indisponível ou a cota gratuita foi atingida.' }, 503, origin);
