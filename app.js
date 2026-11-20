@@ -2709,6 +2709,109 @@
     return detail || 'Não foi possível concluir a super análise. Tente novamente.';
   }
 
+  function appendSuperAnalysisInlineMarkdown(parent, text) {
+    const pattern = /(\*\*[^*\n]+\*\*|__[^_\n]+__|`[^`\n]+`|\*[^*\n]+\*|_[^_\n]+_)/g;
+    let offset = 0;
+    for (const match of text.matchAll(pattern)) {
+      if (match.index > offset) parent.append(document.createTextNode(text.slice(offset, match.index)));
+      const token = match[0];
+      let element;
+      let content;
+      if (token.startsWith('**') || token.startsWith('__')) {
+        element = document.createElement('strong');
+        content = token.slice(2, -2);
+      } else if (token.startsWith('`')) {
+        element = document.createElement('code');
+        content = token.slice(1, -1);
+      } else {
+        element = document.createElement('em');
+        content = token.slice(1, -1);
+      }
+      element.textContent = content;
+      parent.append(element);
+      offset = match.index + token.length;
+    }
+    if (offset < text.length) parent.append(document.createTextNode(text.slice(offset)));
+  }
+
+  function renderSuperAnalysisMarkdown(markdown) {
+    superAnalysisResult.replaceChildren();
+    const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+    let paragraph = [];
+    let list = null;
+    let codeLines = null;
+
+    const closeList = () => { list = null; };
+    const flushParagraph = () => {
+      if (!paragraph.length) return;
+      const block = document.createElement('p');
+      paragraph.forEach((line, index) => {
+        if (index) block.append(document.createElement('br'));
+        appendSuperAnalysisInlineMarkdown(block, line);
+      });
+      superAnalysisResult.append(block);
+      paragraph = [];
+    };
+
+    for (const line of lines) {
+      if (codeLines) {
+        if (/^\s*```/.test(line)) {
+          const pre = document.createElement('pre');
+          const code = document.createElement('code');
+          code.textContent = codeLines.join('\n');
+          pre.append(code);
+          superAnalysisResult.append(pre);
+          codeLines = null;
+        } else codeLines.push(line);
+        continue;
+      }
+      if (/^\s*```/.test(line)) {
+        flushParagraph();
+        closeList();
+        codeLines = [];
+        continue;
+      }
+      const heading = line.match(/^\s{0,3}(#{1,6})\s+(.+?)\s*#*\s*$/);
+      if (heading) {
+        flushParagraph();
+        closeList();
+        const element = document.createElement(`h${heading[1].length}`);
+        appendSuperAnalysisInlineMarkdown(element, heading[2]);
+        superAnalysisResult.append(element);
+        continue;
+      }
+      if (!line.trim()) {
+        flushParagraph();
+        closeList();
+        continue;
+      }
+      const item = line.match(/^\s*(?:([-*+])\s+|(\d+)[.)]\s+)(.+)$/);
+      if (item) {
+        flushParagraph();
+        const type = item[2] ? 'ol' : 'ul';
+        if (!list || list.tagName.toLowerCase() !== type) {
+          closeList();
+          list = document.createElement(type);
+          superAnalysisResult.append(list);
+        }
+        const element = document.createElement('li');
+        appendSuperAnalysisInlineMarkdown(element, item[3]);
+        list.append(element);
+        continue;
+      }
+      closeList();
+      paragraph.push(line);
+    }
+    flushParagraph();
+    if (codeLines) {
+      const pre = document.createElement('pre');
+      const code = document.createElement('code');
+      code.textContent = codeLines.join('\n');
+      pre.append(code);
+      superAnalysisResult.append(pre);
+    }
+  }
+
   async function requestSiteSuperAnalysis(turnstileToken) {
     const config = window.MYCHESS_SUPER_ANALYSIS || {};
     const prompt = superAnalysisPrompt({ includeMatchDetails: false });
@@ -2737,7 +2840,7 @@
       const answer = typeof payload.answer === 'string' ? payload.answer.trim() : '';
       if (!answer) throw new Error('O modelo não retornou uma análise. Tente novamente.');
       if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisResultKey) {
-        superAnalysisResult.textContent = answer;
+        renderSuperAnalysisMarkdown(answer);
         superAnalysisResult.hidden = false;
         superAnalysisStatus.textContent = 'Análise concluída.';
       }
