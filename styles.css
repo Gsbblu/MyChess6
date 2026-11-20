@@ -619,6 +619,8 @@ body.has-game .page-shell{padding-bottom:100px}
 }
 
 @media (min-width:651px) and (max-height:900px){
-  .workspace>.board-card .board-wrap{width:min(100%,560px,calc(100vh - 250px))}
-  .workspace>.board-card .eval-meter{height:calc(100vh - 250px);min-height:0;max-height:none}
+  .workspace>.board-card .board-wrap{width:min(100%,560px,calc(100vh - 220px))}
+  .workspace>.board-card .eval-meter{height:calc(100vh - 220px);min-height:0;max-height:none}
+  .move-dock{padding:5px}
+  .move-dock .move-controls button{width:36px;height:36px}
 }
