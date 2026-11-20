@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-board-sticky-5">
+    <link rel="stylesheet" href="styles.css?v=mychess6-board-size-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -79,6 +79,11 @@
         <div class="board-toolbar">
           <div class="board-label"><span class="live-dot"></span> TABULEIRO <span class="toolbar-divider">/</span> <span class="muted" id="position-name">POSIÇÃO INICIAL</span></div>
             <div class="board-actions">
+              <label class="board-size-control" for="board-size">
+                <span>Tamanho</span>
+                <input id="board-size" type="range" min="70" max="100" step="5" value="100" aria-label="Tamanho do tabuleiro">
+                <output id="board-size-value" for="board-size">100%</output>
+              </label>
               <button class="tool-button board-flip-button" id="flip-board" type="button" aria-label="Inverter tabuleiro" title="Inverter tabuleiro">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v18m0 0-3-3m3 3 3-3M17 21V3m0 0-3 3m3-3 3 3M4 12h16"/></svg><span>Inverter</span>
               </button>
@@ -233,6 +238,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=mychess6-cloudflare-super-analysis-1" defer></script>
+    <script src="app.js?v=mychess6-board-size-1" defer></script>
   </body>
 </html>

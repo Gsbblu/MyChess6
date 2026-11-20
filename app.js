@@ -9,6 +9,11 @@
   const cloneMove = (move) => move ? { ...move } : null;
 
   const boardElement = document.querySelector('#chessboard');
+  const boardWrapElement = document.querySelector('.board-wrap');
+  const boardLayoutElement = document.querySelector('.board-layout');
+  const boardEvalMeter = document.querySelector('.eval-meter');
+  const boardSizeInput = document.querySelector('#board-size');
+  const boardSizeValue = document.querySelector('#board-size-value');
   const annotationArrowsElement = document.querySelector('#annotation-arrows');
   const moveArrowsElement = document.querySelector('#move-arrows');
   const rankLabels = document.querySelector('.rank-labels');
@@ -1336,6 +1341,39 @@
     explainMoveButton.textContent = expanded ? 'Ocultar análise do treinador' : 'Revelar análise do treinador';
   });
   exitVariationButton.addEventListener('click', exitVariationMode);
+
+  function applyBoardSize() {
+    const scale = Number(boardSizeInput.value) / 100;
+    const layoutStyle = getComputedStyle(boardLayoutElement);
+    const horizontalPadding = (parseFloat(layoutStyle.paddingLeft) || 0) + (parseFloat(layoutStyle.paddingRight) || 0);
+    const gap = parseFloat(layoutStyle.columnGap) || 0;
+    const meterVisible = getComputedStyle(boardEvalMeter).display !== 'none';
+    const meterSpace = meterVisible ? boardEvalMeter.getBoundingClientRect().width + gap : 0;
+    const maxWidth = window.innerWidth > 650 && window.innerWidth <= 850 ? 500 : 560;
+    const availableWidth = Math.max(0, boardLayoutElement.clientWidth - horizontalPadding - meterSpace);
+    const baseWidth = Math.min(maxWidth, availableWidth);
+    boardWrapElement.style.flex = '0 0 auto';
+    boardWrapElement.style.width = `${Math.round(baseWidth * scale)}px`;
+    if (meterVisible) {
+      const baseHeight = window.innerWidth <= 850
+        ? Math.min(window.innerWidth * 0.5, 500)
+        : Math.min(window.innerWidth * 0.42, 560);
+      boardEvalMeter.style.height = `${Math.round(baseHeight * scale)}px`;
+    }
+  }
+
+  try {
+    const savedSize = Number(window.localStorage.getItem('mychess6-board-size'));
+    if (savedSize >= 70 && savedSize <= 100 && savedSize % 5 === 0) boardSizeInput.value = String(savedSize);
+  } catch {}
+  boardSizeValue.textContent = `${boardSizeInput.value}%`;
+  applyBoardSize();
+  boardSizeInput.addEventListener('input', () => {
+    boardSizeValue.textContent = `${boardSizeInput.value}%`;
+    applyBoardSize();
+    try { window.localStorage.setItem('mychess6-board-size', boardSizeInput.value); } catch {}
+  });
+  window.addEventListener('resize', applyBoardSize, { passive: true });
 
   document.querySelector('#flip-board').addEventListener('click', () => { flipped = !flipped; render(); });
   navButtons.first.addEventListener('click', () => goTo(0));
