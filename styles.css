@@ -90,6 +90,7 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .piece-being-dragged>.piece{opacity:.2}
 .piece-drag-ghost{position:fixed;z-index:1000;width:clamp(48px,8vw,84px);aspect-ratio:1;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 8px #0008)}
 .piece-drag-ghost .piece{width:100%;height:100%}
+.move-animation-layer{position:absolute;inset:0;z-index:20;overflow:visible;pointer-events:none}
 .rank-labels,.file-labels{color:#dce8c8;text-shadow:0 1px 3px #10170e}
 .square:focus-visible{outline-color:#f5d34b}
 .move-quality-badge{grid-column:1/-1;justify-self:start;border-radius:99px;padding:4px 8px;font-size:9px;font-weight:700;letter-spacing:.2px}

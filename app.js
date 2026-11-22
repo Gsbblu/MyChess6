@@ -201,6 +201,7 @@
   let annotationFen = null;
   let arrowGesture = null;
   let pendingMoveAnimation = null;
+  let activeMoveAnimationCleanup = null;
 
   const pieceArtwork = {
     K: '<path d="M46 10h8v12h12v8H54v9h-8v-9H34v-8h12z"/><path d="M30 51c8-7 12-11 12-18h16c0 7 4 11 12 18l8 33H22z"/><path d="M18 84h64v8H18z"/>',
@@ -736,6 +737,7 @@
     if (annotationFen && annotationFen !== currentFen(position)) { boardAnnotations = []; annotationFen = null; }
     const moveAnimation = pendingMoveAnimation;
     pendingMoveAnimation = null;
+    activeMoveAnimationCleanup?.();
     const sourceSquareBeforeRender = moveAnimation ? boardElement.querySelector(`[data-square="${moveAnimation.from}"]`) : null;
     const sourcePieceBeforeRender = sourceSquareBeforeRender?.querySelector('.piece');
     const sourceRectBeforeRender = sourcePieceBeforeRender?.getBoundingClientRect();
@@ -775,19 +777,33 @@
       const destinationPiece = destinationSquare?.querySelector('.piece');
       const destinationRect = destinationSquare?.getBoundingClientRect();
       if (destinationSquare && destinationPiece && destinationRect) {
-        const startX = sourceRectBeforeRender.left + sourceRectBeforeRender.width / 2;
-        const startY = sourceRectBeforeRender.top + sourceRectBeforeRender.height / 2;
-        const endX = destinationRect.left + destinationRect.width / 2;
-        const endY = destinationRect.top + destinationRect.height / 2;
-        movingPieceClone.style.cssText = `position:fixed;left:${sourceRectBeforeRender.left}px;top:${sourceRectBeforeRender.top}px;width:${sourceRectBeforeRender.width}px;height:${sourceRectBeforeRender.height}px;z-index:1001;pointer-events:none;`;
-        document.body.append(movingPieceClone);
+        const animationLayer = document.createElement('div');
+        animationLayer.className = 'move-animation-layer';
+        const layerRect = boardWrapElement.getBoundingClientRect();
+        const startX = sourceRectBeforeRender.left - layerRect.left;
+        const startY = sourceRectBeforeRender.top - layerRect.top;
+        const endX = destinationRect.left - layerRect.left + (destinationRect.width - sourceRectBeforeRender.width) / 2;
+        const endY = destinationRect.top - layerRect.top + (destinationRect.height - sourceRectBeforeRender.height) / 2;
+        movingPieceClone.style.cssText = `position:absolute;left:${startX}px;top:${startY}px;width:${sourceRectBeforeRender.width}px;height:${sourceRectBeforeRender.height}px;z-index:1;pointer-events:none;transition:none;`;
+        boardWrapElement.append(animationLayer);
+        animationLayer.append(movingPieceClone);
         destinationPiece.style.visibility = 'hidden';
+        let cleaned = false;
+        const cleanup = () => {
+          if (cleaned) return;
+          cleaned = true;
+          movingPieceClone.remove();
+          animationLayer.remove();
+          if (destinationPiece.isConnected) destinationPiece.style.visibility = '';
+          if (activeMoveAnimationCleanup === cleanup) activeMoveAnimationCleanup = null;
+        };
+        activeMoveAnimationCleanup = cleanup;
         const animation = movingPieceClone.animate([
           { transform: 'translate(0, 0)' },
           { transform: `translate(${endX - startX}px, ${endY - startY}px)` }
         ], { duration: 280, easing: 'cubic-bezier(.2,.7,.25,1)' });
-        animation.onfinish = () => { movingPieceClone.remove(); destinationPiece.style.visibility = ''; };
-        animation.oncancel = () => { movingPieceClone.remove(); destinationPiece.style.visibility = ''; };
+        animation.onfinish = cleanup;
+        animation.oncancel = cleanup;
       }
     }
     rankLabels.replaceChildren(...rows.map((row) => { const label = document.createElement('span'); label.textContent = String(8 - row); return label; }));
@@ -1343,6 +1359,7 @@
   exitVariationButton.addEventListener('click', exitVariationMode);
 
   function applyBoardSize() {
+    activeMoveAnimationCleanup?.();
     const scale = Number(boardSizeInput.value) / 100;
     const layoutStyle = getComputedStyle(boardLayoutElement);
     const horizontalPadding = (parseFloat(layoutStyle.paddingLeft) || 0) + (parseFloat(layoutStyle.paddingRight) || 0);
