@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import functools
+import hashlib
 import json
 import subprocess
 import threading
@@ -16,6 +17,9 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "cloud-data" / "games.json"
+MANIFEST = ROOT / "cloud-data" / "index.json"
+SHARD_DIR = ROOT / "cloud-data" / "shards"
+MAX_SHARD_BYTES = 5 * 1024 * 1024
 BATCH_SIZE = 5
 MIN_ARCHIVE_YEAR = 2026
 MAX_RUN_SECONDS = 5 * 60 * 60 + 30 * 60
@@ -77,32 +81,107 @@ def valid_records(records: list[dict]) -> list[dict]:
             and isinstance(record.get("results"), list)]
 
 
-def save_checkpoint(records: list[dict], last_seen: str, cursor: str, complete: bool,
-                    pending: int = 0) -> None:
-    OUTPUT.write_text(json.dumps({
-        "format": "MyChess cloud library",
-        "version": 1,
+def load_cloud_snapshot() -> dict:
+    """Read the sharded format, or the legacy monolithic file during migration."""
+    if MANIFEST.exists():
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        games: list[dict] = []
+        for shard in manifest.get("shards", []):
+            name = shard.get("path", "")
+            if not isinstance(name, str) or Path(name).name != name:
+                raise RuntimeError(f"Nome de shard inválido no índice: {name!r}")
+            part = json.loads((SHARD_DIR / name).read_text(encoding="utf-8"))
+            if not isinstance(part, list):
+                raise RuntimeError(f"Shard inválido: {name}")
+            games.extend(part)
+        manifest["games"] = games
+        return manifest
+    if OUTPUT.exists():
+        return json.loads(OUTPUT.read_text(encoding="utf-8"))
+    return {}
+
+
+def write_cloud_snapshot(records: list[dict], last_seen: str, cursor: str,
+                         complete: bool, pending: int = 0) -> None:
+    """Persist records in bounded JSON shards and a small metadata index."""
+    SHARD_DIR.mkdir(parents=True, exist_ok=True)
+    shards: list[dict] = []
+    entries = []
+    for record in records:
+        encoded = json.dumps(record, ensure_ascii=False, separators=(",", ":"))
+        size = len(encoded.encode("utf-8"))
+        if size + 3 > MAX_SHARD_BYTES:
+            raise RuntimeError(f"A análise {record.get('id', '?')} sozinha excede o limite de um shard.")
+        digest = hashlib.sha256(record["id"].encode("utf-8")).hexdigest()
+        entries.append((digest, record, encoded, size))
+
+    def write_bucket(prefix: str, bucket: list[tuple[str, dict, str, int]]) -> None:
+        bucket.sort(key=lambda entry: entry[1]["id"])
+        size = 2 + sum(entry[3] for entry in bucket) + max(0, len(bucket) - 1) + 1
+        if size <= MAX_SHARD_BYTES:
+            name = f"games-{prefix}.json"
+            payload = "[" + ",".join(entry[2] for entry in bucket) + "]\n"
+            (SHARD_DIR / name).write_text(payload, encoding="utf-8")
+            checksum = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            shards.append({"path": name, "gameCount": len(bucket), "bytes": size, "sha256": checksum})
+            return
+        if len(prefix) >= 64:
+            raise RuntimeError(f"Não foi possível dividir o shard {prefix} abaixo do limite interno.")
+        groups: dict[str, list[tuple[str, dict, str, int]]] = {}
+        for entry in bucket:
+            groups.setdefault(entry[0][:len(prefix) + 1], []).append(entry)
+        for child_prefix in sorted(groups):
+            write_bucket(child_prefix, groups[child_prefix])
+
+    roots: dict[str, list[tuple[str, dict, str, int]]] = {}
+    for entry in entries:
+        roots.setdefault(entry[0][0], []).append(entry)
+    for prefix in sorted(roots):
+        write_bucket(prefix, roots[prefix])
+
+    keep = {shard["path"] for shard in shards}
+    for old in SHARD_DIR.glob("games-*.json"):
+        if old.name not in keep:
+            old.unlink()
+
+    revision_data = {
+        "lastSeenGameUrl": last_seen, "backfillArchiveUrl": cursor,
+        "backfillComplete": complete, "pendingInArchive": pending,
+        "gameCount": len(records), "shards": shards,
+    }
+    revision = hashlib.sha256(json.dumps(revision_data, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+    manifest = {
+        "format": "MyChess cloud library", "version": 2,
+        "revision": revision,
         "lastSeenGameUrl": last_seen,
         "backfillArchiveUrl": cursor,
         "backfillComplete": complete,
         "pendingInArchive": pending,
-        "games": records,
-    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    subprocess.run(["git", "add", "cloud-data/games.json"], cwd=ROOT, check=True)
-    staged = subprocess.run(["git", "diff", "--cached", "--quiet", "--", "cloud-data/games.json"], cwd=ROOT, check=False)
+        "gameCount": len(records), "shards": shards,
+    }
+    MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # The legacy file is removed once the first complete sharded snapshot exists.
+    OUTPUT.unlink(missing_ok=True)
+
+
+def save_checkpoint(records: list[dict], last_seen: str, cursor: str, complete: bool,
+                    pending: int = 0) -> None:
+    write_cloud_snapshot(records, last_seen, cursor, complete, pending)
+    subprocess.run(["git", "add", "-A", "cloud-data"], cwd=ROOT, check=True)
+    staged = subprocess.run(["git", "diff", "--cached", "--quiet", "--", "cloud-data"], cwd=ROOT, check=False)
     if staged.returncode == 0:
         return
     if staged.returncode != 1:
         raise subprocess.CalledProcessError(staged.returncode, staged.args)
-    subprocess.run(["git", "commit", "--only", "cloud-data/games.json", "-m", "Update automatic Chess.com analysis"], cwd=ROOT, check=True)
+    subprocess.run(["git", "commit", "-m", "Update automatic Chess.com analysis"], cwd=ROOT, check=True)
     subprocess.run(["git", "push", "origin", "main"], cwd=ROOT, check=True)
 
 
 def main() -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     try:
-        previous = json.loads(OUTPUT.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        previous = load_cloud_snapshot()
+    except (OSError, json.JSONDecodeError, TypeError):
         previous = {}
     previous_games = previous.get("games", []) if isinstance(previous, dict) else []
     previous_ids = {game.get("id") for game in previous_games if isinstance(game, dict)}

@@ -31,22 +31,22 @@ O trabalho mais recente é integrar a **Super análise com IA** ao painel da par
 
 ## O que o projeto faz
 
-O MyChess6 importa partidas públicas de xadrez padrão do perfil Gab0bu e gera análises com Stockfish na profundidade equilibrada (16). A análise automática roda no GitHub Actions, sem precisar deixar o site ou o laptop ligado. Os resultados são publicados em `cloud-data/games.json`; quando o site é aberto, ele importa essas análises para a biblioteca IndexedDB daquele navegador. Assim, diferentes dispositivos podem receber a mesma biblioteca do repositório, embora cada navegador mantenha sua própria cópia local.
+O MyChess6 importa partidas públicas de xadrez padrão do perfil Gab0bu e gera análises com Stockfish na profundidade equilibrada (16). A análise automática roda no GitHub Actions, sem precisar deixar o site ou o laptop ligado. Os resultados são publicados em `cloud-data/index.json` e shards JSON de no máximo 5 MiB cada; quando o site é aberto, ele importa essas análises para a biblioteca IndexedDB daquele navegador. Assim, diferentes dispositivos podem receber a mesma biblioteca do repositório, embora cada navegador mantenha sua própria cópia local.
 
 ## Automação atual
 
 - Workflow: `.github/workflows/chesscom-cloud-analysis.yml`.
 - Agendamento: a cada 15 minutos, nos minutos 7, 22, 37 e 52 de cada hora.
-- Processa lotes de até cinco partidas, publica `games.json` após cada lote e repete até concluir o retropreenchimento ou atingir o limite seguro de tempo; inicia outra execução automaticamente se ainda houver partidas. A interface sincroniza a nuvem a cada minuto e mostra o total publicado e o cursor.
+- Processa lotes de até cinco partidas, publica o índice e os shards após cada lote e repete até concluir o retropreenchimento ou atingir o limite seguro de tempo; inicia outra execução automaticamente se ainda houver partidas. A interface sincroniza a nuvem a cada minuto e mostra o total publicado e o cursor.
 - Busca arquivos mensais de 2026 em diante; partidas de anos anteriores ficam fora do retropreenchimento automático.
-- Continua do arquivo mensal salvo em `cloud-data/games.json` até concluir o histórico elegível. Depois, revisita os meses recentes.
+- Continua do arquivo mensal salvo em `cloud-data/index.json` até concluir o histórico elegível. Depois, revisita os meses recentes.
 - Para iniciar manualmente: GitHub → **Actions** → **Chess.com automatic analysis** → **Run workflow**.
 - Agendamentos do GitHub podem atrasar. Confira o estado do workflow e a execução mais recente antes de concluir que algo travou.
 
 ## Biblioteca e armazenamento
 
 - A lista de análises salvas é ordenada pela data em que as partidas foram jogadas, mais recentes primeiro; se o PGN não tiver uma data válida, usa a data em que a análise foi salva.
-- A cópia compartilhada fica em `cloud-data/games.json`, no repositório público. Ela não ocupa o armazenamento local do laptop durante o processamento.
+- A cópia compartilhada fica em `cloud-data/index.json` e `cloud-data/shards/`, no repositório público. Cada shard tem limite interno de 5 MiB para evitar o bloqueio de 100 MB por arquivo do GitHub.
 - O site importa os resultados para IndexedDB no navegador. Essa cópia local persiste entre visitas, mas pode ser removida ao limpar os dados do site; é possível importá-la novamente enquanto a cópia do GitHub estiver disponível.
 - Código, PGNs públicos e análises no repositório são visíveis publicamente. Não adicionar tokens, senhas ou partidas privadas.
 
@@ -55,7 +55,7 @@ O MyChess6 importa partidas públicas de xadrez padrão do perfil Gab0bu e gera 
 - `app.js`: importação da biblioteca, lista de partidas e análise pelo motor.
 - `scripts/cloud_analyze.py`: execução headless com Playwright, seleção de arquivos e retropreenchimento.
 - `.github/workflows/chesscom-cloud-analysis.yml`: cron e publicação automática dos resultados.
-- `cloud-data/games.json`: análises compartilhadas e cursor do retropreenchimento.
+- `cloud-data/index.json` e `cloud-data/shards/`: análises compartilhadas e cursor do retropreenchimento.
 - `README.md` e `CLOUD.md`: instruções e descrição da automação.
 
 ## Histórico técnico relevante
@@ -64,4 +64,4 @@ Uma falha anterior fez o script confundir a opção inicial “Busque um jogador
 
 ## Resumo para colar em outra conversa
 
-> Estou continuando o projeto MyChess6. O repositório público é <https://github.com/Gsbblu/MyChess6> e o site é <https://gsbblu.github.io/MyChess6/>. Antes de alterar algo, leia `CONTEXTO-PROJETO.md`, `CLOUDFLARE-SUPER-ANALISE.md` e confira o estado atual de GitHub Actions e Cloudflare Workers Builds. A tarefa em andamento é verificar a Super análise com IA diretamente na tela: Worker `https://mychess6-super-analysis.gsbblu.workers.dev/analyze`, modelo Workers AI Gemma 4, widget Turnstile e cota gratuita; a configuração está publicada, mas a validação ponta a ponta pelo usuário ainda está pendente. Não peça nem exponha a secret `TURNSTILE_SECRET_KEY`. O sistema também analisa automaticamente partidas públicas de xadrez padrão do Chess.com para Gab0bu com Stockfish em profundidade 16. O cron roda a cada 15 minutos; cada execução repete lotes de até cinco partidas, publica `cloud-data/games.json` após cada lote e inicia outra execução se ainda houver partidas, respeitando o limite seguro de tempo. A sincronização da biblioteca ocorre a cada minuto. A busca automática é limitada a arquivos de 2026 em diante; os dados públicos são importados para IndexedDB em cada navegador.
+> Estou continuando o projeto MyChess6. O repositório público é <https://github.com/Gsbblu/MyChess6> e o site é <https://gsbblu.github.io/MyChess6/>. Antes de alterar algo, leia `CONTEXTO-PROJETO.md`, `CLOUDFLARE-SUPER-ANALISE.md` e confira o estado atual de GitHub Actions e Cloudflare Workers Builds. A tarefa em andamento é verificar a Super análise com IA diretamente na tela: Worker `https://mychess6-super-analysis.gsbblu.workers.dev/analyze`, modelo Workers AI Gemma 4, widget Turnstile e cota gratuita; a configuração está publicada, mas a validação ponta a ponta pelo usuário ainda está pendente. Não peça nem exponha a secret `TURNSTILE_SECRET_KEY`. O sistema também analisa automaticamente partidas públicas de xadrez padrão do Chess.com para Gab0bu com Stockfish em profundidade 16. O cron roda a cada 15 minutos; cada execução repete lotes de até cinco partidas, publica o índice `cloud-data/index.json` e shards JSON de até 5 MiB, e inicia outra execução se ainda houver partidas, respeitando o limite seguro de tempo. A sincronização da biblioteca ocorre a cada minuto. A busca automática é limitada a arquivos de 2026 em diante; os dados públicos são importados para IndexedDB em cada navegador.

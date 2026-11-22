@@ -36,11 +36,12 @@ jobs:
       - name: Analyze unreviewed games in the public archives
         run: python scripts/cloud_analyze.py
       - name: Save analyses for the site
-        if: always()
+        if: success()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cloud-data/games.json
+          python scripts/cloud_data_guard.py
+          git add -A cloud-data
           if ! git diff --cached --quiet; then
             git commit -m 'Update automatic Chess.com analysis'
             git push
@@ -50,6 +51,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if python -c "import json, sys; data = json.load(open('cloud-data/games.json', encoding='utf-8')); sys.exit(0 if data.get('backfillComplete') is False else 1)"; then
+          if python -c "import json, pathlib, sys; path = pathlib.Path('cloud-data/index.json'); path = path if path.exists() else pathlib.Path('cloud-data/games.json'); data = json.load(path.open(encoding='utf-8')); sys.exit(0 if data.get('backfillComplete') is False else 1)"; then
             gh workflow run chesscom-cloud-analysis.yml --repo "$GITHUB_REPOSITORY" --ref main
           fi

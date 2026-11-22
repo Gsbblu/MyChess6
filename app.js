@@ -1481,11 +1481,47 @@
     if (cloudImportBusy) return 0;
     cloudImportBusy = true;
     try {
-      let response;
-      try { response = await fetch('cloud-data/games.json', { cache: 'no-cache' }); }
+      let response, data, revision;
+      try { response = await fetch('cloud-data/index.json', { cache: 'no-cache' }); }
       catch { return 0; }
-      if (!response.ok) return 0;
-      const revision = response.headers.get('etag') || response.headers.get('last-modified') || '';
+      if (response.ok) {
+        try { data = await response.json(); } catch { return 0; }
+        revision = [response.headers.get('etag') || response.headers.get('last-modified') || '', data.revision || data.updatedAt || ''].join('|');
+        if (revision && revision === cloudRemoteRevision && cloudRemoteGameIds.length && cloudRemoteSummary) {
+          const localKeys = new Set(await libraryRequest('readonly', 'keys'));
+          if (cloudRemoteGameIds.every((id) => localKeys.has(id))) {
+            renderCloudProgress(cloudRemoteSummary);
+            cloudLastSeenGameUrl = cloudRemoteSummary.lastSeenGameUrl || '';
+            window.MyChess6Cloud.lastSeenGameUrl = cloudLastSeenGameUrl;
+            window.MyChess6Cloud.backfillArchiveUrl = cloudRemoteSummary.backfillArchiveUrl || '';
+            window.MyChess6Cloud.backfillComplete = cloudRemoteSummary.backfillComplete === true;
+            return 0;
+          }
+        }
+        if (Array.isArray(data.shards)) {
+          const shardParts = await Promise.all(data.shards.map(async (shard) => {
+            try {
+              if (!shard || typeof shard.path !== 'string' || !/^games-[a-f0-9]{1,64}\.json$/.test(shard.path)) return null;
+              const shardResponse = await fetch(`cloud-data/shards/${shard.path}`, { cache: 'no-cache' });
+              if (!shardResponse.ok) return null;
+              const part = await shardResponse.json();
+              return Array.isArray(part) ? part : null;
+            } catch { return null; }
+          }));
+          if (shardParts.some((part) => !Array.isArray(part))) return 0;
+          const shardRecords = shardParts.flat();
+          data.games = shardRecords;
+        } else if (!Array.isArray(data.games)) {
+          return 0;
+        }
+      } else {
+        // Compatibility with the original single-file library during deployment.
+        try { response = await fetch('cloud-data/games.json', { cache: 'no-cache' }); }
+        catch { return 0; }
+        if (!response.ok) return 0;
+        try { data = await response.json(); } catch { return 0; }
+      }
+      revision ||= [response.headers.get('etag') || response.headers.get('last-modified') || '', data.revision || data.updatedAt || ''].join('|');
       if (revision && revision === cloudRemoteRevision && cloudRemoteGameIds.length && cloudRemoteSummary) {
         const localKeys = new Set(await libraryRequest('readonly', 'keys'));
         if (cloudRemoteGameIds.every((id) => localKeys.has(id))) {
@@ -1497,8 +1533,6 @@
           return 0;
         }
       }
-      let data;
-      try { data = await response.json(); } catch { return 0; }
       const games = data.games;
       if (!Array.isArray(games)) return 0;
       renderCloudProgress(data);
