@@ -1111,6 +1111,8 @@
   }
 
   function goTo(index) {
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
     index = Math.max(0, Math.min(index, history.length - 1));
     if (index === historyIndex) return;
     const previousIndex = historyIndex;
@@ -1128,6 +1130,15 @@
     lastMove = cloneMove(history[historyIndex].move); selected = -1; legalTargets = [];
     if (batchRunning && !gameReviewResults[historyIndex]) clearAnalysisView('A análise da partida continua; esta posição ainda não foi calculada.');
     render();
+    // A revisão atualiza painéis com alturas diferentes; não deixe o scroll anchoring deslocar a página.
+    void boardElement.offsetHeight;
+    if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
+      const root = document.documentElement;
+      const previousBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(scrollX, scrollY);
+      root.style.scrollBehavior = previousBehavior;
+    }
   }
 
   function showBoard() {
