@@ -2355,8 +2355,8 @@
     }
     activeGameSource = source;
     chessComStatus.textContent = `Analisando automaticamente: ${source.title}…`;
-    requestGameAnalysis({ skipDepthPrompt: true, depth: 16 }).then(() => {
-      if (!pendingAnalysis && !activeAnalysis && autoChessComBusy) {
+    requestGameAnalysis({ skipDepthPrompt: true, depth: 16 }).then((started) => {
+      if (!started && autoChessComBusy) {
         autoChessComBusy = false; autoChessComQueue = [];
         window.MyChess6Cloud.archiveState = 'error';
         chessComStatus.textContent = 'A análise automática não iniciou; nenhum resultado foi salvo.';
@@ -3996,11 +3996,11 @@
   }
 
   async function requestGameAnalysis(options = {}) {
-    if (pendingAnalysis || activeAnalysis || analysisStopping || history.length < 2) return;
+    if (pendingAnalysis || activeAnalysis || analysisStopping || history.length < 2) return false;
     if (Number.isInteger(options.depth)) selectedDepth = options.depth;
     else if (options.skipDepthPrompt) { if (lastGameAnalysisDepth) selectedDepth = lastGameAnalysisDepth; }
     else if (!await askAnalysisDepth()) return;
-    if (pendingAnalysis || activeAnalysis || analysisStopping || history.length < 2) return;
+    if (pendingAnalysis || activeAnalysis || analysisStopping || history.length < 2) return false;
     lastGameAnalysisDepth = selectedDepth;
     exerciseState = null;
     punishmentPlayback = null;
@@ -4027,6 +4027,7 @@
     gameProgressLabel.textContent = cacheHits ? `${cacheHits} posições já calculadas serão reaproveitadas.` : engineState === 'ready' ? 'Preparando análise da partida…' : 'Carregando Stockfish…';
     updateAnalysisControls();
     if (engineState === 'ready') startPendingAnalysis(); else startEngine();
+    return true;
   }
 
   analyzeGameButton.addEventListener('click', requestGameAnalysis);
