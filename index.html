@@ -128,27 +128,27 @@
             <section class="game-review-quality" id="game-review-quality" hidden aria-label="Classificação do lance analisado">
               <div class="game-review-quality-heading"><span id="game-review-context">REVISÃO DA PARTIDA</span><strong class="move-quality-badge" id="game-review-badge"></strong></div>
               <p id="game-review-explanation"></p>
-              <section class="move-alternatives" id="move-alternatives" hidden aria-label="Melhores alternativas à jogada">
-                <div class="move-alternatives-heading"><div><span>MELHORES ALTERNATIVAS</span><small id="move-alternatives-context"></small></div><span class="move-alternatives-engine">Stockfish</span></div>
-                <ol class="move-alternatives-list" id="move-alternatives-list"></ol>
-              </section>
               <div class="super-analysis-actions" id="super-analysis-actions" hidden>
                 <div class="super-analysis-heading"><div><strong>Segunda opinião</strong><span>Compare com outra explicação para o lance.</span></div><span class="super-analysis-tag">IA</span></div>
                 <div class="super-analysis-buttons">
                   <button class="secondary-button" id="run-site-super-analysis" type="button" hidden><span aria-hidden="true">✦</span> Analisar aqui</button>
                   <button class="secondary-button" id="open-super-analysis" type="button">Abrir no ChatGPT <span aria-hidden="true">↗</span></button>
-                  <button class="text-button" id="copy-super-analysis" type="button"><span aria-hidden="true">▢</span> Copiar prompt</button>
                 </div>
                 <details class="super-analysis-privacy"><summary>Privacidade e limites</summary><p>O prompt contém a posição, o lance e as linhas do Stockfish, sem nomes da partida. A Cloudflare processa dados técnicos, como o IP, para verificar e limitar pedidos. A análise depende da cota gratuita.</p></details>
                 <div class="super-analysis-challenge" id="super-analysis-challenge" hidden></div>
                 <div class="super-analysis-result" id="super-analysis-result" hidden aria-live="polite"></div>
                 <span class="super-analysis-status" id="super-analysis-status" role="status" aria-live="polite"></span>
               </div>
+              <section class="move-alternatives" id="move-alternatives" hidden aria-label="Melhores alternativas à jogada">
+                <div class="move-alternatives-heading"><div><span>MELHORES ALTERNATIVAS</span><small id="move-alternatives-context"></small></div><span class="move-alternatives-engine">Stockfish</span></div>
+                <ol class="move-alternatives-list" id="move-alternatives-list"></ol>
+              </section>
               <p class="coach-question" id="game-review-question" hidden></p>
               <p class="exercise-feedback" id="exercise-feedback" hidden></p>
               <div class="punishment-walkthrough" id="punishment-walkthrough" hidden>
+                <span class="punishment-eyebrow">LINHA DO STOCKFISH</span>
                 <p id="punishment-status" aria-live="polite"></p>
-                <button class="secondary-button punishment-step-button" id="punishment-step" type="button">Iniciar punição passo a passo</button>
+                <button class="text-button punishment-step-button" id="punishment-step" type="button">Ver a resposta, lance a lance</button>
               </div>
               <button class="explain-move-button" id="reveal-exercise" type="button" hidden>Mostrar o lance jogado e a análise</button>
               <small id="game-review-depth"></small>

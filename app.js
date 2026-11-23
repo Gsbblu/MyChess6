@@ -76,7 +76,6 @@
   const superAnalysisActions = document.querySelector('#super-analysis-actions');
   const runSiteSuperAnalysisButton = document.querySelector('#run-site-super-analysis');
   const openSuperAnalysisButton = document.querySelector('#open-super-analysis');
-  const copySuperAnalysisButton = document.querySelector('#copy-super-analysis');
   const superAnalysisChallenge = document.querySelector('#super-analysis-challenge');
   const superAnalysisResult = document.querySelector('#super-analysis-result');
   const superAnalysisStatus = document.querySelector('#super-analysis-status');
@@ -2534,28 +2533,14 @@
     if (punishmentPlayback) {
       const playback = punishmentPlayback;
       const done = playback.nextIndex >= playback.tokens.length;
-      analysisPlaceholder.hidden = true;
-      analysisResults.hidden = false;
-      analysisResults.classList.add('from-game-review');
-      analysisResults.classList.remove('exercise-mode');
-      analysisProgress.hidden = true;
-      gameReviewQuality.hidden = false;
-      gameReviewContext.textContent = 'LINHA DE PUNIÇÃO · STOCKFISH';
-      gameReviewBadge.hidden = true;
-      gameReviewExplanation.textContent = playback.lastSan
-        ? `Resposta reproduzida: ${playback.lastSan}. Veja a posição e avance quando estiver pronto.`
-        : 'O Stockfish calculou esta continuação depois do lance analisado. Reproduza uma jogada por vez para acompanhar a punição.';
-      gameReviewQuestion.hidden = true;
-      exerciseFeedback.hidden = true;
-      gameReviewDepth.textContent = `${playback.nextIndex} de ${playback.tokens.length} meios-lances reproduzidos · linha principal calculada pelo Stockfish`;
-      moveAlternatives.hidden = true;
       punishmentWalkthrough.hidden = false;
+      punishmentWalkthrough.classList.add('is-playing');
       punishmentStatus.textContent = done
-        ? `Fim da linha de punição: ${playback.nextIndex} meios-lances reproduzidos. Linhas do motor são continuações calculadas, não a única sequência possível.`
+        ? `Linha concluída · ${playback.nextIndex} lances reproduzidos.`
         : playback.lastSan
-          ? `Lance ${playback.nextIndex} de ${playback.tokens.length}: ${playback.lastSan}. Avance para ver a resposta seguinte.`
-          : `A linha contém ${playback.tokens.length} meios-lances. O primeiro é a resposta principal do adversário.`;
-      punishmentStepButton.textContent = done ? 'Linha reproduzida' : playback.lastSan ? 'Avançar um lance' : 'Ver a primeira resposta';
+          ? `${playback.nextIndex}/${playback.tokens.length} · ${playback.lastSan}`
+          : `${playback.tokens.length} lances disponíveis · a linha do motor é uma sugestão.`;
+      punishmentStepButton.textContent = done ? 'Linha concluída' : playback.lastSan ? 'Próximo lance' : 'Ver primeiro lance';
       punishmentStepButton.disabled = done;
       return;
     }
@@ -2564,10 +2549,11 @@
     const punishable = Boolean(result?.playedMove && result.pvUci && result.quality
       && ['inaccuracy', 'mistake', 'blunder'].includes(result.quality.kind) && !exerciseActiveHere());
     punishmentWalkthrough.hidden = !punishable;
+    punishmentWalkthrough.classList.remove('is-playing');
     if (punishable) {
       const plies = result.pvUci.trim().split(/\s+/).filter(Boolean).slice(0, 16).length;
-      punishmentStatus.textContent = `Veja a resposta calculada pelo Stockfish depois de ${result.playedMove.san}, uma jogada por vez (${plies} meios-lances disponíveis).`;
-      punishmentStepButton.textContent = 'Reproduzir punição passo a passo';
+      punishmentStatus.textContent = `${plies} meios-lances calculados na resposta principal.`;
+      punishmentStepButton.textContent = 'Ver a resposta, lance a lance';
       punishmentStepButton.disabled = false;
     }
   }
@@ -2578,7 +2564,7 @@
       if (!source?.playedMove || !source.pvUci) return;
       const tokens = source.pvUci.trim().split(/\s+/).filter(Boolean).slice(0, 16);
       if (!tokens.length) return;
-      if (!variationSession) enterVariationMode();
+      if (!variationSession) beginVariationMode(true);
       if (!variationSession) return;
       punishmentPlayback = { tokens, nextIndex: 0, expectedIndex: historyIndex, expectedFen: currentFen(position), lastSan: '', applying: false };
     }
@@ -2958,22 +2944,10 @@
     const url = new URL('https://chatgpt.com/');
     url.searchParams.set('q', prompt);
     window.open(url.toString(), '_blank', 'noopener,noreferrer');
-    superAnalysisStatus.textContent = 'Abri o ChatGPT. Se o pedido não aparecer preenchido, clique em “Copiar prompt” e cole na conversa.';
-  }
-
-  async function copySuperAnalysisPrompt() {
-    const prompt = superAnalysisPrompt();
-    if (!prompt) { superAnalysisStatus.textContent = 'Faça uma análise completa do lance antes de copiar o pedido.'; return; }
-    try {
-      await navigator.clipboard.writeText(prompt);
-      superAnalysisStatus.textContent = 'Pedido copiado. Cole-o no ChatGPT para fazer a super análise.';
-    } catch {
-      superAnalysisStatus.textContent = 'Não consegui acessar a área de transferência. Abra o ChatGPT pelo botão e tente novamente.';
-    }
+    superAnalysisStatus.textContent = 'Abri o ChatGPT em outra aba com a posição e as linhas do Stockfish.';
   }
 
   openSuperAnalysisButton.addEventListener('click', openSuperAnalysis);
-  copySuperAnalysisButton.addEventListener('click', copySuperAnalysisPrompt);
   runSiteSuperAnalysisButton.addEventListener('click', runSiteSuperAnalysis);
 
   function scoreForSide(score, rootTurn, side) {

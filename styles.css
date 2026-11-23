@@ -153,15 +153,14 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .super-analysis-heading span{color:#91a092;font-size:9px;line-height:1.4}
 .super-analysis-tag{flex:none;padding:4px 7px;border:1px solid #44553f;border-radius:99px;background:#253126;color:#c6e5ad!important;font-size:8px!important;font-weight:700;letter-spacing:.5px}
 .super-analysis-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.super-analysis-buttons .secondary-button,.super-analysis-buttons .text-button{min-width:0;min-height:38px;margin:0;padding:8px 9px;border:1px solid #3a4c3d;border-radius:6px;background:#202c23;color:#d5e3d0;font-size:10px;font-weight:600;line-height:1.25}
+.super-analysis-buttons .secondary-button{min-width:0;min-height:38px;margin:0;padding:8px 9px;border:1px solid #3a4c3d;border-radius:6px;background:#202c23;color:#d5e3d0;font-size:10px;font-weight:600;line-height:1.25}
 .super-analysis-buttons .secondary-button:hover{border-color:#789b62;background:#2a392c}
-.super-analysis-buttons .text-button{grid-column:1/-1;justify-self:start;min-height:30px;padding:5px 2px;border:0;background:transparent;color:#aab9a9;font-weight:500}
 .super-analysis-actions:not(.has-internal-analysis) #open-super-analysis{grid-column:1/-1}
 .super-analysis-privacy{padding-top:8px;border-top:1px solid #2d3a30;color:#a9b6a8}
 .super-analysis-privacy summary{width:max-content;max-width:100%;color:#b8c8b6;font-size:9px;cursor:pointer}
 .super-analysis-privacy p{margin:7px 0 0;color:#8e9d90;font-size:9px;line-height:1.55}
 .super-analysis-challenge,.super-analysis-result,.super-analysis-status{min-width:0}
-@media(max-width:420px){.super-analysis-buttons{grid-template-columns:1fr}.super-analysis-buttons #open-super-analysis,.super-analysis-buttons .text-button{grid-column:auto}.move-alternative-played{grid-template-columns:auto 1fr}.move-alternative-played .move-alternative-evaluation{grid-column:2;grid-row:auto;text-align:left}}
+@media(max-width:420px){.super-analysis-buttons{grid-template-columns:1fr}.super-analysis-buttons #open-super-analysis{grid-column:auto}.move-alternative-played{grid-template-columns:auto 1fr}.move-alternative-played .move-alternative-evaluation{grid-column:2;grid-row:auto;text-align:left}}
 .advantage-chart-card{margin:16px 0;padding:14px;border:1px solid #2b362e;border-radius:7px;background:#141b16}
 .advantage-chart-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .advantage-chart-heading h3{margin:0 0 4px;color:#e0e8dc;font:600 14px Manrope,sans-serif}
@@ -652,11 +651,19 @@ body.has-game .page-shell{padding-bottom:100px}
 
 .game-review-quality .super-analysis-actions{display:grid;gap:10px;margin:13px 0;padding:13px;border:1px solid #35483a;border-radius:8px;background:linear-gradient(145deg,#19241d,#141b17);box-shadow:0 5px 16px #0002}
 .game-review-quality .super-analysis-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.game-review-quality .super-analysis-buttons .secondary-button,.game-review-quality .super-analysis-buttons .text-button{min-width:0;min-height:38px;margin:0;padding:8px 9px;border:1px solid #3a4c3d;border-radius:6px;background:#202c23;color:#d5e3d0;font-size:10px;font-weight:600;line-height:1.25}
+.game-review-quality .super-analysis-buttons .secondary-button{min-width:0;min-height:38px;margin:0;padding:8px 9px;border:1px solid #3a4c3d;border-radius:6px;background:#202c23;color:#d5e3d0;font-size:10px;font-weight:600;line-height:1.25}
 .game-review-quality .super-analysis-buttons .secondary-button:hover{border-color:#789b62;background:#2a392c}
-.game-review-quality .super-analysis-buttons .text-button{grid-column:1/-1;justify-self:start;min-height:30px;padding:5px 2px;border:0;background:transparent;color:#aab9a9;font-weight:500}
 .game-review-quality .super-analysis-actions:not(.has-internal-analysis) #open-super-analysis{grid-column:1/-1}
 .game-review-quality .super-analysis-privacy{padding-top:8px;border-top:1px solid #2d3a30;color:#a9b6a8}
 .game-review-quality .super-analysis-privacy summary{width:max-content;max-width:100%;color:#b8c8b6;font-size:9px;cursor:pointer}
 .game-review-quality .super-analysis-privacy p{margin:7px 0 0;color:#8e9d90;font-size:9px;line-height:1.55}
-@media(max-width:420px){.game-review-quality .super-analysis-buttons{grid-template-columns:1fr}.game-review-quality .super-analysis-buttons #open-super-analysis,.game-review-quality .super-analysis-buttons .text-button{grid-column:auto}}
+@media(max-width:420px){.game-review-quality .super-analysis-buttons{grid-template-columns:1fr}.game-review-quality .super-analysis-buttons #open-super-analysis{grid-column:auto}}
+.game-review-quality .punishment-walkthrough{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3px 10px;margin:10px 0 0;padding:8px 0 0;border:0;border-top:1px solid #2d3930;border-radius:0;background:transparent;box-shadow:none}
+.game-review-quality .punishment-walkthrough[hidden]{display:none!important}
+.punishment-eyebrow{color:#758578;font-size:7px;font-weight:700;letter-spacing:.7px}
+.game-review-quality .punishment-walkthrough p{grid-column:1;margin:0;color:#8e9c8f;font-size:9px;line-height:1.4}
+.game-review-quality .punishment-step-button{grid-column:2;grid-row:1/3;justify-self:end;width:auto;min-height:28px;padding:5px 2px;border:0;border-radius:0;background:transparent;color:#a2b497;font-size:9px;font-weight:600;text-align:right;cursor:pointer}
+.game-review-quality .punishment-step-button:hover{color:#d1e2c4;text-decoration:underline}
+.game-review-quality .punishment-step-button:disabled{color:#758578;text-decoration:none;opacity:.7;cursor:default}
+.game-review-quality .punishment-walkthrough.is-playing{border-top-color:#3b493c}
+@media(max-width:420px){.game-review-quality .punishment-walkthrough{grid-template-columns:1fr}.game-review-quality .punishment-step-button{grid-column:1;grid-row:auto;justify-self:start}}
