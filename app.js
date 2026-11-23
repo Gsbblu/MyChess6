@@ -2305,9 +2305,13 @@
 
   async function autoAnalyzeUnanalyzedChessComGames() {
     if (autoChessComBusy || pendingAnalysis || activeAnalysis || analysisStopping) return;
+    // Acquire the lock before the IndexedDB read below. A second caller can
+    // otherwise pass the same guard while the first one is still awaiting it.
+    autoChessComBusy = true;
     try {
       const games = chessComGamesCache.filter((game) => game.pgn && game.url && (!game.rules || game.rules === 'chess'));
       if (!games.length) {
+        autoChessComBusy = false;
         window.MyChess6Cloud.archiveState = 'done';
         chessComStatus.textContent = 'Nenhuma partida com PGN está disponível para análise automática.';
         return;
@@ -2321,11 +2325,11 @@
       autoChessComQueue = candidates.slice(0, limit);
       window.MyChess6Cloud.archiveRemaining = Math.max(0, candidates.length - autoChessComQueue.length);
       if (!autoChessComQueue.length) {
+        autoChessComBusy = false;
         window.MyChess6Cloud.archiveState = 'done';
         chessComStatus.textContent = 'Todas as partidas com PGN deste arquivo já têm análise salva.';
         return;
       }
-      autoChessComBusy = true;
       window.MyChess6Cloud.archiveState = 'analyzing';
       startAutoChessComGame(autoChessComQueue.shift());
     } catch (error) {
