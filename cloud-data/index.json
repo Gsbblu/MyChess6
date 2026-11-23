@@ -1,9 +1,9 @@
 {
   "format": "MyChess cloud library",
   "version": 2,
-  "revision": "a74ec1e6debae1fe45cc6936e5efc5b6a557d088aec72185c5efca793702ff38",
+  "revision": "9f626c60426bd320a7aca031102084954d7d615eba3f7a73acbe0293523f7713",
   "lastSeenGameUrl": "https://www.chess.com/game/live/187862075762",
-  "backfillArchiveUrl": "https://api.chess.com/pub/player/gab0bu/games/2026/11",
+  "backfillArchiveUrl": "https://api.chess.com/pub/player/gab0bu/games/2026/10",
   "backfillComplete": true,
   "pendingInArchive": 0,
   "gameCount": 391,
