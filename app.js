@@ -677,9 +677,9 @@
 
   function renderBestMoves(analysis) {
     bestMovesList.replaceChildren();
-    if (!analysis?.fen) { bestMovesPanel.hidden = true; return; }
+    if (!analysis?.fen) { bestMovesPanel.hidden = true; updateMoveAnalysisGroup(); return; }
     let root;
-    try { root = positionFromFen(analysis.fen); } catch { bestMovesPanel.hidden = true; return; }
+    try { root = positionFromFen(analysis.fen); } catch { bestMovesPanel.hidden = true; updateMoveAnalysisGroup(); return; }
     const candidates = [];
     const add = (token, pv, score) => {
       const first = String(token || String(pv || '').trim().split(/\s+/)[0] || '');
@@ -694,7 +694,7 @@
       add(pv.split(/\s+/)[0], pv, line.score);
       if (candidates.length >= 3) break;
     }
-    if (!candidates.length) { bestMovesPanel.hidden = true; return; }
+    if (!candidates.length) { bestMovesPanel.hidden = true; updateMoveAnalysisGroup(); return; }
     candidates.slice(0, 3).forEach((candidate, index) => {
       const item = document.createElement('li'); item.className = `best-move-option best-move-option-${index + 1}`;
       const heading = document.createElement('div'); heading.className = 'best-move-option-heading';
@@ -709,6 +709,7 @@
     });
     bestMovesMeta.textContent = candidates.length > 1 ? `${candidates.length} linhas · Stockfish` : 'Stockfish';
     bestMovesPanel.hidden = false;
+    updateMoveAnalysisGroup();
   }
 
   function renderGameClocks() {
@@ -2738,7 +2739,8 @@
   }
 
   function updateMoveAnalysisGroup() {
-    moveAnalysisGroup.hidden = superAnalysisActions.hidden && moveAlternatives.hidden;
+    moveAnalysisGroup.classList.toggle('has-super-analysis', !superAnalysisActions.hidden);
+    moveAnalysisGroup.hidden = superAnalysisActions.hidden && moveAlternatives.hidden && bestMovesPanel.hidden;
   }
 
   let turnstileScriptPromise = null;

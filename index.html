@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-ui-refresh-20261123-1">
+    <link rel="stylesheet" href="styles.css?v=mychess6-guided-panel-20261123-2">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -128,23 +128,6 @@
             <section class="game-review-quality" id="game-review-quality" hidden aria-label="Classificação do lance analisado">
               <div class="game-review-quality-heading"><span id="game-review-context">REVISÃO DA PARTIDA</span><strong class="move-quality-badge" id="game-review-badge"></strong></div>
               <p id="game-review-explanation"></p>
-              <section class="move-analysis-group" id="move-analysis-group" hidden aria-label="Explicação e melhores jogadas">
-                <div class="super-analysis-actions" id="super-analysis-actions" hidden>
-                  <div class="super-analysis-heading"><div><strong>Explique este lance</strong><span>Receba uma explicação didática das variantes.</span></div><span class="super-analysis-tag">IA</span></div>
-                  <div class="super-analysis-buttons">
-                    <button class="secondary-button" id="run-site-super-analysis" type="button" hidden><span aria-hidden="true">✦</span> Analisar aqui</button>
-                    <button class="secondary-button" id="open-super-analysis" type="button">Abrir no ChatGPT <span aria-hidden="true">↗</span></button>
-                  </div>
-                  <details class="super-analysis-privacy"><summary>Privacidade e limites</summary><p>O prompt contém a posição, o lance e as linhas do Stockfish, sem nomes da partida. A Cloudflare processa dados técnicos, como o IP, para verificar e limitar pedidos. A análise depende da cota gratuita.</p></details>
-                  <div class="super-analysis-challenge" id="super-analysis-challenge" hidden></div>
-                  <div class="super-analysis-result" id="super-analysis-result" hidden aria-live="polite"></div>
-                  <span class="super-analysis-status" id="super-analysis-status" role="status" aria-live="polite"></span>
-                </div>
-                <section class="move-alternatives" id="move-alternatives" hidden aria-label="Melhores alternativas à jogada">
-                  <div class="move-alternatives-heading"><div><span>OUTRAS JOGADAS</span><small id="move-alternatives-context"></small></div><span class="move-alternatives-engine">Stockfish</span></div>
-                  <ol class="move-alternatives-list" id="move-alternatives-list"></ol>
-                </section>
-              </section>
               <p class="coach-question" id="game-review-question" hidden></p>
               <p class="exercise-feedback" id="exercise-feedback" hidden></p>
               <div class="punishment-walkthrough" id="punishment-walkthrough" hidden>
@@ -155,9 +138,26 @@
               <button class="explain-move-button" id="reveal-exercise" type="button" hidden>Mostrar o lance jogado e a análise</button>
               <small id="game-review-depth"></small>
             </section>
-            <section class="best-moves-panel" id="best-moves-panel" hidden aria-label="Melhores jogadas para esta posição">
-              <div class="best-moves-heading"><span>MELHORES JOGADAS</span><small id="best-moves-meta"></small></div>
-              <ol class="best-moves-list" id="best-moves-list"></ol>
+            <section class="move-analysis-group" id="move-analysis-group" hidden aria-label="Explicação e melhores jogadas">
+              <div class="super-analysis-actions" id="super-analysis-actions" hidden>
+                <div class="super-analysis-heading"><div><strong>Explique este lance</strong><span>Receba uma explicação didática das variantes.</span></div><span class="super-analysis-tag">IA</span></div>
+                <div class="super-analysis-buttons">
+                  <button class="secondary-button" id="run-site-super-analysis" type="button" hidden><span aria-hidden="true">✦</span> Analisar aqui</button>
+                  <button class="secondary-button" id="open-super-analysis" type="button">Abrir no ChatGPT <span aria-hidden="true">↗</span></button>
+                </div>
+                <details class="super-analysis-privacy"><summary>Privacidade e limites</summary><p>O prompt contém a posição, o lance e as linhas do Stockfish, sem nomes da partida. A Cloudflare processa dados técnicos, como o IP, para verificar e limitar pedidos. A análise depende da cota gratuita.</p></details>
+                <div class="super-analysis-challenge" id="super-analysis-challenge" hidden></div>
+                <div class="super-analysis-result" id="super-analysis-result" hidden aria-live="polite"></div>
+                <span class="super-analysis-status" id="super-analysis-status" role="status" aria-live="polite"></span>
+              </div>
+              <section class="best-moves-panel" id="best-moves-panel" hidden aria-label="Melhores jogadas para esta posição">
+                <div class="best-moves-heading"><span>MELHORES JOGADAS</span><small id="best-moves-meta"></small></div>
+                <ol class="best-moves-list" id="best-moves-list"></ol>
+              </section>
+              <section class="move-alternatives" id="move-alternatives" hidden aria-label="Melhores alternativas à jogada">
+                <div class="move-alternatives-heading"><div><span>OUTRAS JOGADAS</span><small id="move-alternatives-context"></small></div><span class="move-alternatives-engine">Stockfish</span></div>
+                <ol class="move-alternatives-list" id="move-alternatives-list"></ol>
+              </section>
             </section>
           </section>
           <div class="analysis-actions"><button class="primary-button" id="analyze-position" type="button"><span aria-hidden="true">▶</span> Analisar posição</button><button class="cancel-button" id="cancel-analysis" type="button" hidden>Cancelar</button></div>
@@ -239,6 +239,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=mychess6-ui-refresh-20261123-1" defer></script>
+    <script src="app.js?v=mychess6-guided-panel-20261123-2" defer></script>
   </body>
 </html>
