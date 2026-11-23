@@ -620,3 +620,5 @@ body.has-game .page-shell{padding-bottom:100px}
 .board-size-control input:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
 .board-size-control output{min-width:31px;color:#dce8d5;font-size:9px;text-align:right;font-variant-numeric:tabular-nums}
 @media(max-width:390px){.board-size-control{gap:3px;font-size:8px}.board-size-control input{width:58px}}
+
+@media(min-width:651px){.workspace>.board-card{position:sticky;top:14px;align-self:start}}

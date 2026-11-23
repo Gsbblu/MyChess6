@@ -1112,7 +1112,10 @@
 
   function goTo(index) {
     const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
+    const scrollYBefore = window.scrollY;
+    const boardCard = boardElement.closest('.board-card');
+    const boardRectBefore = boardCard?.getBoundingClientRect();
+    const boardWasVisible = Boolean(boardRectBefore && boardRectBefore.bottom > 0 && boardRectBefore.top < window.innerHeight);
     index = Math.max(0, Math.min(index, history.length - 1));
     if (index === historyIndex) return;
     const previousIndex = historyIndex;
@@ -1132,6 +1135,10 @@
     render();
     // A revisão atualiza painéis com alturas diferentes; não deixe o scroll anchoring deslocar a página.
     void boardElement.offsetHeight;
+    const boardRectAfter = boardCard?.getBoundingClientRect();
+    const scrollY = boardWasVisible && boardRectBefore && boardRectAfter
+      ? window.scrollY + boardRectAfter.top - boardRectBefore.top
+      : scrollYBefore;
     if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
       const root = document.documentElement;
       const previousBehavior = root.style.scrollBehavior;
