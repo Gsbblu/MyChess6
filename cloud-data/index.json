@@ -1,18 +1,96 @@
 {
   "format": "MyChess cloud library",
   "version": 2,
-  "revision": "7c7aa483251ed45189004d45f69a8b08f18d943eef8c312252ab00b78124f871",
+  "revision": "4576210c098e8f24ddb12e329966872bfe1fc7d8ccf069ef2656fdf816fc7c6f",
   "lastSeenGameUrl": "https://www.chess.com/game/live/187515364054",
   "backfillArchiveUrl": "",
   "backfillComplete": true,
   "pendingInArchive": 0,
-  "gameCount": 381,
+  "gameCount": 383,
   "shards": [
     {
-      "path": "games-0.json",
-      "gameCount": 24,
-      "bytes": 4893226,
-      "sha256": "3bd3f41fb0975cc0fc6ed3aab375278872ff29b6a19a8f2b559e03d2aa32d80c"
+      "path": "games-00.json",
+      "gameCount": 2,
+      "bytes": 506957,
+      "sha256": "57fcbb514ee7fbfd62672cb7af9da38eb8659b77391cb5b0e1b88b0ca7a77ea3"
+    },
+    {
+      "path": "games-01.json",
+      "gameCount": 1,
+      "bytes": 96133,
+      "sha256": "4193d59d7f1105f90fd76b2d92bb090245c0ccf4fa2dcf798ffac62a9feb1f5d"
+    },
+    {
+      "path": "games-03.json",
+      "gameCount": 1,
+      "bytes": 98673,
+      "sha256": "5e72a7f069aa0d19f7af4fb591ab32a8edcc691eb6764a510f4d15a0d5b9d34f"
+    },
+    {
+      "path": "games-04.json",
+      "gameCount": 1,
+      "bytes": 513392,
+      "sha256": "504e1ce5cc4d91b214bba0eaebe5114f9d86a3adebdea72f0381d53ac6e29e64"
+    },
+    {
+      "path": "games-05.json",
+      "gameCount": 2,
+      "bytes": 245943,
+      "sha256": "7803d188c27794909c4d8174ec945a5145e17a2f3bf5756e2545b9831431847e"
+    },
+    {
+      "path": "games-06.json",
+      "gameCount": 1,
+      "bytes": 185384,
+      "sha256": "d9c96ce9f6f23e68872cae1d15258ba57e6859a820494599925275bd5c4b5f8c"
+    },
+    {
+      "path": "games-08.json",
+      "gameCount": 1,
+      "bytes": 134329,
+      "sha256": "fa8634a2758eef834473c1f6ecb7e37801522fa707106ec4ae3c71968084f139"
+    },
+    {
+      "path": "games-09.json",
+      "gameCount": 4,
+      "bytes": 702314,
+      "sha256": "7d8a01cef5d59a113d8efb920c16879194578d1cebf14fa620ff31906f5c8e95"
+    },
+    {
+      "path": "games-0a.json",
+      "gameCount": 1,
+      "bytes": 392603,
+      "sha256": "601d2b5b6b84005956dc080e7057f69e6039ce4634360e98b3568e14964f4398"
+    },
+    {
+      "path": "games-0b.json",
+      "gameCount": 4,
+      "bytes": 1141215,
+      "sha256": "c8d7c84f15ce4b59772aecbcc92f906ac6a62eed5e8dfd2d6c0f397ee93ef08f"
+    },
+    {
+      "path": "games-0c.json",
+      "gameCount": 1,
+      "bytes": 143642,
+      "sha256": "81414d45f195e798999fa26917e8efa5768dd38b87867d76070345ce6e95bf40"
+    },
+    {
+      "path": "games-0d.json",
+      "gameCount": 2,
+      "bytes": 436919,
+      "sha256": "fa441050b112aef05b512ba953ec7dd4ae051bad228dbea52308c53ca2b1ac97"
+    },
+    {
+      "path": "games-0e.json",
+      "gameCount": 1,
+      "bytes": 407157,
+      "sha256": "527bc97aaeb042089cf1b7f7a2a169b3e457750efc5534cd634a3cd0ffbc9cb8"
+    },
+    {
+      "path": "games-0f.json",
+      "gameCount": 3,
+      "bytes": 401981,
+      "sha256": "2d2b3ebca8e8cb63c7eefa654090e4b41e2db7770e9c50c866a74ac608ebf2ee"
     },
     {
       "path": "games-1.json",
@@ -52,9 +130,9 @@
     },
     {
       "path": "games-7.json",
-      "gameCount": 14,
-      "bytes": 2465632,
-      "sha256": "69437736e4515d163b03a2d7074e2e33b5cd94986660726f394d7595775a42e9"
+      "gameCount": 15,
+      "bytes": 2555764,
+      "sha256": "fec62ea4629d8838ba27a64970914178b060acc1e1d1d137547b480dd0c7e55c"
     },
     {
       "path": "games-8.json",
