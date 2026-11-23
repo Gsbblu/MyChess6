@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-guided-panel-20261123-2">
+    <link rel="stylesheet" href="styles.css?v=mychess6-explainer-split-20261123-3">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -138,7 +138,7 @@
               <button class="explain-move-button" id="reveal-exercise" type="button" hidden>Mostrar o lance jogado e a análise</button>
               <small id="game-review-depth"></small>
             </section>
-            <section class="move-analysis-group" id="move-analysis-group" hidden aria-label="Explicação e melhores jogadas">
+            <section class="move-explanation-panel" id="move-explanation-panel" hidden aria-label="Explique este lance">
               <div class="super-analysis-actions" id="super-analysis-actions" hidden>
                 <div class="super-analysis-heading"><div><strong>Explique este lance</strong><span>Receba uma explicação didática das variantes.</span></div><span class="super-analysis-tag">IA</span></div>
                 <div class="super-analysis-buttons">
@@ -150,6 +150,8 @@
                 <div class="super-analysis-result" id="super-analysis-result" hidden aria-live="polite"></div>
                 <span class="super-analysis-status" id="super-analysis-status" role="status" aria-live="polite"></span>
               </div>
+            </section>
+            <section class="move-analysis-group" id="move-analysis-group" hidden aria-label="Melhores jogadas e alternativas">
               <section class="best-moves-panel" id="best-moves-panel" hidden aria-label="Melhores jogadas para esta posição">
                 <div class="best-moves-heading"><span>MELHORES JOGADAS</span><small id="best-moves-meta"></small></div>
                 <ol class="best-moves-list" id="best-moves-list"></ol>
@@ -239,6 +241,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=mychess6-guided-panel-20261123-2" defer></script>
+    <script src="app.js?v=mychess6-explainer-split-20261123-3" defer></script>
   </body>
 </html>

@@ -74,6 +74,7 @@
   const gameReviewBadge = document.querySelector('#game-review-badge');
   const gameReviewExplanation = document.querySelector('#game-review-explanation');
   const moveAnalysisGroup = document.querySelector('#move-analysis-group');
+  const moveExplanationPanel = document.querySelector('#move-explanation-panel');
   const superAnalysisActions = document.querySelector('#super-analysis-actions');
   const runSiteSuperAnalysisButton = document.querySelector('#run-site-super-analysis');
   const openSuperAnalysisButton = document.querySelector('#open-super-analysis');
@@ -677,9 +678,9 @@
 
   function renderBestMoves(analysis) {
     bestMovesList.replaceChildren();
-    if (!analysis?.fen) { bestMovesPanel.hidden = true; updateMoveAnalysisGroup(); return; }
+    if (!analysis?.fen) { bestMovesPanel.hidden = true; updateMoveAnalysisPanels(); return; }
     let root;
-    try { root = positionFromFen(analysis.fen); } catch { bestMovesPanel.hidden = true; updateMoveAnalysisGroup(); return; }
+    try { root = positionFromFen(analysis.fen); } catch { bestMovesPanel.hidden = true; updateMoveAnalysisPanels(); return; }
     const candidates = [];
     const add = (token, pv, score) => {
       const first = String(token || String(pv || '').trim().split(/\s+/)[0] || '');
@@ -694,7 +695,7 @@
       add(pv.split(/\s+/)[0], pv, line.score);
       if (candidates.length >= 3) break;
     }
-    if (!candidates.length) { bestMovesPanel.hidden = true; updateMoveAnalysisGroup(); return; }
+    if (!candidates.length) { bestMovesPanel.hidden = true; updateMoveAnalysisPanels(); return; }
     candidates.slice(0, 3).forEach((candidate, index) => {
       const item = document.createElement('li'); item.className = `best-move-option best-move-option-${index + 1}`;
       const heading = document.createElement('div'); heading.className = 'best-move-option-heading';
@@ -709,7 +710,7 @@
     });
     bestMovesMeta.textContent = candidates.length > 1 ? `${candidates.length} linhas · Stockfish` : 'Stockfish';
     bestMovesPanel.hidden = false;
-    updateMoveAnalysisGroup();
+    updateMoveAnalysisPanels();
   }
 
   function renderGameClocks() {
@@ -1224,7 +1225,7 @@
     gameReviewQuestion.textContent = after.quality?.lesson ? after.quality.lesson.questions.decision : 'Lembre o que você pretendia e pense nas respostas do adversário antes de revelar.';
     gameReviewDepth.textContent = 'A classificação, as setas e a avaliação ficam ocultas até você revelar.';
     moveAlternatives.hidden = true;
-    updateMoveAnalysisGroup();
+    updateMoveAnalysisPanels();
     revealExerciseButton.hidden = false;
     engineStatusText.textContent = 'Exercício guiado: a análise fica oculta até você revelar.';
   }
@@ -2419,7 +2420,7 @@
     siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
     gameReviewQuestion.hidden = true;
     moveAlternatives.hidden = true;
-    updateMoveAnalysisGroup();
+    updateMoveAnalysisPanels();
     analysisProgress.hidden = true;
     progressBar.value = 0;
     progressLabel.textContent = 'Preparando motor…';
@@ -2440,12 +2441,12 @@
     moveAlternativesList.replaceChildren();
     if (!playedResult?.playedMove || !beforeResult?.bestMove || !beforeResult?.fen) {
       moveAlternatives.hidden = true;
-      updateMoveAnalysisGroup();
+      updateMoveAnalysisPanels();
       return;
     }
     let root;
     try { root = positionFromFen(beforeResult.fen); }
-    catch { moveAlternatives.hidden = true; updateMoveAnalysisGroup(); return; }
+    catch { moveAlternatives.hidden = true; updateMoveAnalysisPanels(); return; }
     const played = playedResult.playedMove;
     moveAlternativesContext.textContent = `Na posição antes de ${played.moveNumber}${played.side === 'w' ? '.' : '…'} ${played.san}`;
 
@@ -2487,7 +2488,7 @@
       item.append(heading, continuation); moveAlternativesList.append(item);
     });
     moveAlternatives.hidden = candidates.length === 0;
-    updateMoveAnalysisGroup();
+    updateMoveAnalysisPanels();
   }
 
   function renderGameReviewAtCurrentPosition() {
@@ -2498,7 +2499,7 @@
     renderBoardQualityMarker();
     revealExerciseButton.hidden = true; exerciseFeedback.hidden = true;
     analysisResults.classList.remove('exercise-mode');
-    if (!result) { moveAlternatives.hidden = true; updateMoveAnalysisGroup(); renderPunishmentControls(); return; }
+    if (!result) { moveAlternatives.hidden = true; updateMoveAnalysisPanels(); renderPunishmentControls(); return; }
     if (exerciseActiveHere()) { renderExercisePrompt(); renderPunishmentControls(); return; }
     analysisPlaceholder.hidden = true;
     analysisResults.hidden = false;
@@ -2735,12 +2736,12 @@
       superAnalysisStatus.textContent = '';
     }
     if (superAnalysisActions.hidden) superAnalysisStatus.textContent = '';
-    updateMoveAnalysisGroup();
+    updateMoveAnalysisPanels();
   }
 
-  function updateMoveAnalysisGroup() {
-    moveAnalysisGroup.classList.toggle('has-super-analysis', !superAnalysisActions.hidden);
-    moveAnalysisGroup.hidden = superAnalysisActions.hidden && moveAlternatives.hidden && bestMovesPanel.hidden;
+  function updateMoveAnalysisPanels() {
+    moveExplanationPanel.hidden = superAnalysisActions.hidden;
+    moveAnalysisGroup.hidden = moveAlternatives.hidden && bestMovesPanel.hidden;
   }
 
   let turnstileScriptPromise = null;
@@ -3204,7 +3205,7 @@
       superAnalysisActions.hidden = true;
       gameReviewQuestion.hidden = true;
       moveAlternatives.hidden = true;
-      updateMoveAnalysisGroup();
+      updateMoveAnalysisPanels();
       return;
     }
     updateSuperAnalysisActions();
