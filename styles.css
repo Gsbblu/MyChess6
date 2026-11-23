@@ -667,3 +667,19 @@ body.has-game .page-shell{padding-bottom:100px}
 .game-review-quality .punishment-step-button:disabled{color:#758578;text-decoration:none;opacity:.7;cursor:default}
 .game-review-quality .punishment-walkthrough.is-playing{border-top-color:#3b493c}
 @media(max-width:420px){.game-review-quality .punishment-walkthrough{grid-template-columns:1fr}.game-review-quality .punishment-step-button{grid-column:1;grid-row:auto;justify-self:start}}
+.game-review-quality .move-analysis-group{display:grid;gap:0;margin:13px 0;border:1px solid #405441;border-left:3px solid #b7e181;border-radius:8px;background:linear-gradient(145deg,#1b281e,#141c17);box-shadow:0 6px 18px #0002;overflow:hidden}
+.game-review-quality .move-analysis-group[hidden]{display:none!important}
+.game-review-quality .move-analysis-group .super-analysis-actions{gap:10px;margin:0;padding:12px;border:0;border-radius:0;background:transparent;box-shadow:none}
+.game-review-quality .super-analysis-heading strong{font-size:14px;color:#e7f0e1}
+.game-review-quality .super-analysis-heading span{font-size:10px}
+.game-review-quality .super-analysis-tag{padding:4px 8px}
+.game-review-quality .super-analysis-buttons .secondary-button{min-height:42px;background:#253328;border-color:#465a48}
+.game-review-quality .super-analysis-actions.has-internal-analysis #run-site-super-analysis,.game-review-quality .super-analysis-actions:not(.has-internal-analysis) #open-super-analysis{border-color:#b7e181;background:#b7e181;color:#172016;box-shadow:0 2px 8px #b7e18122}
+.game-review-quality .super-analysis-actions.has-internal-analysis #run-site-super-analysis:hover,.game-review-quality .super-analysis-actions:not(.has-internal-analysis) #open-super-analysis:hover{border-color:#d0f0b0;background:#d0f0b0}
+.game-review-quality .move-analysis-group .move-alternatives{gap:7px;margin:0;padding:10px 12px 12px;border:0;border-top:1px solid #2d3a30;border-radius:0;background:transparent;box-shadow:none}
+.game-review-quality .move-alternatives-heading>div>span{color:#849286;font-size:8px}
+.game-review-quality .move-alternatives-heading small{font-size:8px;color:#7f8d81}
+.game-review-quality .move-alternatives-engine{padding:2px 6px;color:#7f8d81;border-color:#303d32;font-size:7px}
+.game-review-quality .move-alternative-option{padding:6px 7px;background:#171f19;border-color:#2b372e}
+.game-review-quality .move-alternative-option-heading strong{font-size:9px}
+.game-review-quality .move-alternative-option p{font-size:8px;color:#849186}

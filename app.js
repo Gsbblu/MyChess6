@@ -73,6 +73,7 @@
   const gameReviewContext = document.querySelector('#game-review-context');
   const gameReviewBadge = document.querySelector('#game-review-badge');
   const gameReviewExplanation = document.querySelector('#game-review-explanation');
+  const moveAnalysisGroup = document.querySelector('#move-analysis-group');
   const superAnalysisActions = document.querySelector('#super-analysis-actions');
   const runSiteSuperAnalysisButton = document.querySelector('#run-site-super-analysis');
   const openSuperAnalysisButton = document.querySelector('#open-super-analysis');
@@ -1222,6 +1223,7 @@
     gameReviewQuestion.textContent = after.quality?.lesson ? after.quality.lesson.questions.decision : 'Lembre o que você pretendia e pense nas respostas do adversário antes de revelar.';
     gameReviewDepth.textContent = 'A classificação, as setas e a avaliação ficam ocultas até você revelar.';
     moveAlternatives.hidden = true;
+    updateMoveAnalysisGroup();
     revealExerciseButton.hidden = false;
     engineStatusText.textContent = 'Exercício guiado: a análise fica oculta até você revelar.';
   }
@@ -2416,6 +2418,7 @@
     siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
     gameReviewQuestion.hidden = true;
     moveAlternatives.hidden = true;
+    updateMoveAnalysisGroup();
     analysisProgress.hidden = true;
     progressBar.value = 0;
     progressLabel.textContent = 'Preparando motor…';
@@ -2436,11 +2439,12 @@
     moveAlternativesList.replaceChildren();
     if (!playedResult?.playedMove || !beforeResult?.bestMove || !beforeResult?.fen) {
       moveAlternatives.hidden = true;
+      updateMoveAnalysisGroup();
       return;
     }
     let root;
     try { root = positionFromFen(beforeResult.fen); }
-    catch { moveAlternatives.hidden = true; return; }
+    catch { moveAlternatives.hidden = true; updateMoveAnalysisGroup(); return; }
     const played = playedResult.playedMove;
     moveAlternativesContext.textContent = `Na posição antes de ${played.moveNumber}${played.side === 'w' ? '.' : '…'} ${played.san}`;
 
@@ -2482,6 +2486,7 @@
       item.append(heading, continuation); moveAlternativesList.append(item);
     });
     moveAlternatives.hidden = candidates.length === 0;
+    updateMoveAnalysisGroup();
   }
 
   function renderGameReviewAtCurrentPosition() {
@@ -2492,7 +2497,7 @@
     renderBoardQualityMarker();
     revealExerciseButton.hidden = true; exerciseFeedback.hidden = true;
     analysisResults.classList.remove('exercise-mode');
-    if (!result) { moveAlternatives.hidden = true; renderPunishmentControls(); return; }
+    if (!result) { moveAlternatives.hidden = true; updateMoveAnalysisGroup(); renderPunishmentControls(); return; }
     if (exerciseActiveHere()) { renderExercisePrompt(); renderPunishmentControls(); return; }
     analysisPlaceholder.hidden = true;
     analysisResults.hidden = false;
@@ -2729,6 +2734,11 @@
       superAnalysisStatus.textContent = '';
     }
     if (superAnalysisActions.hidden) superAnalysisStatus.textContent = '';
+    updateMoveAnalysisGroup();
+  }
+
+  function updateMoveAnalysisGroup() {
+    moveAnalysisGroup.hidden = superAnalysisActions.hidden && moveAlternatives.hidden;
   }
 
   let turnstileScriptPromise = null;
@@ -3192,6 +3202,7 @@
       superAnalysisActions.hidden = true;
       gameReviewQuestion.hidden = true;
       moveAlternatives.hidden = true;
+      updateMoveAnalysisGroup();
       return;
     }
     updateSuperAnalysisActions();
