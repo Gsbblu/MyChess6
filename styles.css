@@ -108,9 +108,6 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .explain-move-button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin-top:10px;padding:7px 10px;border:1px solid #405441;border-radius:5px;background:#202b21;color:#cde3bd;font:600 10px 'DM Sans',sans-serif;cursor:pointer}
 .explain-move-button:hover{background:#29382a}
 .explain-move-button:focus-visible{outline:2px solid #b7e181;outline-offset:2px}
-.detailed-move-explanation{display:grid;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid #303d32}
-.detailed-move-explanation[hidden]{display:none!important}
-.explore-variation-button{width:auto;margin:9px 0 0;align-self:flex-start;cursor:pointer}
 .variation-banner{min-height:38px;padding:5px 12px 5px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #455a43;background:#202b21;color:#c9d9c1;font-size:9px}
 .variation-banner .tool-button{padding:5px 8px;font-size:9px}
 .board-actions{display:flex;align-items:center;gap:7px}
@@ -121,7 +118,7 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .board-actions .tool-button svg,.variation-banner .return-original-button svg{width:16px;height:16px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .board-actions .board-flip-button{min-width:38px}
 .variation-banner .return-original-button{border-color:#638351;background:#273a29;color:#dff2d3}
-@media(max-width:650px){.analysis-card .explore-variation-button{margin:9px 0 0;align-self:flex-start}.variation-banner{align-items:flex-start;flex-direction:column;padding:9px 12px}.variation-banner .tool-button{align-self:flex-end}}
+@media(max-width:650px){.variation-banner{align-items:flex-start;flex-direction:column;padding:9px 12px}.variation-banner .tool-button{align-self:flex-end}}
 @media(max-width:650px){.piece-drag-ghost{width:clamp(44px,13vw,68px)}}
 .rating-settings{margin-top:14px;border-top:1px solid var(--line);padding-top:11px;color:#aeb9ad;font-size:10px}
 .rating-settings summary{cursor:pointer;color:#cdd8cb;font-weight:600}
@@ -129,31 +126,42 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .rating-fields label{display:grid;gap:5px;flex:1}
 .rating-fields input{width:100%;border:1px solid #364237;border-radius:4px;background:#111713;color:var(--text);padding:7px 8px;font:inherit;font-size:11px}
 .rating-settings>p{margin:9px 0 0;color:#829084;line-height:1.5}
-.best-line-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.best-line-actions .secondary-button{margin:0;cursor:pointer}
-.move-action{width:100%;min-width:0;min-height:48px;display:flex;align-items:center;gap:10px;margin:0;padding:8px 10px;border:1px solid #344438;border-radius:6px;background:#1b251e;color:#dbe5d7;text-align:left;font:inherit;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
-.move-action:hover{border-color:#607b56;background:#222f25}
-.move-action:active{transform:translateY(1px)}
-.move-action:focus-visible{outline:2px solid #b7e181;outline-offset:2px}
-.move-action-icon{width:27px;height:27px;flex:0 0 27px;display:grid;place-items:center;border:1px solid #405441;border-radius:5px;background:#263329;color:#b7e181;font-size:13px;font-weight:700}
-.move-action-icon.line-icon{font-size:17px}
-.move-action-copy{min-width:0;flex:1;display:grid;gap:3px}
-.move-action-copy strong{color:#dce8d5;font-size:11px;font-weight:700;line-height:1.3}
-.move-action-copy small{display:block;min-width:0;color:#91a092;font-size:9px;font-weight:400;line-height:1.45;overflow:hidden;text-overflow:ellipsis}
-.move-action-chevron{flex:0 0 auto;color:#9bb58a;font-size:16px;line-height:1}
-.coach-action{margin-top:10px;border-color:#405441;background:#202b21}
-.coach-action[aria-expanded="true"]{border-color:#819c68;background:#27362a}
-.move-options{display:grid;gap:7px;margin-top:12px;padding:10px;border:1px solid #303d32;border-radius:6px;background:#141b16}
-.move-options[hidden]{display:none!important}
-.move-options-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#91a08f;font-size:8px;font-weight:700;letter-spacing:.8px}
-.move-options-heading small{color:#758579;font-size:8px;font-weight:500;letter-spacing:0}
-.best-line-actions{display:grid;gap:6px;margin:0}
-.best-line-actions .move-action{min-height:52px}
-.best-line-actions .move-action-copy small{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal}
-.explore-variation-button{align-self:stretch;width:100%;margin:9px 0 0;cursor:pointer}
-.analysis-card .explore-variation-button{align-self:stretch}
-.explore-variation-button .move-action-icon{color:#b9c7ba}
-.game-review-quality .move-action-copy strong{font-size:11px}
+.move-alternatives{display:grid;gap:8px;margin:12px 0;padding:11px;border:1px solid #405441;border-left:3px solid #b7e181;border-radius:7px;background:linear-gradient(145deg,#1d2a20,#151e18);box-shadow:0 5px 16px #0002}
+.move-alternatives[hidden]{display:none!important}
+.move-alternatives-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.move-alternatives-heading>div{display:grid;gap:4px;min-width:0}
+.move-alternatives-heading>div>span{color:#b9d89f;font-size:9px;font-weight:700;letter-spacing:.75px}
+.move-alternatives-heading small{color:#9aa99b;font-size:9px;line-height:1.4}
+.move-alternatives-engine{flex:none;padding:3px 6px;border:1px solid #37483a;border-radius:99px;color:#9baa9b;font-size:8px}
+.move-alternatives-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.move-alternative-played{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px 9px;padding:7px 8px;border:1px solid #594b34;border-radius:5px;background:#29261b}
+.move-alternative-played>span:first-child{grid-row:span 2;color:#e0c47e;font-size:7px;font-weight:700;letter-spacing:.6px}
+.move-alternative-played strong{color:#f1e4c2;font-size:11px}
+.move-alternative-played .move-alternative-evaluation{grid-column:3;grid-row:1/3;color:#e4cf98}
+.move-alternative-option{padding:7px 8px;border:1px solid #2e3c31;border-radius:5px;background:#18221b}
+.move-alternative-option-heading{display:grid;grid-template-columns:19px minmax(0,1fr) auto;align-items:center;gap:7px}
+.move-alternative-rank{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#293a2d;color:#bfe1a8;font-size:9px;font-weight:700}
+.move-alternative-option-2 .move-alternative-rank{background:#20323d;color:#b2d9ec}
+.move-alternative-option-3 .move-alternative-rank{background:#3a3021;color:#ecd3a0}
+.move-alternative-option-heading strong{min-width:0;color:#e0e9dc;font-size:10px}
+.move-alternative-evaluation{color:#b8c7b6;font-size:9px;font-variant-numeric:tabular-nums;text-align:right}
+.move-alternative-option p{margin:5px 0 0 25px;color:#94a195;font-size:9px;line-height:1.45;overflow-wrap:anywhere}
+.super-analysis-actions{display:grid;gap:10px;margin:13px 0;padding:13px;border:1px solid #35483a;border-radius:8px;background:linear-gradient(145deg,#19241d,#141b17);box-shadow:0 5px 16px #0002}
+.super-analysis-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.super-analysis-heading>div{display:grid;gap:3px}
+.super-analysis-heading strong{color:#e2ebdd;font:600 12px Manrope,sans-serif}
+.super-analysis-heading span{color:#91a092;font-size:9px;line-height:1.4}
+.super-analysis-tag{flex:none;padding:4px 7px;border:1px solid #44553f;border-radius:99px;background:#253126;color:#c6e5ad!important;font-size:8px!important;font-weight:700;letter-spacing:.5px}
+.super-analysis-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.super-analysis-buttons .secondary-button,.super-analysis-buttons .text-button{min-width:0;min-height:38px;margin:0;padding:8px 9px;border:1px solid #3a4c3d;border-radius:6px;background:#202c23;color:#d5e3d0;font-size:10px;font-weight:600;line-height:1.25}
+.super-analysis-buttons .secondary-button:hover{border-color:#789b62;background:#2a392c}
+.super-analysis-buttons .text-button{grid-column:1/-1;justify-self:start;min-height:30px;padding:5px 2px;border:0;background:transparent;color:#aab9a9;font-weight:500}
+.super-analysis-actions:not(.has-internal-analysis) #open-super-analysis{grid-column:1/-1}
+.super-analysis-privacy{padding-top:8px;border-top:1px solid #2d3a30;color:#a9b6a8}
+.super-analysis-privacy summary{width:max-content;max-width:100%;color:#b8c8b6;font-size:9px;cursor:pointer}
+.super-analysis-privacy p{margin:7px 0 0;color:#8e9d90;font-size:9px;line-height:1.55}
+.super-analysis-challenge,.super-analysis-result,.super-analysis-status{min-width:0}
+@media(max-width:420px){.super-analysis-buttons{grid-template-columns:1fr}.super-analysis-buttons #open-super-analysis,.super-analysis-buttons .text-button{grid-column:auto}.move-alternative-played{grid-template-columns:auto 1fr}.move-alternative-played .move-alternative-evaluation{grid-column:2;grid-row:auto;text-align:left}}
 .advantage-chart-card{margin:16px 0;padding:14px;border:1px solid #2b362e;border-radius:7px;background:#141b16}
 .advantage-chart-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .advantage-chart-heading h3{margin:0 0 4px;color:#e0e8dc;font:600 14px Manrope,sans-serif}
@@ -189,8 +197,6 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
   .game-review-quality>p{font-size:12px}
   .game-review-quality>small{font-size:9px;line-height:1.5}
   .explain-move-button{min-height:42px;font-size:12px}
-  .explore-variation-button{min-height:42px;margin-left:0}
-  .best-line-actions .secondary-button{min-height:42px;margin:0}
   .moves-card{padding:14px 12px}
   .move-entry{min-height:38px;padding:7px 9px}
   .game-position-link{min-height:40px}
@@ -355,8 +361,6 @@ body.has-game .page-shell{padding-bottom:100px}
 }
 
 /* Treinador: lição estruturada (fatos, indícios, incertezas) */
-.detailed-move-explanation{display:grid;gap:9px;margin-top:8px}
-.detailed-move-explanation[hidden]{display:none!important}
 .lesson-confidence{margin:0;padding:6px 9px;border-radius:4px;font-size:10px;line-height:1.5;font-weight:600}
 .lesson-confidence-verified{background:#203524;color:#b8e5a2;border-left:2px solid #79b765}
 .lesson-confidence-partial{background:#363322;color:#ecd98f;border-left:2px solid #c9ae4d}
@@ -645,3 +649,14 @@ body.has-game .page-shell{padding-bottom:100px}
 @media(max-width:390px){.board-size-control{gap:3px;font-size:8px}.board-size-control input{width:58px}}
 
 @media(min-width:651px){.workspace>.board-card{position:sticky;top:14px;align-self:start}}
+
+.game-review-quality .super-analysis-actions{display:grid;gap:10px;margin:13px 0;padding:13px;border:1px solid #35483a;border-radius:8px;background:linear-gradient(145deg,#19241d,#141b17);box-shadow:0 5px 16px #0002}
+.game-review-quality .super-analysis-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.game-review-quality .super-analysis-buttons .secondary-button,.game-review-quality .super-analysis-buttons .text-button{min-width:0;min-height:38px;margin:0;padding:8px 9px;border:1px solid #3a4c3d;border-radius:6px;background:#202c23;color:#d5e3d0;font-size:10px;font-weight:600;line-height:1.25}
+.game-review-quality .super-analysis-buttons .secondary-button:hover{border-color:#789b62;background:#2a392c}
+.game-review-quality .super-analysis-buttons .text-button{grid-column:1/-1;justify-self:start;min-height:30px;padding:5px 2px;border:0;background:transparent;color:#aab9a9;font-weight:500}
+.game-review-quality .super-analysis-actions:not(.has-internal-analysis) #open-super-analysis{grid-column:1/-1}
+.game-review-quality .super-analysis-privacy{padding-top:8px;border-top:1px solid #2d3a30;color:#a9b6a8}
+.game-review-quality .super-analysis-privacy summary{width:max-content;max-width:100%;color:#b8c8b6;font-size:9px;cursor:pointer}
+.game-review-quality .super-analysis-privacy p{margin:7px 0 0;color:#8e9d90;font-size:9px;line-height:1.55}
+@media(max-width:420px){.game-review-quality .super-analysis-buttons{grid-template-columns:1fr}.game-review-quality .super-analysis-buttons #open-super-analysis,.game-review-quality .super-analysis-buttons .text-button{grid-column:auto}}

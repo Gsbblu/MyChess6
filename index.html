@@ -128,11 +128,18 @@
             <section class="game-review-quality" id="game-review-quality" hidden aria-label="Classificação do lance analisado">
               <div class="game-review-quality-heading"><span id="game-review-context">REVISÃO DA PARTIDA</span><strong class="move-quality-badge" id="game-review-badge"></strong></div>
               <p id="game-review-explanation"></p>
+              <section class="move-alternatives" id="move-alternatives" hidden aria-label="Melhores alternativas à jogada">
+                <div class="move-alternatives-heading"><div><span>MELHORES ALTERNATIVAS</span><small id="move-alternatives-context"></small></div><span class="move-alternatives-engine">Stockfish</span></div>
+                <ol class="move-alternatives-list" id="move-alternatives-list"></ol>
+              </section>
               <div class="super-analysis-actions" id="super-analysis-actions" hidden>
-                <button class="secondary-button" id="run-site-super-analysis" type="button" hidden>Analisar aqui <span aria-hidden="true">✦</span></button>
-                <button class="secondary-button" id="open-super-analysis" type="button">Abrir no ChatGPT <span aria-hidden="true">↗</span></button>
-                <button class="text-button" id="copy-super-analysis" type="button">Copiar prompt</button>
-                <small>Ao modelo vão a posição, o lance e as linhas do Stockfish, sem nomes da partida. A Cloudflare também processa dados técnicos, como o IP, para verificar e limitar pedidos. A análise depende da cota gratuita.</small>
+                <div class="super-analysis-heading"><div><strong>Segunda opinião</strong><span>Compare com outra explicação para o lance.</span></div><span class="super-analysis-tag">IA</span></div>
+                <div class="super-analysis-buttons">
+                  <button class="secondary-button" id="run-site-super-analysis" type="button" hidden><span aria-hidden="true">✦</span> Analisar aqui</button>
+                  <button class="secondary-button" id="open-super-analysis" type="button">Abrir no ChatGPT <span aria-hidden="true">↗</span></button>
+                  <button class="text-button" id="copy-super-analysis" type="button"><span aria-hidden="true">▢</span> Copiar prompt</button>
+                </div>
+                <details class="super-analysis-privacy"><summary>Privacidade e limites</summary><p>O prompt contém a posição, o lance e as linhas do Stockfish, sem nomes da partida. A Cloudflare processa dados técnicos, como o IP, para verificar e limitar pedidos. A análise depende da cota gratuita.</p></details>
                 <div class="super-analysis-challenge" id="super-analysis-challenge" hidden></div>
                 <div class="super-analysis-result" id="super-analysis-result" hidden aria-live="polite"></div>
                 <span class="super-analysis-status" id="super-analysis-status" role="status" aria-live="polite"></span>
@@ -145,17 +152,6 @@
               </div>
               <button class="explain-move-button" id="reveal-exercise" type="button" hidden>Mostrar o lance jogado e a análise</button>
               <small id="game-review-depth"></small>
-              <button class="move-action coach-action" id="explain-move" type="button" aria-expanded="false" aria-controls="detailed-move-explanation" hidden><span class="move-action-icon" aria-hidden="true">✦</span><span class="move-action-copy"><strong>Explicação do treinador</strong><small>Entenda os motivos da classificação</small></span><span class="move-action-chevron" aria-hidden="true">＋</span></button>
-              <div class="detailed-move-explanation" id="detailed-move-explanation" hidden></div>
-              <button class="secondary-button" id="replay-played-line" type="button" hidden>Reproduzir a linha do lance jogado</button>
-              <div class="move-options" id="best-line-actions" hidden aria-label="Continuações sugeridas pelo Stockfish">
-                <div class="move-options-heading"><span>CONTINUAÇÃO SUGERIDA</span><small>Stockfish</small></div>
-                <div class="best-line-actions">
-                  <button class="move-action" id="show-best-move" type="button"><span class="move-action-icon" aria-hidden="true">1</span><span class="move-action-copy"><strong>Testar o melhor lance</strong><small id="best-move-preview">—</small></span><span class="move-action-chevron" aria-hidden="true">›</span></button>
-                  <button class="move-action" id="show-best-line" type="button"><span class="move-action-icon line-icon" aria-hidden="true">↗</span><span class="move-action-copy"><strong>Reproduzir a linha principal</strong><small id="best-line-preview">—</small></span><span class="move-action-chevron" aria-hidden="true">›</span></button>
-                </div>
-              </div>
-              <button class="move-action explore-variation-button" id="explore-variation" type="button"><span class="move-action-icon" aria-hidden="true">＋</span><span class="move-action-copy"><strong>Explorar outra jogada</strong><small>Monte uma linha alternativa neste tabuleiro</small></span><span class="move-action-chevron" aria-hidden="true">›</span></button>
             </section>
             <section class="best-moves-panel" id="best-moves-panel" hidden aria-label="Melhores jogadas para esta posição">
               <div class="best-moves-heading"><span>MELHORES JOGADAS</span><small id="best-moves-meta"></small></div>

@@ -88,15 +88,9 @@
   const punishmentStepButton = document.querySelector('#punishment-step');
   const bestMoveCaption = document.querySelector('#best-move-caption');
   const gameReviewDepth = document.querySelector('#game-review-depth');
-  const explainMoveButton = document.querySelector('#explain-move');
-  const detailedMoveExplanation = document.querySelector('#detailed-move-explanation');
-  const replayPlayedLineButton = document.querySelector('#replay-played-line');
-  const bestLineActions = document.querySelector('#best-line-actions');
-  const showBestMoveButton = document.querySelector('#show-best-move');
-  const showBestLineButton = document.querySelector('#show-best-line');
-  const bestMovePreview = document.querySelector('#best-move-preview');
-  const bestLinePreview = document.querySelector('#best-line-preview');
-  const exploreVariationButton = document.querySelector('#explore-variation');
+  const moveAlternatives = document.querySelector('#move-alternatives');
+  const moveAlternativesContext = document.querySelector('#move-alternatives-context');
+  const moveAlternativesList = document.querySelector('#move-alternatives-list');
   const variationBanner = document.querySelector('#variation-banner');
   const exitVariationButton = document.querySelector('#exit-variation');
   const evaluationNumber = document.querySelector('#eval-number');
@@ -1228,8 +1222,7 @@
     gameReviewQuestion.hidden = false;
     gameReviewQuestion.textContent = after.quality?.lesson ? after.quality.lesson.questions.decision : 'Lembre o que você pretendia e pense nas respostas do adversário antes de revelar.';
     gameReviewDepth.textContent = 'A classificação, as setas e a avaliação ficam ocultas até você revelar.';
-    hideDidacticMoveExplanation();
-    bestLineActions.hidden = true;
+    moveAlternatives.hidden = true;
     revealExerciseButton.hidden = false;
     engineStatusText.textContent = 'Exercício guiado: a análise fica oculta até você revelar.';
   }
@@ -1258,79 +1251,6 @@
     render();
     engineStatusText.textContent = 'Modo de variação ativo. Faça um lance no tabuleiro para explorar outra continuação.';
     return true;
-  }
-
-  function enterVariationMode() {
-    beginVariationMode(true);
-  }
-
-  function showBestAlternative(includeFullLine) {
-    if (historyIndex < 1) return;
-    const originalIndex = historyIndex;
-    const startIndex = historyIndex - 1;
-    const source = gameReviewResults[startIndex];
-    if (!source) {
-      engineStatusText.textContent = 'Analise a partida nesta profundidade antes de mostrar a melhor alternativa.';
-      return;
-    }
-
-    const tokens = includeFullLine && source.pvUci
-      ? source.pvUci.trim().split(/\s+/).filter(Boolean).slice(0, 24)
-      : [source.bestMove].filter(Boolean);
-    if (!tokens.length) {
-      engineStatusText.textContent = 'O Stockfish não forneceu uma linha principal para este lance.';
-      return;
-    }
-
-    const alreadyExploring = Boolean(variationSession);
-    goTo(startIndex);
-    if (!alreadyExploring) {
-      enterVariationMode();
-      if (variationSession) variationSession.historyIndex = originalIndex;
-    }
-
-    let applied = 0;
-    for (const token of tokens) {
-      const move = parseUciMove(position, token);
-      if (!move) break;
-      commitMove(move, true);
-      applied += 1;
-    }
-    if (!applied) {
-      engineStatusText.textContent = 'Não foi possível reproduzir a linha principal do Stockfish nesta posição.';
-      return;
-    }
-
-    variationNeedsAnalysis = true;
-    analyzeVariationWhenReady();
-    engineStatusText.textContent = includeFullLine
-      ? `Linha principal aplicada até ${applied} lance(s). Analisando a sequência hipotética.`
-      : 'Melhor lance aplicado como uma linha hipotética. Analisando a alternativa.';
-  }
-
-  function replayPlayedLine() {
-    const source = gameReviewResults[historyIndex];
-    if (!source?.playedMove || !source.pvUci) {
-      engineStatusText.textContent = 'Não há uma continuação calculada para reproduzir neste lance.';
-      return;
-    }
-    const tokens = source.pvUci.trim().split(/\s+/).filter(Boolean).slice(0, 24);
-    if (!tokens.length) return;
-    if (!variationSession) enterVariationMode();
-    let applied = 0;
-    for (const token of tokens) {
-      const move = parseUciMove(position, token);
-      if (!move) break;
-      commitMove(move, true);
-      applied += 1;
-    }
-    if (!applied) {
-      engineStatusText.textContent = 'Não foi possível reproduzir legalmente a continuação calculada.';
-      return;
-    }
-    variationNeedsAnalysis = true;
-    analyzeVariationWhenReady();
-    engineStatusText.textContent = `Continuação após ${source.playedMove.san} reproduzida por ${applied} lance(s). A partida original continua salva.`;
   }
 
   function exitVariationMode() {
@@ -1365,17 +1285,6 @@
     requestGameAnalysis({ skipDepthPrompt: true });
   }
 
-  exploreVariationButton.addEventListener('click', enterVariationMode);
-  showBestMoveButton.addEventListener('click', () => showBestAlternative(false));
-  showBestLineButton.addEventListener('click', () => showBestAlternative(true));
-  replayPlayedLineButton.addEventListener('click', replayPlayedLine);
-  explainMoveButton.addEventListener('click', () => {
-    const expanded = explainMoveButton.getAttribute('aria-expanded') === 'true';
-    explainMoveButton.setAttribute('aria-expanded', String(!expanded));
-    detailedMoveExplanation.hidden = expanded;
-    replayPlayedLineButton.hidden = expanded || !gameReviewResults[historyIndex]?.pvUci;
-    explainMoveButton.querySelector('.move-action-chevron').textContent = expanded ? '＋' : '−';
-  });
   exitVariationButton.addEventListener('click', exitVariationMode);
 
   function applyBoardSize() {
@@ -2507,9 +2416,7 @@
     siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
     siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
     gameReviewQuestion.hidden = true;
-    bestLineActions.hidden = true;
-    replayPlayedLineButton.hidden = true;
-    hideDidacticMoveExplanation();
+    moveAlternatives.hidden = true;
     analysisProgress.hidden = true;
     progressBar.value = 0;
     progressLabel.textContent = 'Preparando motor…';
@@ -2523,8 +2430,59 @@
     evaluationFill.style.height = '50%';
     evaluationBarLabel.textContent = '—';
     evaluationBar.setAttribute('aria-label', 'Avaliação ainda indisponível');
-    exploreVariationButton.hidden = true;
     if (message) engineStatusText.textContent = message;
+  }
+
+  function renderMoveAlternatives(playedResult, beforeResult) {
+    moveAlternativesList.replaceChildren();
+    if (!playedResult?.playedMove || !beforeResult?.bestMove || !beforeResult?.fen) {
+      moveAlternatives.hidden = true;
+      return;
+    }
+    let root;
+    try { root = positionFromFen(beforeResult.fen); }
+    catch { moveAlternatives.hidden = true; return; }
+    const played = playedResult.playedMove;
+    moveAlternativesContext.textContent = `Na posição antes de ${played.moveNumber}${played.side === 'w' ? '.' : '…'} ${played.san}`;
+
+    const playedRow = document.createElement('li');
+    playedRow.className = 'move-alternative-played';
+    const playedLabel = document.createElement('span'); playedLabel.textContent = 'JOGADO';
+    const playedSan = document.createElement('strong'); playedSan.textContent = `${played.moveNumber}${played.side === 'w' ? '.' : '…'} ${played.san}`;
+    const playedEval = document.createElement('span'); playedEval.className = 'move-alternative-evaluation';
+    playedEval.textContent = playedResult.score
+      ? formatEvaluationForSide(playedResult.score, playedResult.turn, beforeResult.turn)
+      : 'avaliação indisponível';
+    playedRow.append(playedLabel, playedSan, playedEval);
+    moveAlternativesList.append(playedRow);
+
+    const candidates = [];
+    const add = (pv, score) => {
+      const line = String(pv || '').trim();
+      const token = line.split(/\s+/)[0] || '';
+      if (!token || candidates.some((item) => item.token === token)) return;
+      const move = parseUciMove(root, token);
+      if (!move) return;
+      const san = moveToSan(root, move);
+      if (san === played.san) return;
+      candidates.push({ token, san, pv: line, score: score || null });
+    };
+    add(beforeResult.pvUci || beforeResult.bestMove, beforeResult.score);
+    for (const line of beforeResult.variations || []) add(line.pv, line.score);
+    candidates.slice(0, 3).forEach((candidate, index) => {
+      const item = document.createElement('li'); item.className = `move-alternative-option move-alternative-option-${index + 1}`;
+      const heading = document.createElement('div'); heading.className = 'move-alternative-option-heading';
+      const rank = document.createElement('span'); rank.className = 'move-alternative-rank'; rank.textContent = String(index + 1);
+      const san = document.createElement('strong'); san.textContent = `${root.fullmove}${root.turn === 'w' ? '.' : '…'} ${candidate.san}`;
+      const evaluation = document.createElement('span'); evaluation.className = 'move-alternative-evaluation';
+      evaluation.textContent = candidate.score
+        ? formatEvaluationForSide(candidate.score, beforeResult.turn, beforeResult.turn)
+        : '—';
+      heading.append(rank, san, evaluation);
+      const continuation = document.createElement('p'); continuation.textContent = formatPrincipalVariation(beforeResult.fen, candidate.pv);
+      item.append(heading, continuation); moveAlternativesList.append(item);
+    });
+    moveAlternatives.hidden = candidates.length === 0;
   }
 
   function renderGameReviewAtCurrentPosition() {
@@ -2535,7 +2493,7 @@
     renderBoardQualityMarker();
     revealExerciseButton.hidden = true; exerciseFeedback.hidden = true;
     analysisResults.classList.remove('exercise-mode');
-    if (!result) { renderPunishmentControls(); return; }
+    if (!result) { moveAlternatives.hidden = true; renderPunishmentControls(); return; }
     if (exerciseActiveHere()) { renderExercisePrompt(); renderPunishmentControls(); return; }
     analysisPlaceholder.hidden = true;
     analysisResults.hidden = false;
@@ -2543,25 +2501,11 @@
     analysisResults.classList.add('from-game-review');
     gameReviewQuality.hidden = false;
     const previousResult = gameReviewResults[historyIndex - 1];
-    bestLineActions.hidden = !result.playedMove || !previousResult?.bestMove;
-    if (previousResult?.bestMove) {
-      let moveLabel = previousResult.best;
-      try {
-        const root = positionFromFen(previousResult.fen);
-        moveLabel = `${root.fullmove}${root.turn === 'w' ? '.' : '…'} ${previousResult.best}`;
-      } catch { /* keep the SAN returned by the analysis */ }
-      const evaluation = previousResult.score
-        ? formatEvaluationForSide(previousResult.score, previousResult.turn, previousResult.turn)
-        : 'avaliação indisponível';
-      bestMovePreview.textContent = `${moveLabel} · ${evaluation}`;
-      bestLinePreview.textContent = previousResult.pv || 'Linha principal indisponível.';
-    }
-    exploreVariationButton.hidden = Boolean(variationSession || gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game' || analysisStopping);
+    renderMoveAlternatives(result, previousResult);
     if (result.score) showEvaluation(result.score.type, result.score.value, result.turn);
     bestMoveLabel.textContent = result.best;
     principalVariation.textContent = result.pv;
     const move = result.playedMove;
-    replayPlayedLineButton.hidden = !move || !result.pvUci || explainMoveButton.getAttribute('aria-expanded') !== 'true';
     gameReviewContext.textContent = move
       ? `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}`
       : 'ANÁLISE DA POSIÇÃO INICIAL';
@@ -2571,18 +2515,10 @@
       gameReviewBadge.className = `move-quality-badge quality-${result.quality.kind}`;
       gameReviewBadge.textContent = result.quality.label;
       gameReviewExplanation.textContent = result.quality.explanation;
-      const previous = gameReviewResults[historyIndex - 1];
-      if (previous && result.playedMove && result.quality.lesson) {
-        renderLesson(result.quality.lesson, previousResult && result.playedMove ? { before: previousResult, after: result, playedMove: result.playedMove } : null);
-      } else {
-        gameReviewQuestion.hidden = true;
-        hideDidacticMoveExplanation();
-      }
     } else {
       gameReviewBadge.hidden = true;
       gameReviewExplanation.textContent = 'Esta é a posição inicial: ainda não há um lance anterior para classificar.';
       gameReviewQuestion.hidden = true;
-      hideDidacticMoveExplanation();
     }
     gameReviewDepth.textContent = `Análise da partida · profundidade ${result.depth || selectedDepth} · calculada pelo Stockfish`;
     if (exerciseState?.revealed && exerciseState.feedback && historyIndex === exerciseState.moveIndex) { exerciseFeedback.textContent = exerciseState.feedback; exerciseFeedback.hidden = false; }
@@ -2612,10 +2548,7 @@
       gameReviewQuestion.hidden = true;
       exerciseFeedback.hidden = true;
       gameReviewDepth.textContent = `${playback.nextIndex} de ${playback.tokens.length} meios-lances reproduzidos · linha principal calculada pelo Stockfish`;
-      bestLineActions.hidden = true;
-      exploreVariationButton.hidden = true;
-      explainMoveButton.hidden = true;
-      replayPlayedLineButton.hidden = true;
+      moveAlternatives.hidden = true;
       punishmentWalkthrough.hidden = false;
       punishmentStatus.textContent = done
         ? `Fim da linha de punição: ${playback.nextIndex} meios-lances reproduzidos. Linhas do motor são continuações calculadas, não a única sequência possível.`
@@ -2798,6 +2731,7 @@
     superAnalysisActions.hidden = !prompt || Boolean(variationSession || exerciseActiveHere());
     const config = window.MYCHESS_SUPER_ANALYSIS || {};
     runSiteSuperAnalysisButton.hidden = !config.endpoint || !config.turnstileSiteKey;
+    superAnalysisActions.classList.toggle('has-internal-analysis', !runSiteSuperAnalysisButton.hidden);
     const currentKey = prompt ? `${currentFen(history[historyIndex - 1].position)}|${currentFen(history[historyIndex].position)}` : '';
     if (siteSuperAnalysisResultKey !== currentKey) {
       siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
@@ -3121,15 +3055,6 @@
     return { label, kind, loss, lesson, explanation };
   }
 
-  function hideDidacticMoveExplanation() {
-    explainMoveButton.hidden = true;
-    replayPlayedLineButton.hidden = true;
-    explainMoveButton.setAttribute('aria-expanded', 'false');
-    explainMoveButton.querySelector('.move-action-chevron').textContent = '＋';
-    detailedMoveExplanation.hidden = true;
-    detailedMoveExplanation.replaceChildren();
-  }
-
   function formatEvaluationForSide(score, turn, side) {
     const value = scoreForSide(score, turn, side);
     if (value === null) return 'indisponível';
@@ -3237,41 +3162,6 @@
     paint(); return wrap;
   }
 
-  function renderLesson(lesson, context = null) {
-    replayPlayedLineButton.hidden = true;
-    detailedMoveExplanation.replaceChildren();
-    if (!lesson) { hideDidacticMoveExplanation(); return; }
-    const [confidenceKind, confidenceText] = LESSON_CONFIDENCE[lesson.explanation] || LESSON_CONFIDENCE.unconfirmed;
-    const confidence = document.createElement('p'); confidence.className = `lesson-confidence lesson-confidence-${confidenceKind}`; confidence.textContent = confidenceText;
-    detailedMoveExplanation.append(confidence);
-    if (lesson.facts.length) detailedMoveExplanation.append(lessonBlock('facts', 'Fatos calculados', lessonList(lesson.facts, 'lesson-list')));
-    if (lesson.heuristics.length) {
-      const wrapper = document.createElement('div');
-      wrapper.append(lessonParagraph('São medidas simples da posição. Não provam por que o motor prefere outro lance.'), lessonList(lesson.heuristics, 'lesson-list'));
-      detailedMoveExplanation.append(lessonBlock('heuristics', 'Indícios posicionais (heurísticas, não provas)', wrapper));
-    }
-    if (lesson.uncertainty.length) detailedMoveExplanation.append(lessonBlock('uncertainty', 'O que não ficou provado', lessonList(lesson.uncertainty.map((text) => ({ text })), 'lesson-list')));
-    if (lesson.lines.played || lesson.lines.best) {
-      const lines = [];
-      if (lesson.lines.played) lines.push({ text: `Após ${lesson.san}: ${lesson.lines.played}` });
-      if (lesson.alternative && lesson.lines.best) lines.push({ text: `Após ${lesson.alternative.san}: ${lesson.lines.best}` });
-      detailedMoveExplanation.append(lessonBlock('lines', 'Variantes calculadas (lances legais)', lessonList(lines, 'lesson-list lesson-lines-list')));
-      const viewer = buildSequenceViewer(lesson, context);
-      if (viewer) detailedMoveExplanation.append(viewer);
-    }
-    if (lesson.alternative || lesson.equivalent.length) {
-      const wrapper = document.createElement('div');
-      if (lesson.alternative) wrapper.append(lessonParagraph(`Melhor lance do motor: ${lesson.alternative.san}${lesson.alternative.evaluation ? ` (${lesson.alternative.evaluation})` : ''}.`));
-      if (lesson.equivalent.length) wrapper.append(lessonParagraph(`Outros lances com avaliação quase igual: ${lesson.equivalent.map((item) => `${item.san} (${item.evaluation})`).join(', ')}.`));
-      detailedMoveExplanation.append(lessonBlock('alternative', 'Alternativas', wrapper));
-    }
-    detailedMoveExplanation.append(lessonBlock('takeaway', 'Para levar', lessonParagraph(lesson.takeaway)));
-    detailedMoveExplanation.hidden = true;
-    explainMoveButton.hidden = false;
-    explainMoveButton.setAttribute('aria-expanded', 'false');
-    explainMoveButton.querySelector('.move-action-chevron').textContent = '＋';
-  }
-
   function addMoveQuality(result, previous, playedMove) {
     const quality = moveQuality(previous, result, playedMove);
     const badge = document.createElement('span'); badge.className = `move-quality-badge quality-${quality.kind}`;
@@ -3308,7 +3198,7 @@
     renderMoveArrows();
     renderBestMoves({ fen, turn, bestMove: cached.bestMove, pvUci: cached.pv || '', score: cached.score, variations: cached.variations || [] });
     analysisPlaceholder.hidden = true; analysisResults.hidden = false; analysisProgress.hidden = true;
-    analysisResults.classList.remove('from-game-review'); gameReviewQuality.hidden = true; exploreVariationButton.hidden = true;
+    analysisResults.classList.remove('from-game-review'); gameReviewQuality.hidden = true; moveAlternatives.hidden = true;
     if (cached.score) showEvaluation(cached.score.type, cached.score.value, turn);
     bestMoveLabel.textContent = move ? moveToSan(pos, move) : 'Nenhum lance legal';
     principalVariation.textContent = formatPrincipalVariation(fen, cached.pv || '');
@@ -3327,7 +3217,7 @@
       gameReviewQuality.hidden = true;
       superAnalysisActions.hidden = true;
       gameReviewQuestion.hidden = true;
-      hideDidacticMoveExplanation();
+      moveAlternatives.hidden = true;
       return;
     }
     updateSuperAnalysisActions();
@@ -3347,8 +3237,7 @@
     };
 
     gameReviewQuality.hidden = false;
-    exploreVariationButton.hidden = Boolean(variationSession || !gameReviewResults[historyIndex] || gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game' || analysisStopping);
-    bestLineActions.hidden = Boolean(variationNeedsAnalysis || !gameReviewResults[historyIndex - 1]?.bestMove);
+    renderMoveAlternatives(gameReviewResults[historyIndex], gameReviewResults[historyIndex - 1]);
     gameReviewContext.textContent = `${variationSession ? 'JOGADA HIPOTÉTICA' : 'QUALIDADE DO LANCE'} · ${playedMove.moveNumber}${playedMove.side === 'w' ? '.' : '…'} ${playedMove.san}`;
     gameReviewQuestion.hidden = true;
     gameReviewDepth.textContent = `${source} · profundidade ${result.depth || selectedDepth} · calculada pelo Stockfish`;
@@ -3357,7 +3246,6 @@
       currentBoardQuality = null;
       renderBoardQualityMarker();
       gameReviewBadge.hidden = true;
-      hideDidacticMoveExplanation();
       gameReviewExplanation.textContent = 'Não foi possível comparar avaliações na mesma profundidade para classificar este lance. Analise a partida ou a variação nesta profundidade para obter uma classificação confiável.';
       return;
     }
@@ -3377,7 +3265,6 @@
     gameReviewBadge.className = `move-quality-badge quality-${quality.kind}`;
     gameReviewBadge.textContent = quality.label;
     gameReviewExplanation.textContent = quality.explanation;
-    renderLesson(quality.lesson, previous ? { before: previous, after: reviewed, playedMove } : null);
   }
 
   function formatPrincipalVariation(fen, pv) {
@@ -4095,7 +3982,7 @@
     visibleArrowAnalysis = null;
     renderMoveArrows();
     renderBestMoves(null);
-    analysisResults.classList.remove('from-game-review'); gameReviewQuality.hidden = true; bestLineActions.hidden = true; exploreVariationButton.hidden = true;
+    analysisResults.classList.remove('from-game-review'); gameReviewQuality.hidden = true; moveAlternatives.hidden = true;
     const cached = lookupAnalysis(job.fen, job.depth);
     if (cached) { renderCachedPosition(cached, job.fen, job.turn, job.depth); return; }
     pendingAnalysis = job;
