@@ -342,6 +342,13 @@ body.has-game .page-shell{padding-bottom:100px}
 .rating-settings{font-size:12px}
 .advantage-chart-heading p{font-size:12px}
 .chart-current-eval{font-size:12px}
+.analysis-card>.eval-summary,.analysis-results>.principal-line{display:none!important}
+.game-review-quality{margin-top:8px;padding:15px;border-color:#435342;border-radius:9px;background:radial-gradient(ellipse at 8% 0%,#263528 0,transparent 58%),linear-gradient(145deg,#18231b,#141b16);box-shadow:inset 0 1px #ffffff09,0 6px 16px #0002}
+.game-review-quality-heading{display:grid;justify-items:start;gap:9px}
+.game-review-quality-heading>span{color:#a7b8a5;font-size:10px;font-weight:700;letter-spacing:1px}
+.game-review-quality-heading .move-quality-badge{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border:1px solid currentColor;border-radius:12px;font-size:15px;font-weight:800;letter-spacing:.1px;line-height:1.2;box-shadow:inset 0 1px #ffffff12,0 3px 10px #0002}
+.game-review-quality-heading .move-quality-badge::before{content:"✦";font-size:14px;opacity:.9}
+.game-review-quality>p{margin-top:12px}
 .chart-quality-legend{font-size:11.5px}
 .advantage-chart-status{font-size:11.5px;color:#93a195}
 .chart-axis-label,.chart-axis-caption{font-size:12px}

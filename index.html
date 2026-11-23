@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-readable-moves-20261123-4">
+    <link rel="stylesheet" href="styles.css?v=mychess6-quality-card-20261123-5">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -120,7 +120,7 @@
             <button class="mode-tab" type="button" role="tab" aria-selected="false" data-depth="22" title="Analisar até a profundidade 22">Profunda</button>
           </div>
           <div class="eval-summary"><span class="eval-number" id="eval-number" hidden>—</span><span class="eval-caption">AVALIAÇÃO</span><span class="eval-side" id="eval-side">Aguardando análise</span></div>
-          <div class="empty-analysis" id="analysis-placeholder"><span class="sparkle" aria-hidden="true">✳</span><p>Use o Stockfish para avaliar esta posição.</p><span>O motor real calcula vantagem, melhor lance e linha principal.</span></div>
+          <div class="empty-analysis" id="analysis-placeholder"><span class="sparkle" aria-hidden="true">✳</span><p>Use o Stockfish para avaliar esta posição.</p><span>O motor real calcula a vantagem e sugere as melhores jogadas.</span></div>
           <section class="analysis-results" id="analysis-results" hidden aria-label="Resultado da análise" aria-live="polite">
             <div class="analysis-progress" id="analysis-progress" hidden><div class="progress-copy"><span id="progress-label">Preparando motor…</span><span id="progress-stats"></span></div><progress id="analysis-progress-bar" max="100" value="0"></progress></div>
             <div class="result-line" id="best-move-result" hidden><span id="best-move-caption">MELHOR LANCE</span><strong id="best-move">—</strong></div>
