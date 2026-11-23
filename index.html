@@ -145,14 +145,17 @@
               </div>
               <button class="explain-move-button" id="reveal-exercise" type="button" hidden>Mostrar o lance jogado e a análise</button>
               <small id="game-review-depth"></small>
-              <button class="explain-move-button" id="explain-move" type="button" aria-expanded="false" aria-controls="detailed-move-explanation" hidden>Revelar análise do treinador</button>
+              <button class="move-action coach-action" id="explain-move" type="button" aria-expanded="false" aria-controls="detailed-move-explanation" hidden><span class="move-action-icon" aria-hidden="true">✦</span><span class="move-action-copy"><strong>Explicação do treinador</strong><small>Entenda os motivos da classificação</small></span><span class="move-action-chevron" aria-hidden="true">＋</span></button>
               <div class="detailed-move-explanation" id="detailed-move-explanation" hidden></div>
               <button class="secondary-button" id="replay-played-line" type="button" hidden>Reproduzir a linha do lance jogado</button>
-              <div class="best-line-actions" id="best-line-actions" hidden aria-label="Explorar a melhor alternativa">
-                <button class="secondary-button" id="show-best-move" type="button">Ver a melhor alternativa</button>
-                <button class="secondary-button" id="show-best-line" type="button">Ver a melhor sequência</button>
+              <div class="move-options" id="best-line-actions" hidden aria-label="Continuações sugeridas pelo Stockfish">
+                <div class="move-options-heading"><span>CONTINUAÇÃO SUGERIDA</span><small>Stockfish</small></div>
+                <div class="best-line-actions">
+                  <button class="move-action" id="show-best-move" type="button"><span class="move-action-icon" aria-hidden="true">1</span><span class="move-action-copy"><strong>Testar o melhor lance</strong><small id="best-move-preview">—</small></span><span class="move-action-chevron" aria-hidden="true">›</span></button>
+                  <button class="move-action" id="show-best-line" type="button"><span class="move-action-icon line-icon" aria-hidden="true">↗</span><span class="move-action-copy"><strong>Reproduzir a linha principal</strong><small id="best-line-preview">—</small></span><span class="move-action-chevron" aria-hidden="true">›</span></button>
+                </div>
               </div>
-              <button class="secondary-button explore-variation-button" id="explore-variation" type="button">Explorar outra jogada a partir daqui</button>
+              <button class="move-action explore-variation-button" id="explore-variation" type="button"><span class="move-action-icon" aria-hidden="true">＋</span><span class="move-action-copy"><strong>Explorar outra jogada</strong><small>Monte uma linha alternativa neste tabuleiro</small></span><span class="move-action-chevron" aria-hidden="true">›</span></button>
             </section>
             <section class="best-moves-panel" id="best-moves-panel" hidden aria-label="Melhores jogadas para esta posição">
               <div class="best-moves-heading"><span>MELHORES JOGADAS</span><small id="best-moves-meta"></small></div>

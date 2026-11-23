@@ -94,6 +94,8 @@
   const bestLineActions = document.querySelector('#best-line-actions');
   const showBestMoveButton = document.querySelector('#show-best-move');
   const showBestLineButton = document.querySelector('#show-best-line');
+  const bestMovePreview = document.querySelector('#best-move-preview');
+  const bestLinePreview = document.querySelector('#best-line-preview');
   const exploreVariationButton = document.querySelector('#explore-variation');
   const variationBanner = document.querySelector('#variation-banner');
   const exitVariationButton = document.querySelector('#exit-variation');
@@ -1372,7 +1374,7 @@
     explainMoveButton.setAttribute('aria-expanded', String(!expanded));
     detailedMoveExplanation.hidden = expanded;
     replayPlayedLineButton.hidden = expanded || !gameReviewResults[historyIndex]?.pvUci;
-    explainMoveButton.textContent = expanded ? 'Ocultar análise do treinador' : 'Revelar análise do treinador';
+    explainMoveButton.querySelector('.move-action-chevron').textContent = expanded ? '＋' : '−';
   });
   exitVariationButton.addEventListener('click', exitVariationMode);
 
@@ -2542,6 +2544,18 @@
     gameReviewQuality.hidden = false;
     const previousResult = gameReviewResults[historyIndex - 1];
     bestLineActions.hidden = !result.playedMove || !previousResult?.bestMove;
+    if (previousResult?.bestMove) {
+      let moveLabel = previousResult.best;
+      try {
+        const root = positionFromFen(previousResult.fen);
+        moveLabel = `${root.fullmove}${root.turn === 'w' ? '.' : '…'} ${previousResult.best}`;
+      } catch { /* keep the SAN returned by the analysis */ }
+      const evaluation = previousResult.score
+        ? formatEvaluationForSide(previousResult.score, previousResult.turn, previousResult.turn)
+        : 'avaliação indisponível';
+      bestMovePreview.textContent = `${moveLabel} · ${evaluation}`;
+      bestLinePreview.textContent = previousResult.pv || 'Linha principal indisponível.';
+    }
     exploreVariationButton.hidden = Boolean(variationSession || gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game' || analysisStopping);
     if (result.score) showEvaluation(result.score.type, result.score.value, result.turn);
     bestMoveLabel.textContent = result.best;
@@ -3111,7 +3125,7 @@
     explainMoveButton.hidden = true;
     replayPlayedLineButton.hidden = true;
     explainMoveButton.setAttribute('aria-expanded', 'false');
-    explainMoveButton.textContent = 'Revelar análise do treinador';
+    explainMoveButton.querySelector('.move-action-chevron').textContent = '＋';
     detailedMoveExplanation.hidden = true;
     detailedMoveExplanation.replaceChildren();
   }
@@ -3255,7 +3269,7 @@
     detailedMoveExplanation.hidden = true;
     explainMoveButton.hidden = false;
     explainMoveButton.setAttribute('aria-expanded', 'false');
-    explainMoveButton.textContent = 'Revelar análise do treinador';
+    explainMoveButton.querySelector('.move-action-chevron').textContent = '＋';
   }
 
   function addMoveQuality(result, previous, playedMove) {
