@@ -168,7 +168,7 @@
       </section>
 
       <section class="moves-card" aria-labelledby="moves-title">
-        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled>Analisar partida</button></div>
+        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled><span class="game-analyze-icon" aria-hidden="true">✦</span><span class="game-analyze-label">Analisar partida</span></button></div>
         <div class="move-list" id="move-list" role="group" aria-label="Lances da partida"><p class="move-list-empty">Importe uma partida PGN para ver e navegar pelos lances.</p></div>
         <p class="move-quality-legend">Ícones após a análise: ★ brilhante · 👍 grande lance · ♛ melhor · ⚡ excelente · ✓ bom · ?! imprecisão · ? erro · ?? erro grave · × chance perdida</p>
         <p class="keyboard-hint">Atalhos: ← e → navegam pelos lances. Com o foco no tabuleiro, as setas movem o foco entre as casas e Shift + ← / → navegam pelos lances. Botão direito + arraste desenha ou remove uma seta.</p>
@@ -177,7 +177,8 @@
           <div class="game-analysis-progress"><div class="progress-copy"><span id="game-progress-label">Aguardando análise.</span><span id="game-progress-count"></span></div><progress id="game-progress" max="100" value="0"></progress></div>
           <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">
             <div class="game-summary-heading"><div><p class="eyebrow">APRENDIZADO</p><h3 id="game-summary-title">Resumo da partida</h3></div><span id="game-summary-status"></span></div>
-            <div class="game-summary-overview" id="game-summary-overview"></div>
+            <div class="summary-overview-card"><span class="summary-overview-kicker">VISÃO RÁPIDA</span><div class="game-summary-overview" id="game-summary-overview"></div></div>
+            <div class="game-summary-metrics" id="game-summary-metrics" aria-label="Indicadores da análise"></div>
             <section class="game-summary-block game-summary-coach-block"><h4>Revisão guiada · pense antes de abrir</h4><div id="game-summary-coach"></div></section>
             <details class="summary-more"><summary>Ver estatísticas e diagnóstico detalhado</summary>
               <div class="summary-more-content">

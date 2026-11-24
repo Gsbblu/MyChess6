@@ -103,6 +103,7 @@
   const depthDialog = document.querySelector('#depth-dialog');
   const depthDialogForm = depthDialog.querySelector('form');
   const analyzeGameButton = document.querySelector('#analyze-game');
+  const analyzeGameButtonLabel = analyzeGameButton.querySelector('.game-analyze-label');
   const gameAnalysisPanel = document.querySelector('#game-analysis');
   const gameProgressLabel = document.querySelector('#game-progress-label');
   const gameProgressCount = document.querySelector('#game-progress-count');
@@ -111,6 +112,7 @@
   const gameSummary = document.querySelector('#game-summary');
   const gameSummaryStatus = document.querySelector('#game-summary-status');
   const gameSummaryOverview = document.querySelector('#game-summary-overview');
+  const gameSummaryMetrics = document.querySelector('#game-summary-metrics');
   const gameSummaryCoach = document.querySelector('#game-summary-coach');
   const gameSummaryOpening = document.querySelector('#game-summary-opening');
   const gameSummaryQualities = document.querySelector('#game-summary-qualities');
@@ -2411,7 +2413,7 @@
     analysisModes.forEach((button) => { button.disabled = busy; });
     analyzeGameButton.disabled = busy || history.length < 2;
     const gameBusy = gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game';
-    analyzeGameButton.textContent = gameBusy ? (variationSession ? 'Analisando variação…' : 'Analisando partida…') : variationSession ? 'Reanalisar variação' : 'Analisar partida';
+    analyzeGameButtonLabel.textContent = gameBusy ? (variationSession ? 'Analisando variação…' : 'Analisando partida…') : variationSession ? 'Reanalisar variação' : 'Analisar partida';
     if (engineState === 'loading' && pendingAnalysis?.kind !== 'game' && pendingAnalysis) analyzeButton.innerHTML = '<span aria-hidden="true">…</span> Carregando Stockfish';
     else if (activeAnalysis?.kind === 'game' || pendingAnalysis?.kind === 'game') analyzeButton.innerHTML = variationSession ? '<span aria-hidden="true">…</span> Análise da variação em andamento' : '<span aria-hidden="true">…</span> Análise da partida em andamento';
     else if (activeAnalysis || analysisStopping) analyzeButton.innerHTML = '<span aria-hidden="true">…</span> Analisando posição';
@@ -3570,6 +3572,20 @@
     const gameResultText = gameResult !== '*' && !variationSession ? ` Resultado registrado no PGN: ${gameResult}.` : '';
     overview.textContent = `${analyzed.length} posições analisadas. A avaliação começou em ${startEval} e terminou em ${endEval}.${gameResultText} ${sideLines.join(' ')}`;
     gameSummaryOverview.append(overview);
+    gameSummaryMetrics.replaceChildren();
+    const solidMoves = classified.filter(({ result }) => goodKinds.has(result.quality.kind)).length;
+    const reviewMoves = classified.filter(({ result }) => concerningKinds.has(result.quality.kind)).length;
+    const metrics = [
+      { value: `${analyzed.length}/${history.length}`, label: 'posições analisadas', kind: 'metric-progress' },
+      { value: String(solidMoves), label: 'lances bons ou melhores', kind: 'metric-positive' },
+      { value: String(reviewMoves), label: 'lances para rever', kind: reviewMoves ? 'metric-attention' : 'metric-positive' }
+    ];
+    for (const metric of metrics) {
+      const card = document.createElement('div'); card.className = `summary-metric ${metric.kind}`;
+      const value = document.createElement('strong'); value.textContent = metric.value;
+      const label = document.createElement('span'); label.textContent = metric.label;
+      card.append(value, label); gameSummaryMetrics.append(card);
+    }
 
     // Revisão guiada: momentos críticos (ambos os lados) + um lance para repetir.
     gameSummaryCoach.replaceChildren();
@@ -3835,7 +3851,7 @@
       });
       group.append(make('title', {}, `${moveText(point.index)} · ${scoreText(point.result)} · ${quality}`));
       group.append(make('circle', { cx: point.x, cy: point.y, r: 13, class: 'chart-point-hit-area' }));
-      group.append(make('circle', { cx: point.x, cy: point.y, r: point.index === historyIndex ? 7 : 5.5, class: 'chart-point-marker' }));
+      group.append(make('circle', { cx: point.x, cy: point.y, r: point.index === historyIndex ? 5.5 : 3.2, class: 'chart-point-marker' }));
       group.lastChild.setAttribute('fill', qualityColor(point.result, point.index));
       const selectPoint = () => {
         goTo(point.index);
@@ -3862,7 +3878,7 @@
       point.classList.toggle('selected', selectedPoint);
       point.setAttribute('aria-pressed', String(selectedPoint));
       const marker = point.querySelector('.chart-point-marker');
-      if (marker) marker.setAttribute('r', selectedPoint ? '7' : '5.5');
+      if (marker) marker.setAttribute('r', selectedPoint ? '5.5' : '3.2');
     });
   }
 
