@@ -867,3 +867,77 @@ body.has-game .page-shell{padding-bottom:100px}
 .chart-point-tooltip-copy strong{font-size:12px}
 .chart-point-tooltip-copy small{font-size:10px}
 .chart-point-tooltip-copy small:last-child{color:#8fd6c9;font-weight:700}
+
+/* Polimento visual das áreas gerais da aplicação. */
+:root{--accent-teal:#62c8ba;--accent-blue:#6688dc}
+.topbar{position:relative;isolation:isolate;background:linear-gradient(100deg,#101715f5,#11191af2 55%,#11151bf5)}
+.topbar:after{position:absolute;right:0;bottom:-1px;left:0;height:1px;background:linear-gradient(90deg,transparent,#62c8ba66 24%,#6688dc66 72%,transparent);content:"";pointer-events:none}
+.brand-mark{transition:transform .25s ease,color .25s ease,text-shadow .25s ease}
+.brand:hover .brand-mark{transform:translateY(-2px) rotate(-7deg);color:#83d8ca;text-shadow:0 0 18px #62c8ba66}
+.free-badge{padding:7px 11px;border:1px solid #31443e;border-radius:99px;background:linear-gradient(120deg,#172522,#171f25);font-size:10px;transition:border-color .2s ease,background .2s ease}
+.free-badge:hover{border-color:#4b766d;background:linear-gradient(120deg,#1c302e,#1b2630)}
+.intro{animation:interface-enter .48s cubic-bezier(.2,.75,.25,1) both}
+.intro .eyebrow-line{background:linear-gradient(90deg,var(--accent-teal),var(--accent-blue));box-shadow:0 0 12px #62c8ba55}
+.intro h1 em{background:linear-gradient(100deg,#b6e88a 8%,#6bd0bf 58%,#8e9ff0);background-clip:text;-webkit-background-clip:text;color:transparent}
+.engine-pill{border-color:#354d49;background:linear-gradient(120deg,#192522,#182027);box-shadow:inset 0 1px #ffffff08}
+.import-card{isolation:isolate;border-color:#304541;background:radial-gradient(ellipse at 4% 0%,#62c8ba17,transparent 46%),linear-gradient(115deg,#192522,#171e20 62%,#171b23);box-shadow:0 9px 26px #0002,inset 0 1px #ffffff08;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.import-card:before{position:absolute;z-index:-1;top:0;right:10%;left:0;height:1px;background:linear-gradient(90deg,#62c8ba99,#6688dc55,transparent);content:""}
+.import-card:hover{transform:translateY(-2px);border-color:#41645e;box-shadow:0 14px 32px #0003,0 0 22px #62c8ba0c,inset 0 1px #ffffff0a}
+.import-icon{border-color:#3e625b;background:linear-gradient(145deg,#203b37,#202d37);color:#8ddace;transition:transform .24s cubic-bezier(.2,.75,.25,1),box-shadow .24s ease}
+.import-card:hover .import-icon{transform:translateY(-2px) rotate(-4deg);box-shadow:0 5px 15px #62c8ba25}
+.archive-card{border-color:#30433f;background:radial-gradient(ellipse at 90% 0%,#6688dc0d,transparent 38%),linear-gradient(145deg,#151f1d,#12191a);box-shadow:0 12px 32px #0002,inset 0 1px #ffffff08;transition:border-color .22s ease,box-shadow .22s ease}
+.archive-card:hover{border-color:#3b5650;box-shadow:0 15px 36px #0003,inset 0 1px #ffffff09}
+.archive-heading .eyebrow{color:#70cbbd}
+.archive-tools .secondary-button,.paste-pgn summary,.chesscom-search .primary-button{transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.archive-tools .secondary-button:hover,.paste-pgn summary:hover{transform:translateY(-1px);border-color:#52766c;background:linear-gradient(120deg,#243a35,#222e3c);box-shadow:0 5px 14px #0003}
+.library-tabs{gap:5px;border-color:#2d403d}
+.library-tab{position:relative;margin-bottom:-1px;border-radius:8px 8px 0 0;transition:color .2s ease,background .2s ease,border-color .2s ease}
+.library-tab:hover{color:#d9ece6;background:linear-gradient(180deg,#1a2928aa,transparent)}
+.library-tab.selected{border-image:linear-gradient(90deg,var(--accent-teal),var(--accent-blue)) 1;color:#e3f1ed;text-shadow:0 0 16px #62c8ba24}
+.archive-pane{border-color:#2f4540;background:radial-gradient(ellipse at 100% 0%,#6688dc0b,transparent 44%),linear-gradient(145deg,#17211f,#141b1a);transition:border-color .2s ease,box-shadow .2s ease}
+.archive-pane:focus-within{border-color:#45675f;box-shadow:0 0 0 1px #62c8ba14,0 8px 22px #0002}
+.archive-pane-title h3{color:#dcece6}
+.archive-tag,.saved-count{background:linear-gradient(120deg,#203632,#202a39);color:#9cd7cb}
+.chesscom-search input,.archive-filters select,.insights-heading select,.insights-heading input[type=number],.rating-fields input,.paste-panel textarea{transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.chesscom-search input:focus,.archive-filters select:focus,.insights-heading select:focus,.insights-heading input[type=number]:focus,.rating-fields input:focus,.paste-panel textarea:focus{border-color:#5aa99d;outline:none;box-shadow:0 0 0 3px #62c8ba20}
+.external-game-card,.saved-game-card{border-color:#2d403a;background:linear-gradient(120deg,#192421,#171e20);transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.external-game-card:hover,.saved-game-card:hover{transform:translateY(-1px);border-color:#45675e;background:linear-gradient(120deg,#1c2b27,#1b242b);box-shadow:0 5px 16px #0002}
+.board-card{border-color:#304742;background:radial-gradient(ellipse at 50% 0%,#62c8ba0c,transparent 52%),linear-gradient(150deg,#17211f,#141a1b);box-shadow:0 14px 38px #0003,inset 0 1px #ffffff08;transition:border-color .22s ease,box-shadow .22s ease}
+.board-card:hover{border-color:#3b5b55;box-shadow:0 17px 42px #0003,0 0 24px #62c8ba0a,inset 0 1px #ffffff09}
+.board-toolbar,.board-footer{border-color:#2b403b}
+.board-toolbar{background:linear-gradient(90deg,#182421,#171e20 68%,#191d25)}
+.board-surface{border-radius:3px;box-shadow:0 13px 35px #0005,0 0 0 1px #8ddace18}
+.chessboard{border-radius:3px;box-shadow:0 0 0 1px #0d1311,0 13px 35px #0005}
+.square{transition:filter .16s ease,box-shadow .16s ease}
+.square:hover{filter:brightness(1.08)}
+.analysis-card{border-color:#30443f;background:radial-gradient(ellipse at 100% 0%,#6688dc13,transparent 38%),linear-gradient(155deg,#17211f,#151a1e);box-shadow:0 14px 38px #0003,inset 0 1px #ffffff08;transition:border-color .22s ease,box-shadow .22s ease}
+.analysis-card:focus-within{border-color:#3d625b;box-shadow:0 14px 38px #0003,0 0 0 1px #62c8ba12,inset 0 1px #ffffff08}
+.panel-heading .eyebrow{color:#70cbbd}
+.soon-tag{border:1px solid #354e49;border-radius:99px;background:linear-gradient(110deg,#1c302e,#202638);color:#9acfc4}
+.mode-tabs{border-color:#2d413e;border-radius:9px;background:linear-gradient(110deg,#111918,#151b22)}
+.mode-tab{border-radius:6px;cursor:pointer;transition:color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease}
+.mode-tab:hover:not(.selected){color:#c8ddd6;background:#1d2928}
+.mode-tab.selected{background:linear-gradient(120deg,#24423d,#26354a);color:#e0f4ed;box-shadow:inset 0 0 0 1px #65b9aa44,0 4px 12px #0003}
+.eval-summary{border-color:#314843;background:radial-gradient(ellipse at 0% 0%,#62c8ba14,transparent 60%),linear-gradient(120deg,#192725,#19212a)}
+.eval-number{color:#dff1e9}
+.empty-analysis{border-radius:9px;background:radial-gradient(ellipse at 50% 75%,#6688dc0b,transparent 58%)}
+.sparkle{animation:sparkle-drift 3.2s ease-in-out infinite}
+.analysis-actions .primary-button{border:1px solid #6bc9bb;background:linear-gradient(120deg,#72d4c1,#53aaa9 62%,#6688c7);color:#10201e;box-shadow:0 5px 18px #62c8ba24,inset 0 1px #ffffff70;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
+.analysis-actions .primary-button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 9px 23px #62c8ba37,inset 0 1px #ffffff80}
+.analysis-actions .primary-button:active:not(:disabled){transform:translateY(0)}
+.analysis-actions .primary-button:focus-visible,.archive-tools button:focus-visible,.library-tab:focus-visible,.paste-pgn summary:focus-visible{outline:2px solid #83dbcd;outline-offset:3px}
+.secondary-button,.tool-button,.text-button,.summary-move-link{transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
+.secondary-button:hover:not(:disabled),.tool-button:hover:not(:disabled){border-color:#4b7168;background:linear-gradient(120deg,#263b36,#263247);color:#e4f0eb}
+.secondary-button:active:not(:disabled),.tool-button:active:not(:disabled){transform:translateY(1px)}
+.board-size-control input{accent-color:var(--accent-teal)}
+.move-controls button{cursor:pointer;transition:transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease}
+.move-controls button:hover:not(:disabled){transform:translateY(-1px);border-color:#52796f;background:linear-gradient(130deg,#263b36,#263247);color:#e5f3ed}
+.rating-settings{border-color:#2d403b;border-radius:8px;background:linear-gradient(130deg,#151f1c,#151b20)}
+.rating-settings summary{transition:color .18s ease}
+.rating-settings summary:hover{color:#a4dfd2}
+footer{border-color:#2d403e;background:linear-gradient(90deg,transparent,#14201f55 50%,transparent)}
+footer span:first-child{color:#a8d8cc}
+@keyframes interface-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sparkle-drift{0%,100%{transform:translateY(0) rotate(0);text-shadow:0 0 8px #62c8ba22}50%{transform:translateY(-3px) rotate(8deg);text-shadow:0 0 18px #62c8ba66}}
+@media(max-width:650px){.archive-heading h2{font-size:22px}.board-card:hover,.analysis-card:hover,.archive-card:hover{transform:none}.free-badge{padding:6px 8px}.import-card:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.intro,.sparkle{animation:none!important}*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
