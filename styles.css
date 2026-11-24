@@ -966,3 +966,12 @@ footer span:first-child{color:#a8d8cc}
 .asset-credit a:hover{color:#c3e8dc;text-decoration-color:#8ddace}
 footer{height:auto;min-height:75px;padding:14px 0 12px;flex-wrap:wrap}
 @media(prefers-reduced-motion:reduce){.piece,.square{transition:none!important}}
+
+/* Reduz repinturas frequentes durante navegação, arraste e revisão do gráfico. */
+.piece-white,.piece-black{filter:none}
+.piece{transition:transform .14s cubic-bezier(.2,.75,.25,1)}
+.square:hover .piece{transform:translateY(-2px)}
+.board-wrap{filter:none}
+.piece-drag-ghost{top:0;left:0;will-change:transform}
+.chart-advantage-segment,.chart-point-marker,.chart-point.selected .chart-point-marker{filter:none}
+.chart-point-marker{transition:r .12s ease}

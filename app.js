@@ -805,6 +805,7 @@
     boardElement.replaceChildren();
     const rows = flipped ? [...Array(8).keys()].reverse() : [...Array(8).keys()];
     const cols = flipped ? [...Array(8).keys()].reverse() : [...Array(8).keys()];
+    const legalTargetSquares = new Set(legalTargets.map((move) => move.to));
     for (const row of rows) {
       const rowElement = document.createElement('div'); rowElement.className = 'board-row'; rowElement.setAttribute('role', 'row'); boardElement.append(rowElement);
       for (const col of cols) {
@@ -814,17 +815,9 @@
       button.setAttribute('aria-label', `${squareName(square)}${piece === '.' ? ', vazia' : `, ${pieceName(piece)}`}`);
       button.innerHTML = pieceMarkup(piece);
       if (square === selected) button.classList.add('selected');
-      if (legalTargets.some((move) => move.to === square)) button.classList.add(position.board[square] === '.' ? 'legal-target' : 'legal-capture');
+      if (legalTargetSquares.has(square)) button.classList.add(position.board[square] === '.' ? 'legal-target' : 'legal-capture');
       if (lastMove && (square === lastMove.from || square === lastMove.to)) button.classList.add('last-move');
       if (boardAnnotations.some((annotation) => annotation.type === 'square' && annotation.square === square)) button.classList.add('annotation-square');
-      button.addEventListener('click', () => {
-        boardFocusSquare = square;
-        if (suppressSquareClick) { suppressSquareClick = false; return; }
-        onSquareClick(square);
-      });
-      button.addEventListener('pointerdown', (event) => {
-        beginPointerDrag(event, square);
-      });
       rowElement.append(button);
     }
     }
@@ -941,13 +934,8 @@
   }
 
   function squareAtPoint(clientX, clientY) {
-    for (const cell of boardElement.querySelectorAll('.square')) {
-      const rect = cell.getBoundingClientRect();
-      if (clientX >= rect.left && clientX < rect.right && clientY >= rect.top && clientY < rect.bottom) {
-        return Number(cell.dataset.square);
-      }
-    }
-    return -1;
+    const cell = document.elementFromPoint(clientX, clientY)?.closest('.square');
+    return cell && boardElement.contains(cell) ? Number(cell.dataset.square) : -1;
   }
 
   function updateArrowGesture(event) {
@@ -1045,10 +1033,9 @@
     moveArrowsElement.hidden = false;
   }
 
-  function beginPointerDrag(event, square) {
+  function beginPointerDrag(event, square, origin) {
     const piece = position.board[square];
     if (event.button !== 0 || piece === '.' || color(piece) !== position.turn) return;
-    const origin = event.currentTarget;
     pointerDrag = { pointerId: event.pointerId, from: square, origin, startX: event.clientX, startY: event.clientY, moved: false, target: null };
     selected = square; legalTargets = legalMoves(position, square);
     paintSelection(square);
@@ -1056,11 +1043,13 @@
   }
 
   function paintSelection(square) {
+    const targets = new Set(legalTargets.map((move) => move.to));
     for (const cell of boardElement.querySelectorAll('.square')) {
       const cellIndex = Number(cell.dataset.square);
       cell.classList.toggle('selected', cellIndex === square);
-      cell.classList.toggle('legal-target', legalTargets.some((move) => move.to === cellIndex && position.board[cellIndex] === '.'));
-      cell.classList.toggle('legal-capture', legalTargets.some((move) => move.to === cellIndex && position.board[cellIndex] !== '.'));
+      const isTarget = targets.has(cellIndex);
+      cell.classList.toggle('legal-target', isTarget && position.board[cellIndex] === '.');
+      cell.classList.toggle('legal-capture', isTarget && position.board[cellIndex] !== '.');
     }
   }
 
@@ -1075,7 +1064,7 @@
       document.body.append(ghost); pointerDrag.ghost = ghost;
       pointerDrag.origin.classList.add('piece-being-dragged');
     }
-    pointerDrag.ghost.style.left = `${event.clientX}px`; pointerDrag.ghost.style.top = `${event.clientY}px`;
+    pointerDrag.ghost.style.transform = `translate3d(${event.clientX}px,${event.clientY}px,0) translate(-50%,-50%)`;
     const over = document.elementFromPoint(event.clientX, event.clientY)?.closest('.square');
     const targetIndex = over ? Number(over.dataset.square) : -1;
     if (pointerDrag.target && Number(pointerDrag.target.dataset.square) !== targetIndex) pointerDrag.target.classList.remove('drag-over');
@@ -1104,6 +1093,18 @@
   window.addEventListener('pointermove', updatePointerDrag, { passive: false, capture: true });
   window.addEventListener('pointerup', (event) => finishPointerDrag(event), true);
   window.addEventListener('pointercancel', (event) => finishPointerDrag(event, true), true);
+  boardElement.addEventListener('click', (event) => {
+    const squareElement = event.target?.closest?.('.square');
+    if (!squareElement || !boardElement.contains(squareElement)) return;
+    const square = Number(squareElement.dataset.square);
+    boardFocusSquare = square;
+    if (suppressSquareClick) { suppressSquareClick = false; return; }
+    onSquareClick(square);
+  });
+  boardElement.addEventListener('pointerdown', (event) => {
+    const squareElement = event.target?.closest?.('.square');
+    if (squareElement && boardElement.contains(squareElement)) beginPointerDrag(event, Number(squareElement.dataset.square), squareElement);
+  });
   boardElement.addEventListener('pointerdown', beginArrowGesture, true);
   window.addEventListener('blur', () => { arrowGesture = null; });
   boardElement.addEventListener('contextmenu', (event) => {
