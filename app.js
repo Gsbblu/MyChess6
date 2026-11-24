@@ -1032,6 +1032,9 @@
     const square = Number(squareElement.dataset.square);
     boardFocusSquare = square;
     if (suppressSquareClick) { suppressSquareClick = false; return; }
+    if (manualArrows.length || highlightedSquare >= 0) {
+      manualArrows = []; highlightedSquare = -1; renderBoardArrows();
+    }
     onSquareClick(square);
   });
   boardElement.addEventListener('pointerdown', (event) => {
