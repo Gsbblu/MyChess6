@@ -1,4 +1,4 @@
-# Publicar o MyChess 5
+# Publicar Gabe's Chess
 
 O projeto estático não precisa de compilação nem de instalação de ferramentas. A pasta `publicacao/` contém uma cópia pronta para hospedagem: página, estilos, aplicação, Stockfish local e licença do motor.
 
