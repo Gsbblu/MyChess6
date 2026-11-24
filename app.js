@@ -4167,6 +4167,21 @@
   document.addEventListener('visibilitychange', () => {
     document.body.classList.toggle('page-hidden', document.hidden);
   });
+  const backgroundOptions = [...document.querySelectorAll('.background-option')];
+  const setBackground = (name) => {
+    const selected = ['forest', 'ocean', 'plum', 'slate'].includes(name) ? name : 'forest';
+    document.body.dataset.background = selected;
+    backgroundOptions.forEach((button) => {
+      const active = button.dataset.background === selected;
+      button.classList.toggle('selected', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  };
+  try { setBackground(sessionStorage.getItem('gabes-chess-background') || 'forest'); } catch { setBackground('forest'); }
+  backgroundOptions.forEach((button) => button.addEventListener('click', () => {
+    setBackground(button.dataset.background);
+    try { sessionStorage.setItem('gabes-chess-background', button.dataset.background); } catch {}
+  }));
   window.addEventListener('pagehide', stopEngine);
   async function initializeMyChess() {
     if (cloudRemoteSummary) renderCloudProgress(cloudRemoteSummary);
