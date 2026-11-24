@@ -1135,3 +1135,22 @@ body:before{background:radial-gradient(ellipse at 14% 20%,#50bdb02b 0,transparen
   .intro h1{font-size:clamp(31px,8.1vw,42px);letter-spacing:-1.25px}
   .intro-copy{max-width:470px;font-size:12px}
 }
+
+/* Movimentos curtos e previsíveis, sem repintar sombras grandes em cada hover. */
+:root{--ease-fluid:cubic-bezier(.22,.68,0,1)}
+body:before{animation-duration:30s;transform-origin:center}
+.import-card,.archive-card,.board-card,.analysis-card,.external-game-card,.saved-game-card{transition:transform .18s var(--ease-fluid),border-color .18s ease}
+.import-card:hover{box-shadow:0 9px 26px #0002,inset 0 1px #ffffff08}
+.archive-card:hover{box-shadow:0 12px 32px #0002,inset 0 1px #ffffff08}
+.board-card:hover,.analysis-card:focus-within{box-shadow:0 14px 38px #0003,inset 0 1px #ffffff08}
+.external-game-card:hover,.saved-game-card:hover{box-shadow:none}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #7bd4c4;outline-offset:3px}
+.primary-button:active:not(:disabled),.secondary-button:active:not(:disabled),.tool-button:active:not(:disabled),.move-entry:active,.library-tab:active,.rating-mode-button:active{transform:scale(.985);transition-duration:.08s}
+.move-animation-layer{contain:layout style;pointer-events:none}
+body.page-hidden:before,body.page-hidden *,body.page-hidden *:before,body.page-hidden *:after{animation-play-state:paused!important}
+@media(hover:none),(pointer:coarse){
+  .brand:hover .brand-mark,.import-card:hover,.archive-tools .secondary-button:hover,.paste-pgn summary:hover,.external-game-card:hover,.saved-game-card:hover,.board-card:hover{transform:none}
+  .free-badge:hover,.library-tab:hover,.secondary-button:hover:not(:disabled),.tool-button:hover:not(:disabled),.mode-tab:hover:not(.selected){filter:none}
+  .import-card:hover,.archive-card:hover,.board-card:hover,.analysis-card:focus-within,.external-game-card:hover,.saved-game-card:hover{box-shadow:none}
+}
+@media(prefers-reduced-motion:reduce){body:before{animation:none!important}.primary-button:active:not(:disabled),.secondary-button:active:not(:disabled),.tool-button:active:not(:disabled),.move-entry:active,.library-tab:active,.rating-mode-button:active{transform:none}}

@@ -4161,6 +4161,9 @@
     });
   }));
 
+  document.addEventListener('visibilitychange', () => {
+    document.body.classList.toggle('page-hidden', document.hidden);
+  });
   window.addEventListener('pagehide', stopEngine);
   async function initializeMyChess() {
     if (cloudRemoteSummary) renderCloudProgress(cloudRemoteSummary);
