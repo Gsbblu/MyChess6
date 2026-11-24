@@ -135,8 +135,7 @@
     chartTooltipSymbol.className = `chart-point-tooltip-symbol quality-mark-${mark.kind}`;
     chartTooltipQuality.textContent = point.result.quality?.label || mark.title;
     chartTooltipMove.textContent = moveLabel;
-    const perspective = point.value > 0.15 ? 'brancas' : point.value < -0.15 ? 'pretas' : 'igualado';
-    chartTooltipEvaluation.textContent = `Avaliação ${point.evaluation} · ${perspective}`;
+    chartTooltipEvaluation.textContent = point.evaluation;
     chartPointTooltip.hidden = false;
     const matrix = advantageChart.getScreenCTM?.();
     if (!matrix || !advantageChart.createSVGPoint) return;
@@ -3843,6 +3842,17 @@
       const value = scoreFor(result);
       return `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value).toFixed(1)}`;
     };
+    const evaluationContext = (result) => {
+      if (result.score.type === 'mate') {
+        const whiteMate = result.turn === 'w' ? result.score.value : -result.score.value;
+        if (!whiteMate) return 'Mate nesta posição';
+        const winner = whiteMate > 0 ? 'brancas' : 'pretas';
+        return `Mate em ${Math.abs(whiteMate)} para as ${winner}`;
+      }
+      const value = scoreFor(result);
+      const side = value > 0.15 ? 'Vantagem das brancas' : value < -0.15 ? 'Vantagem das pretas' : 'Posição equilibrada';
+      return `${scoreText(result)} · ${side}`;
+    };
     const moveText = (index) => {
       if (index === 0) return 'Posição inicial';
       const entry = history[index];
@@ -3872,7 +3882,7 @@
     svg.append(make('text', { x: right, y: height - 9, class: 'chart-axis-caption', 'text-anchor': 'end' }, 'Final'));
 
     const points = results.map((result, index) => result && scoreFor(result) !== null
-      ? { result, index, value: scoreFor(result), evaluation: scoreText(result), x: xFor(index), y: yFor(scoreFor(result)) }
+      ? { result, index, value: scoreFor(result), evaluation: evaluationContext(result), x: xFor(index), y: yFor(scoreFor(result)) }
       : null).filter(Boolean);
     if (!points.length) {
       svg.append(make('text', { x: (left + right) / 2, y: baseline - 5, class: 'chart-empty-label', 'text-anchor': 'middle' }, 'Aguardando avaliações do Stockfish'));
@@ -3884,7 +3894,7 @@
     const selectPoint = (point) => {
       const quality = point.result.quality?.label || (point.index === 0 ? 'Posição inicial' : 'Sem classificação');
       goTo(point.index);
-      advantageChartStatus.textContent = `${moveText(point.index)} selecionada: ${scoreText(point.result)}, ${quality}. Tabuleiro atualizado.`;
+      advantageChartStatus.textContent = `${moveText(point.index)} selecionada: ${evaluationContext(point.result)}, ${quality}. Tabuleiro atualizado.`;
       showBoard();
     };
     chartSelectPointAt = (x, y) => {
@@ -3913,9 +3923,9 @@
         role: 'button',
         tabindex: '0',
         'aria-describedby': 'chart-point-tooltip',
-        'aria-label': `${moveText(point.index)}: ${scoreText(point.result)}, ${quality}. Ir para esta posição no tabuleiro.`
+        'aria-label': `${moveText(point.index)}: ${evaluationContext(point.result)}, ${quality}. Ir para esta posição no tabuleiro.`
       });
-      group.append(make('title', {}, `${moveText(point.index)} · ${scoreText(point.result)} · ${quality}`));
+      group.append(make('title', {}, `${moveText(point.index)} · ${evaluationContext(point.result)} · ${quality}`));
       group.append(make('circle', { cx: point.x, cy: point.y, r: 4.5, class: 'chart-point-hit-area' }));
       group.append(make('circle', { cx: point.x, cy: point.y, r: point.index === historyIndex ? 6.3 : 4.1, class: 'chart-point-marker' }));
       group.lastChild.setAttribute('fill', qualityColor(point.result, point.index));
@@ -3930,8 +3940,7 @@
     }
 
     const latest = points[points.length - 1];
-    const side = latest.value > 0.15 ? 'Vantagem das brancas' : latest.value < -0.15 ? 'Vantagem das pretas' : 'Posição equilibrada';
-    chartCurrentEval.textContent = `${scoreText(latest.result)} · ${side}`;
+    chartCurrentEval.textContent = latest.evaluation;
     advantageChartStatus.textContent = 'Clique ou toque em um ponto para ir direto à posição correspondente no tabuleiro. As cores dos pontos indicam a qualidade dos lances.';
     updateAdvantageChartSelection();
   }
