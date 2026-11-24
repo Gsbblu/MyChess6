@@ -724,97 +724,112 @@ body.has-game .page-shell{padding-bottom:100px}
 .move-analysis-group .move-alternative-option p{font-size:10px;color:#a0ada2;line-height:1.55}
 @media(max-width:420px){.move-explanation-panel .super-analysis-buttons{grid-template-columns:1fr}.move-explanation-panel .super-analysis-buttons #open-super-analysis{grid-column:auto}}
 
-/* Revisão da partida: hierarquia mais clara, cards leves e gráfico compacto. */
-.moves-card{padding:18px 20px;background:linear-gradient(145deg,#171f1a,#141a16)}
-.moves-heading{gap:14px;padding-bottom:13px;border-bottom:1px solid #29352e}
-.moves-heading>div:first-child{flex:none}
-.moves-heading .eyebrow{color:#83c8bd}
-.game-details{margin-left:auto;color:#91a39b}
-.game-analyze-button{min-height:43px;padding:10px 16px;border:1px solid #69c8bd;border-radius:9px;background:linear-gradient(135deg,#70d0c0,#53afa9);color:#10201e;font-size:12px;font-weight:800;box-shadow:0 5px 16px #50bdb02b,inset 0 1px #ffffff66;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
-.game-analyze-button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 8px 22px #50bdb044,inset 0 1px #ffffff66}
-.game-analyze-button:focus-visible{outline:2px solid #a2e8dc;outline-offset:3px}
-.game-analyze-button:disabled{opacity:.62;color:#9bbab4;background:linear-gradient(135deg,#263b38,#20312f);border-color:#3c625d;box-shadow:none}
-.game-analyze-icon{font-size:15px;line-height:1}
-.move-list{gap:6px 8px;margin-top:13px;padding:2px 1px 5px;max-height:190px;align-content:flex-start}
-.move-pair{gap:3px;padding:2px 3px;border:1px solid #26332c;border-radius:7px;background:#151d18;transition:border-color .15s ease,background .15s ease}
-.move-pair:hover{border-color:#3b554b;background:#19251f}
-.move-number{font-size:10px;color:#82958a}
-.move-entry{padding:4px 5px;border-radius:5px;font-variant-numeric:tabular-nums}
-.move-entry:hover{background:#253832}
-.move-entry.current{border-color:#4d9387;background:#203b38;color:#dcf5e9}
-.move-quality-legend{margin-top:10px;color:#83958b;line-height:1.6}
-.keyboard-hint{color:#74847b}
-.game-summary{position:relative;isolation:isolate;overflow:hidden;margin:16px 0;padding:19px;border-color:#3c5b56;border-radius:12px;background:radial-gradient(ellipse at 8% 0%,#50bdb01f 0,transparent 48%),linear-gradient(145deg,#172523,#141b1e);box-shadow:0 9px 25px #0002,inset 0 1px #ffffff08}
-.game-summary:before{position:absolute;z-index:-1;inset:0 0 auto;height:2px;background:linear-gradient(90deg,#6dd3c1,#547fd0 60%,transparent);content:""}
-.game-summary-heading{align-items:flex-start;padding-bottom:13px;border-bottom:1px solid #2c403e}
-.game-summary-heading .eyebrow{color:#69c9bc;font-size:9px;letter-spacing:1.3px}
-.game-summary-heading h3{font-size:clamp(18px,2vw,22px);letter-spacing:-.45px;color:#e5f0ec}
-.game-summary-heading>span{padding:5px 9px;border:1px solid #35514b;border-radius:99px;background:#1c302d;color:#91c9bd;font-size:10px;font-weight:600}
-.summary-overview-card{margin-top:14px;padding:13px 15px;border:1px solid #344b49;border-left:3px solid #61c5b8;border-radius:8px;background:linear-gradient(120deg,#1b2c2d,#192326);box-shadow:inset 0 1px #ffffff08}
-.summary-overview-kicker{color:#72cabe;font-size:8px;font-weight:800;letter-spacing:1px}
-.game-summary-overview>p{margin:6px 0 0;color:#d0dfda;font-size:12px;line-height:1.65}
-.game-summary-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0 15px}
-.summary-metric{display:grid;gap:3px;min-width:0;padding:11px 12px;border:1px solid #2e4140;border-radius:8px;background:linear-gradient(145deg,#1a2728,#172123)}
-.summary-metric strong{color:#dff2ec;font:700 19px/1 Manrope,sans-serif;font-variant-numeric:tabular-nums}
-.summary-metric span{color:#94aaa3;font-size:10px;line-height:1.35}
-.summary-metric.metric-positive strong{color:#84d6c2}
-.summary-metric.metric-attention strong{color:#efbd81}
-.summary-metric.metric-progress strong{color:#9eb8ed}
-.game-summary-coach-block{margin:0;padding:14px;border-color:#38514a;border-radius:9px;background:linear-gradient(145deg,#192724,#151d1b)}
-.game-summary-coach-block>h4{margin-bottom:11px;color:#8cd1c2;font-size:12px}
-.coach-review-card{padding:10px 11px;border:1px solid #2d423d;border-radius:7px;background:#182320}
-.coach-review-card+.coach-review-card{margin-top:8px;padding:10px 11px;border-top:1px solid #2d423d}
+/* Revisão enxuta: pares de lances, avaliação legível e relatório por lado. */
+.moves-heading{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px 14px;padding:0 0 14px;border-bottom:1px solid #2b3731}
+.moves-heading>div:first-child{grid-column:1;grid-row:1}
+.game-details{grid-column:2;grid-row:1;margin:0;text-align:right}
+.game-outcome-indicator{grid-column:3;grid-row:1}
+.game-analyze-button{grid-column:1/-1;grid-row:2;justify-self:start;min-width:190px;min-height:42px;padding:9px 16px;border:1px solid #b7e181;border-radius:6px;background:linear-gradient(180deg,#c4e995,#acd87b);color:#182218;font-size:12px;font-weight:800;box-shadow:0 2px 8px #0002;transition:filter .15s ease,transform .15s ease}
+.game-analyze-button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 4px 12px #0003}
+.game-analyze-button:disabled{opacity:.55;background:#28332a;border-color:#465441;color:#a2b19d;box-shadow:none}
+.move-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:2px 10px;max-height:232px;margin-top:13px;padding:2px 2px 7px;align-content:start}
+.move-pair{display:grid;grid-template-columns:29px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:2px;min-width:0;min-height:35px;padding:2px 3px;border:0;border-bottom:1px solid #26312b;border-radius:0;background:transparent;transition:background .15s ease}
+.move-pair:hover{border-color:#35463b;background:#18211b}
+.move-number{font-size:10px;color:#79887d}
+.move-entry{display:inline-flex;align-items:center;justify-content:center;gap:3px;min-width:0;padding:5px 3px;border:1px solid transparent;border-radius:4px;color:#c4cec3;font-size:11px;line-height:1.2}
+.move-entry-san{overflow:hidden;text-overflow:ellipsis}
+.move-entry.current{border-color:#58734b;background:#253427;color:#ecf4e7}
+.move-quality-symbol,.move-quality-symbol .board-quality-icon{flex:none}
+.move-quality-legend{margin-top:10px;padding-top:9px;border-top:1px solid #26332b;color:#819084}
+.keyboard-hint{margin-bottom:0;color:#748178}
+.turn-indicator{gap:8px;padding:7px 10px;border:1px solid #344239;border-radius:6px;background:#1a231c;color:#c4d0c4;font-size:11px;font-weight:600;white-space:nowrap}
+.turn-indicator span{width:8px;height:8px;flex:none;background:#e2e8dc;box-shadow:0 0 0 3px #ffffff12}
+.board-footer{background:#141b16}
+.game-summary{margin:12px 0 15px;padding:17px;border:1px solid #303d37;border-radius:9px;background:linear-gradient(150deg,#171f1b,#141a17);box-shadow:none}
+.game-summary:before{display:none}
+.game-summary-heading{align-items:center;padding:0 0 12px;border-bottom:1px solid #29352e}
+.game-summary-heading .eyebrow{color:#9bc7ad}
+.game-summary-heading h3{font-size:18px;letter-spacing:-.25px}
+.game-summary-heading>span{padding:4px 8px;border-color:#3b5044;background:#1e2b23;color:#a8c5ae;font-size:9px}
+.game-summary-overview{margin-top:13px}
+.summary-eval-card{display:grid;grid-template-columns:minmax(130px,.7fr) minmax(150px,1fr) minmax(160px,1.2fr) auto;align-items:center;gap:8px 14px;padding:12px 14px;border:1px solid #35443b;border-left:3px solid #9acb7d;border-radius:6px;background:#1a241d}
+.summary-eval-label{color:#90a494;font-size:9px;font-weight:700;letter-spacing:.65px}
+.summary-eval-line{display:flex;align-items:center;gap:10px;color:#e1ecd9;font:700 19px/1 Manrope,sans-serif;font-variant-numeric:tabular-nums}
+.summary-eval-line span{color:#819486;font:500 15px 'DM Sans',sans-serif}
+.summary-eval-note{color:#9aa99c;font-size:10px;line-height:1.4}
+.summary-game-result{padding:5px 8px;border:1px solid #3b5143;border-radius:5px;background:#202d23;color:#c9dec0;font-size:10px;font-weight:700;white-space:nowrap}
+.game-summary-sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}
+.summary-player-card{min-width:0;padding:11px 12px;border:1px solid #303d36;border-radius:6px;background:#161e19}
+.summary-player-heading{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:7px}
+.summary-player-dot{width:9px;height:9px;border:1px solid #8e9a8e;border-radius:50%;background:#e4e6d8}
+.summary-black .summary-player-dot{border-color:#b5c0b6;background:#344038;box-shadow:inset 0 0 0 2px #19221c}
+.summary-player-heading strong{overflow:hidden;color:#dbe5db;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.summary-player-heading small{color:#829286;font-size:9px;white-space:nowrap}
+.summary-player-stats{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 0 17px}
+.summary-player-stats span{padding:4px 7px;border-radius:4px;background:#202b23;color:#a8c3aa;font-size:10px}
+.summary-player-stats .summary-review-stat{background:#242a25;color:#a4ada5}
+.summary-player-stats .summary-review-stat.has-reviews{background:#332a22;color:#dfb58a}
+.game-summary-coach-block{margin:0;padding:13px;border-color:#303d36;border-radius:7px;background:#151d18}
+.game-summary-coach-block>h4{margin-bottom:9px;color:#c2d3c1;font-size:12px}
+.coach-review-card{padding:10px;border-color:#2c3931;border-radius:5px;background:#19221c}
+.coach-review-card+.coach-review-card{padding:10px;border-top-color:#2c3931}
 .coach-review-card>strong{font-size:12px}
-.coach-review-answer summary{color:#80c9bd}
-.summary-move-link{border-color:#3e5d55;border-radius:6px;background:#1d302c;color:#c5e5dc}
-.summary-move-link:hover{border-color:#66b9aa;background:#233c37}
-.summary-exercise-link{border-color:#567c6e;color:#d3eee3}
-.summary-more{margin-top:13px;border-color:#2b403c}
-.summary-more>summary{color:#87bcb2}
-.summary-more[open]>summary{color:#c8e7df}
-.summary-more-content{gap:11px;padding-top:3px}
-.game-summary-block{border-color:#2c413d;border-radius:8px;background:linear-gradient(145deg,#17211f,#141b19)}
-.game-summary-block>h4{color:#89cdbf}
-.game-summary-item+.game-summary-item{border-color:#293a36}
-.summary-quality-table th,.summary-quality-table td{border-color:#2b3d39}
-.summary-quality-table thead th{color:#8ea9a0}
-.summary-quality-table tbody th{color:#c3d5ce}
-.summary-move-link:focus-visible,.game-analyze-button:focus-visible{outline-offset:3px}
-.advantage-chart-card{margin:13px 0;padding:15px 16px 12px;border-color:#304642;border-radius:11px;background:radial-gradient(ellipse at 50% 0%,#54b9aa12,transparent 65%),linear-gradient(150deg,#161f1d,#13191a);box-shadow:0 8px 24px #0002,inset 0 1px #ffffff08}
-.advantage-chart-heading{align-items:center;gap:14px}
-.advantage-chart-heading h3{margin-bottom:4px;color:#deebe6;font-size:15px;letter-spacing:-.2px}
-.advantage-chart-heading p{color:#91a49d;font-size:11px}
-.chart-current-eval{padding:7px 10px;border:1px solid #36554f;border-radius:99px;background:linear-gradient(120deg,#1c302e,#1b2730);color:#a8ddd0;font-size:10px;font-weight:700}
-.chart-quality-legend{gap:6px 11px;margin:9px 0 0;color:#a3b2ac;font-size:9px}
-.chart-quality-legend>span{gap:5px;padding:3px 7px;border:1px solid #283a35;border-radius:99px;background:#17201d}
-.chart-quality-dot{width:6px;height:6px;box-shadow:0 0 7px currentColor}
-.advantage-chart{margin-top:2px;overflow:hidden}
-.chart-grid-line{stroke:#2a3935;stroke-width:.8;stroke-dasharray:2 7;opacity:.75}
-.chart-zero-line{stroke:#60746c;stroke-width:1.2;opacity:.75}
-.chart-axis-label,.chart-axis-caption{fill:#80938b;font-size:10px}
-.chart-area-white{fill:#65cbbb;fill-opacity:.09}
-.chart-area-black{fill:#8ca8dd;fill-opacity:.08}
-.chart-advantage-segment{stroke-width:2;opacity:.88;filter:drop-shadow(0 1px 3px #75cbb333)}
-.chart-point-marker{stroke:#16201e;stroke-width:1.5;transition:r .16s ease,filter .16s ease}
-.chart-point.selected .chart-point-marker{stroke:#effbf5;stroke-width:2;filter:drop-shadow(0 0 4px #8de1d4aa)}
-.chart-point:focus-visible .chart-point-marker{stroke:#fff;stroke-width:2.5}
-.advantage-chart-status{margin-top:2px;color:#879a92;font-size:10px}
-.all-positions{margin-bottom:10px}
-@media(max-width:650px){
-  .moves-card{padding:14px 12px}
-  .moves-heading{padding-bottom:11px}
-  .moves-heading .game-analyze-button{width:100%;min-height:46px;margin:0}
-  .game-summary{padding:14px}
-  .game-summary-heading{gap:9px}
-  .game-summary-heading>span{font-size:9px}
-  .summary-overview-card{padding:11px 12px}
-  .game-summary-metrics{gap:6px}
-  .summary-metric{padding:9px 8px}
-  .summary-metric strong{font-size:17px}
-  .summary-metric span{font-size:9px}
-  .game-summary-coach-block{padding:11px}
-  .advantage-chart-card{padding:12px 10px 10px}
-  .chart-quality-legend{gap:5px}
-  .chart-quality-legend>span{padding:3px 6px;font-size:8px}
+.coach-review-prompt{color:#c1cec1}
+.coach-review-answer summary{color:#a9cc91}
+.summary-move-link{border-radius:4px;background:#202c22;color:#d1dfcb}
+.summary-more{margin-top:12px;border-color:#29362e}
+.summary-more>summary{color:#aab8aa}
+.summary-more[open]>summary{color:#d4e0d0}
+.summary-more-content{gap:9px;padding-top:3px}
+.game-summary-block{border-color:#2d3a32;border-radius:6px;background:#151d18}
+.game-summary-block>h4{color:#b5c9ad}
+.summary-quality-table th,.summary-quality-table td{border-color:#28342c}
+.advantage-chart-card{margin:0 0 14px;padding:13px 14px 10px;border:1px solid #2e3933;border-radius:8px;background:#141b17;box-shadow:none}
+.advantage-chart-heading{align-items:center;gap:12px}
+.advantage-chart-heading h3{margin:0 0 3px;color:#e1e9df;font-size:14px}
+.advantage-chart-heading p{color:#839186;font-size:10px}
+.chart-current-eval{padding:5px 8px;border:1px solid #38483d;border-radius:5px;background:#1b251e;color:#c2d3bb;font-size:10px;font-weight:600}
+.chart-quality-legend{gap:5px 11px;margin:8px 0 0;color:#8f9d91;font-size:9px}
+.chart-quality-legend>span{gap:4px;padding:0;border:0;border-radius:0;background:transparent}
+.chart-quality-dot{width:6px;height:6px;box-shadow:none}
+.advantage-chart{display:block;width:100%;height:auto;margin:0;overflow:hidden}
+.chart-grid-line{stroke:#28342d;stroke-width:.8;stroke-dasharray:2 6;opacity:.8}
+.chart-zero-line{stroke:#58665b;stroke-width:1;opacity:.85}
+.chart-axis-label,.chart-axis-caption{fill:#7f8d82;font-size:9px}
+.chart-area-white{fill:#9ecb77;fill-opacity:.025}
+.chart-area-black{fill:#9ca7b9;fill-opacity:.025}
+.chart-quality-dot.quality-excellent{background:#b9d787}.chart-quality-dot.quality-missed{background:#f08c9a}
+.chart-advantage-segment{stroke-width:1.6;opacity:.9;filter:none}
+.chart-point-marker{stroke:#141b17;stroke-width:1.1;transition:r .14s ease,filter .14s ease}
+.chart-point.selected .chart-point-marker{stroke:#f1f5e9;stroke-width:1.8;filter:drop-shadow(0 0 3px #d9e8ca88)}
+.chart-point:focus-visible .chart-point-marker{stroke:#fff;stroke-width:2.4}
+.advantage-chart-status{margin:0;color:#748178;font-size:9px}
+@media(max-width:760px){
+  .moves-heading{grid-template-columns:minmax(0,1fr) auto;gap:9px}
+  .game-details{grid-column:2;grid-row:1}
+  .game-outcome-indicator{grid-column:1;grid-row:2}
+  .game-analyze-button{grid-column:2;grid-row:2;justify-self:stretch;min-width:0}
+  .move-list{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:1px 6px}
+  .summary-eval-card{grid-template-columns:1fr auto}
+  .summary-eval-label,.summary-eval-line{grid-column:1}
+  .summary-eval-note{grid-column:1}
+  .summary-game-result{grid-column:2;grid-row:1/4}
 }
-@media(max-width:390px){.game-summary-metrics{grid-template-columns:1fr}.summary-metric{grid-template-columns:auto 1fr;align-items:center;gap:8px}.summary-metric strong{min-width:36px}}
+@media(max-width:520px){
+  .moves-heading{grid-template-columns:1fr auto}
+  .game-details{display:none}
+  .game-outcome-indicator{grid-column:1;grid-row:2}
+  .game-analyze-button{grid-column:1/-1;grid-row:3;width:100%;min-height:44px}
+  .move-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 9px;max-height:220px}
+  .move-pair{grid-template-columns:27px minmax(0,1fr) minmax(0,1fr)}
+  .game-summary{padding:13px}
+  .game-summary-sides{grid-template-columns:1fr;gap:7px}
+  .summary-eval-card{grid-template-columns:1fr auto;gap:7px 10px;padding:11px}
+  .summary-eval-line{font-size:18px}
+  .summary-eval-note{font-size:9px}
+  .advantage-chart-card{padding:11px 9px 9px}
+  .chart-current-eval{align-self:flex-start}
+  .chart-quality-legend{gap:5px 8px}
+  .chart-quality-legend>span{font-size:8px}
+}
+@media(prefers-reduced-motion:reduce){.move-pair,.move-entry,.game-analyze-button,.chart-point-marker{transition:none!important}}

@@ -112,7 +112,7 @@
   const gameSummary = document.querySelector('#game-summary');
   const gameSummaryStatus = document.querySelector('#game-summary-status');
   const gameSummaryOverview = document.querySelector('#game-summary-overview');
-  const gameSummaryMetrics = document.querySelector('#game-summary-metrics');
+  const gameSummarySides = document.querySelector('#game-summary-sides');
   const gameSummaryCoach = document.querySelector('#game-summary-coach');
   const gameSummaryOpening = document.querySelector('#game-summary-opening');
   const gameSummaryQualities = document.querySelector('#game-summary-qualities');
@@ -123,6 +123,14 @@
   const advantageChart = document.querySelector('#advantage-chart');
   const advantageChartStatus = document.querySelector('#advantage-chart-status');
   const chartCurrentEval = document.querySelector('#chart-current-eval');
+  let chartSelectPointAt = null;
+  advantageChart.addEventListener('click', (event) => {
+    if (!chartSelectPointAt || !advantageChart.getScreenCTM || !advantageChart.createSVGPoint) return;
+    const matrix = advantageChart.getScreenCTM(); if (!matrix) return;
+    const point = advantageChart.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+    const local = point.matrixTransform(matrix.inverse());
+    chartSelectPointAt(local.x, local.y);
+  });
   const whiteRatingInput = document.querySelector('#white-rating');
   const blackRatingInput = document.querySelector('#black-rating');
   const navButtons = {
@@ -3561,30 +3569,42 @@
     for (const item of classified) bySide[item.result.playedMove.side].push(item);
     const concerningKinds = new Set(['inaccuracy', 'mistake', 'blunder']);
     const goodKinds = new Set(coach.goodKinds);
-    const sideLines = ['w', 'b'].map((side) => {
-      const moves = bySide[side];
-      const concerning = moves.filter(({ result }) => concerningKinds.has(result.quality.kind));
-      const sound = moves.filter(({ result }) => goodKinds.has(result.quality.kind)).length;
-      return `${summarySideLabel(side)}: ${sound} lances bons ou melhores, ${concerning.length} a rever.`;
-    });
     gameSummaryOverview.replaceChildren();
-    const overview = document.createElement('p');
-    const gameResultText = gameResult !== '*' && !variationSession ? ` Resultado registrado no PGN: ${gameResult}.` : '';
-    overview.textContent = `${analyzed.length} posições analisadas. A avaliação começou em ${startEval} e terminou em ${endEval}.${gameResultText} ${sideLines.join(' ')}`;
-    gameSummaryOverview.append(overview);
-    gameSummaryMetrics.replaceChildren();
-    const solidMoves = classified.filter(({ result }) => goodKinds.has(result.quality.kind)).length;
-    const reviewMoves = classified.filter(({ result }) => concerningKinds.has(result.quality.kind)).length;
-    const metrics = [
-      { value: `${analyzed.length}/${history.length}`, label: 'posições analisadas', kind: 'metric-progress' },
-      { value: String(solidMoves), label: 'lances bons ou melhores', kind: 'metric-positive' },
-      { value: String(reviewMoves), label: 'lances para rever', kind: reviewMoves ? 'metric-attention' : 'metric-positive' }
-    ];
-    for (const metric of metrics) {
-      const card = document.createElement('div'); card.className = `summary-metric ${metric.kind}`;
-      const value = document.createElement('strong'); value.textContent = metric.value;
-      const label = document.createElement('span'); label.textContent = metric.label;
-      card.append(value, label); gameSummaryMetrics.append(card);
+    const evalCard = document.createElement('div'); evalCard.className = 'summary-eval-card';
+    const evalLabel = document.createElement('span'); evalLabel.className = 'summary-eval-label'; evalLabel.textContent = 'AVALIAÇÃO DO MOTOR';
+    const evalLine = document.createElement('strong'); evalLine.className = 'summary-eval-line';
+    const formatEval = (score, turn) => {
+      const value = scoreForSide(score, turn, 'w');
+      if (value === null) return '—';
+      if (score.type === 'mate') {
+        const whiteMate = score.value === 0 ? (turn === 'w' ? -1 : 1) : score.value * (turn === 'w' ? 1 : -1);
+        return `${whiteMate > 0 ? '+' : '−'}M${Math.abs(score.value)}`;
+      }
+      const pawns = value / 100;
+      return `${pawns > 0 ? '+' : pawns < 0 ? '−' : ''}${Math.abs(pawns).toFixed(1)}`;
+    };
+    evalLine.append(document.createTextNode(formatEval(first.score, first.turn)));
+    const arrow = document.createElement('span'); arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '→'; evalLine.append(arrow, document.createTextNode(formatEval(last.score, last.turn)));
+    const evalNote = document.createElement('span'); evalNote.className = 'summary-eval-note'; evalNote.textContent = `${analyzed.length} de ${history.length} posições · ${startEval} no início e ${endEval} no fim`;
+    evalCard.append(evalLabel, evalLine, evalNote);
+    if (gameResult !== '*' && !variationSession) { const result = document.createElement('span'); result.className = 'summary-game-result'; result.textContent = `Resultado PGN ${gameResult}`; evalCard.append(result); }
+    gameSummaryOverview.append(evalCard);
+
+    gameSummarySides.replaceChildren();
+    for (const side of ['w', 'b']) {
+      const moves = bySide[side];
+      const sound = moves.filter(({ result }) => goodKinds.has(result.quality.kind)).length;
+      const review = moves.filter(({ result }) => concerningKinds.has(result.quality.kind)).length;
+      const card = document.createElement('article'); card.className = `summary-player-card ${side === 'w' ? 'summary-white' : 'summary-black'}`;
+      const heading = document.createElement('div'); heading.className = 'summary-player-heading';
+      const dot = document.createElement('span'); dot.className = 'summary-player-dot'; dot.setAttribute('aria-hidden', 'true');
+      const name = document.createElement('strong'); name.textContent = summarySideLabel(side);
+      const count = document.createElement('small'); count.textContent = `${moves.length} lances analisados`;
+      heading.append(dot, name, count);
+      const stats = document.createElement('div'); stats.className = 'summary-player-stats';
+      const soundStat = document.createElement('span'); soundStat.className = 'summary-sound-stat'; soundStat.textContent = `${sound} bons ou melhores`;
+      const reviewStat = document.createElement('span'); reviewStat.className = review ? 'summary-review-stat has-reviews' : 'summary-review-stat'; reviewStat.textContent = `${review} a rever`;
+      stats.append(soundStat, reviewStat); card.append(heading, stats); gameSummarySides.append(card);
     }
 
     // Revisão guiada: momentos críticos (ambos os lados) + um lance para repetir.
@@ -3771,9 +3791,14 @@
       if (text) element.textContent = text;
       return element;
     };
-    const width = 900, height = 250;
-    const left = 48, right = 886, top = 18, bottom = 210;
-    const maxScore = 5;
+    const width = 900, height = 220;
+    const left = 48, right = 886, top = 16, bottom = 178;
+    const largestEval = results.reduce((largest, result) => {
+      if (!result?.score || result.score.type === 'mate') return largest;
+      const whiteScore = result.turn === 'w' ? result.score.value : -result.score.value;
+      return Math.max(largest, Math.abs(whiteScore / 100));
+    }, 0);
+    const maxScore = Math.max(2, Math.min(20, Math.ceil(largestEval / 2) * 2));
     const baseline = top + (bottom - top) / 2;
     const yFor = (score) => top + ((maxScore - Math.max(-maxScore, Math.min(maxScore, score))) / (maxScore * 2)) * (bottom - top);
     const maxIndex = Math.max(1, history.length - 1);
@@ -3801,14 +3826,16 @@
       const kind = result.quality?.kind;
       return ({
         best: '#9edb83', excellent: '#b9d787', good: '#d8d289',
-        inaccuracy: '#efd279', mistake: '#f0aa71', blunder: '#f08c7d',
+        inaccuracy: '#efd279', mistake: '#f0aa71', blunder: '#f08c7d', missed: '#f08c9a',
         brilliant: '#82d9dc', great: '#c5a9f2'
       })[kind] || (index === 0 ? '#d8e3d5' : '#89958b');
     };
 
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     svg.replaceChildren();
-    for (const tick of [5, 3, 1, 0, -1, -3, -5]) {
+    chartSelectPointAt = null;
+    const ticks = [maxScore, maxScore / 2, 0, -maxScore / 2, -maxScore];
+    for (const tick of ticks) {
       const y = yFor(tick);
       svg.append(make('line', { x1: left, y1: y, x2: right, y2: y, class: tick === 0 ? 'chart-zero-line' : 'chart-grid-line' }));
       const label = tick > 0 ? `+${tick}` : String(tick).replace('-', '−');
@@ -3827,6 +3854,18 @@
       advantageChartStatus.textContent = 'A análise do Stockfish preencherá o gráfico.';
       return;
     }
+
+    const selectPoint = (point) => {
+      const quality = point.result.quality?.label || (point.index === 0 ? 'Posição inicial' : 'Sem classificação');
+      goTo(point.index);
+      advantageChartStatus.textContent = `${moveText(point.index)} selecionada: ${scoreText(point.result)}, ${quality}. Tabuleiro atualizado.`;
+      showBoard();
+    };
+    chartSelectPointAt = (x, y) => {
+      if (y < top || y > bottom) return;
+      const nearest = points.reduce((best, point) => Math.abs(point.x - x) < Math.abs(best.x - x) ? point : best, points[0]);
+      selectPoint(nearest);
+    };
 
     for (let index = 1; index < points.length; index += 1) {
       const from = points[index - 1], to = points[index];
@@ -3850,17 +3889,11 @@
         'aria-label': `${moveText(point.index)}: ${scoreText(point.result)}, ${quality}. Ir para esta posição no tabuleiro.`
       });
       group.append(make('title', {}, `${moveText(point.index)} · ${scoreText(point.result)} · ${quality}`));
-      group.append(make('circle', { cx: point.x, cy: point.y, r: 13, class: 'chart-point-hit-area' }));
+      group.append(make('circle', { cx: point.x, cy: point.y, r: 4.5, class: 'chart-point-hit-area' }));
       group.append(make('circle', { cx: point.x, cy: point.y, r: point.index === historyIndex ? 5.5 : 3.2, class: 'chart-point-marker' }));
       group.lastChild.setAttribute('fill', qualityColor(point.result, point.index));
-      const selectPoint = () => {
-        goTo(point.index);
-        advantageChartStatus.textContent = `${moveText(point.index)} selecionada: ${scoreText(point.result)}, ${quality}. Tabuleiro atualizado.`;
-        showBoard();
-      };
-      group.addEventListener('click', selectPoint);
       group.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectPoint(); }
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectPoint(point); }
       });
       svg.append(group);
     }
