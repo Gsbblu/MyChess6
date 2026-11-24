@@ -244,7 +244,15 @@
     N: '<path d="M27 78c2-12-4-21-5-31-2-14 7-24 21-30l9-9 7 13 14 7 8 18-9 13 2 19z"/><path d="m39 26 8 4M28 79h48v8H28zM20 88h62v7H20z"/><circle cx="61" cy="31" r="3" class="piece-eye"/>',
     P: '<circle cx="50" cy="25" r="14"/><path d="M39 41h22c0 12 4 21 11 31H28c7-10 11-19 11-31z"/><path d="M25 74h50v9H25zM18 86h64v9H18z"/>',
   };
-  const pieceMarkup = (piece) => piece === '.' ? '' : `<svg class="piece ${white(piece) ? 'piece-white' : 'piece-black'}" viewBox="0 0 100 100" aria-hidden="true" focusable="false">${pieceArtwork[piece.toUpperCase()]}</svg>`;
+  const pieceEngraving = {
+    K: '<path d="M50 8v29m-6-17h12M34 50h32M30 56h40M27 76h46M24 81h52"/><path d="m36 61 5 14m23-14-5 14M42 43v5m16-5v5"/>',
+    Q: '<path d="m20 23 10 21 10-28 10 27 10-27 10 28 10-21M29 52h42M28 61h44M26 69h48M23 77h54M20 83h60"/><path d="M40 55v10m20-10v10M35 72v4m30-4v4"/>',
+    R: '<path d="M23 20h10v12m12-12h10v12m12-12h10v12M26 43h48M29 51h42M32 61h36M32 69h36M26 79h48M22 85h56"/><path d="M39 54v19m22-19v19"/>',
+    B: '<path d="m42 20 17 24M34 47h32M32 54h36M36 61h28M32 72h36M27 81h46M21 88h58"/><path d="m39 67 6-6m16 6-6-6"/>',
+    N: '<path d="m28 47 11-17 13-10m-21 35 15-4m-13 13 19-5m-19 14h34M26 82h49M22 89h56"/><path d="m45 27 7 8m-12-7 5 10"/>',
+    P: '<path d="M37 25h26M40 43h20M36 53h28M33 62h34M29 70h42M26 79h48M21 87h58"/><path d="M44 47v18m12-18v18"/>',
+  };
+  const pieceMarkup = (piece) => piece === '.' ? '' : `<svg class="piece ${white(piece) ? 'piece-white' : 'piece-black'}" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><g class="piece-silhouette">${pieceArtwork[piece.toUpperCase()]}</g><g class="piece-engraving">${pieceEngraving[piece.toUpperCase()]}</g></svg>`;
 
   function attacked(pos, target, byColor) {
     const tr = Math.floor(target / 8), tc = target % 8;
