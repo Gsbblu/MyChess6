@@ -7,7 +7,7 @@
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=gabes-chess-all-arrows-removed-1">
+    <link rel="stylesheet" href="styles.css?v=board-annotations-v1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -84,6 +84,7 @@
               <button class="tool-button board-flip-button" id="flip-board" type="button" aria-label="Inverter tabuleiro" title="Inverter tabuleiro">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v18m0 0-3-3m3 3 3-3M17 21V3m0 0-3 3m3-3 3 3M4 12h16"/></svg><span>Inverter</span>
               </button>
+              <button class="tool-button" id="clear-board-markings" type="button" aria-label="Limpar flechas e destaques do tabuleiro" title="Limpar flechas e destaques">Limpar</button>
             </div>
           </div>
           <div class="variation-banner" id="variation-banner" hidden><span>Modo de variação · a partida original está preservada</span><button class="tool-button return-original-button" id="exit-variation" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 5 3 12l7 7M3 12h18"/></svg><span>Voltar à partida original</span></button></div>
@@ -97,6 +98,8 @@
               <div class="file-labels" aria-hidden="true"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div>
             </div>
           </div>
+          <p class="board-marking-help" id="board-marking-help">Flechas: clique direito e arraste; no toque, mantenha pressionado e arraste. No teclado, pressione M na origem e M no destino; M na mesma casa destaca-a (Escape cancela). Flechas do Stockfish acompanham a posição analisada.</p>
+          <span class="visually-hidden" id="board-marking-status" role="status" aria-live="polite"></span>
           <div class="board-footer">
             <span class="turn-indicator" id="turn-indicator"><span></span> Vez das brancas</span>
             <span class="fen-label" hidden>FEN <b id="fen-label">posição inicial</b></span>
@@ -246,6 +249,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=gabes-chess-all-arrows-removed-1" defer></script>
+    <script src="app.js?v=board-annotations-v1" defer></script>
   </body>
 </html>

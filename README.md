@@ -62,6 +62,14 @@ Na revisão de um lance analisado, **Ver a melhor alternativa** inicia uma linha
 
 É possível mover peças por clique/toque ou arrastar com o mouse. O tabuleiro verifica movimentos legais, incluindo roque, en passant e promoção (a dama é a escolha padrão ao mover no tabuleiro). PGNs podem ser abertos de arquivo ou colados, e um **FEN colado sozinho** abre o tabuleiro livre naquela posição (posições ilegais — peão na primeira/última fileira ou lado que não joga em xeque — são recusadas com explicação); a leitura de lances tolera exportações comuns (captura sem `x`, promoção `e8Q`, numeração `1…`); variações e comentários são ignorados durante a importação, e a lista de lances permite navegar pela partida. Se o arquivo tiver várias partidas, só a primeira é carregada (cabeçalhos e lances vêm dela) e o site avisa quantas foram ignoradas.
 
+### Flechas e destaques no tabuleiro
+
+- **Mouse:** clique com o botão direito numa casa e arraste até outra para criar uma flecha. Repita o mesmo gesto para removê-la.
+- **Toque:** mantenha uma casa pressionada por cerca de meio segundo e arraste até outra. A pressão sem arraste destaca a casa; repita para remover o destaque.
+- O botão **Limpar** remove as anotações manuais. Elas são apagadas ao mudar a posição e acompanham a orientação visual quando o tabuleiro é invertido.
+- Depois de analisar uma posição ou navegar por uma análise da partida, uma flecha verde mostra o melhor lance e até duas azuis mostram as alternativas principais calculadas pelo Stockfish. Elas acompanham a posição exibida e não são marcações manuais.
+- As flechas são uma camada visual sem captura de ponteiro; seleção, movimento por clique/toque e arraste de peças continuam usando as casas do tabuleiro. O desenho é decorativo e não recebe foco de teclado; as jogadas também aparecem como texto acessível no painel de análise.
+
 ## Revisão técnica mais recente
 
 - **Variações sem interrupção**: cada lance hipotético reanalisa a linha na profundidade já escolhida para a partida (antes, abria o diálogo "Qual profundidade?" a cada lance e a profundidade podia divergir da original, o que afeta a comparação do treinador).

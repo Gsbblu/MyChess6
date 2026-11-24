@@ -223,6 +223,13 @@
   const analysisCacheLimit = 256;
   let pointerDrag = null;
   let suppressSquareClick = false;
+  // The annotation layer is independent from the board's move-selection state.
+  let manualArrows = [];
+  let highlightedSquare = -1;
+  let manualGesture = null;
+  let arrowAnalysis = null;
+  let manualAnnotationFen = currentFen(position);
+  let keyboardMarkFrom = -1;
   let exerciseState = null;
   let punishmentPlayback = null;
   let boardFocusSquare = 52;
@@ -735,6 +742,8 @@
   }
 
   function renderBestMoves(analysis) {
+    arrowAnalysis = analysis?.fen && analysis.fen === currentFen(position) ? analysis : null;
+    renderBoardArrows();
     bestMovesList.replaceChildren();
     if (!analysis?.fen) { bestMovesPanel.hidden = true; updateMoveAnalysisPanels(); return; }
     let root;
@@ -819,6 +828,13 @@
       rowElement.append(button);
     }
     }
+    const arrowLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    arrowLayer.classList.add('board-arrow-layer');
+    arrowLayer.setAttribute('viewBox', '0 0 800 800');
+    arrowLayer.setAttribute('aria-hidden', 'true');
+    arrowLayer.innerHTML = '<defs><marker id="board-arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>';
+    boardElement.append(arrowLayer);
+    renderBoardArrows(arrowLayer);
     if (movingPieceClone && sourceRectBeforeRender && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       const destinationSquare = boardElement.querySelector(`[data-square="${moveAnimation.to}"]`);
       const destinationPiece = destinationSquare?.querySelector('.piece');
@@ -882,6 +898,73 @@
     }
   }
 
+  function renderBoardArrows(layer = boardElement.querySelector('.board-arrow-layer')) {
+    if (!layer) return;
+    const fen = currentFen(position);
+    if (manualAnnotationFen !== fen) { manualAnnotationFen = fen; manualArrows = []; highlightedSquare = -1; }
+    const namespace = 'http://www.w3.org/2000/svg';
+    layer.querySelectorAll('.board-arrow-drawing').forEach((node) => node.remove());
+    const squarePoint = (square) => {
+      const row = Math.floor(square / 8), col = square % 8;
+      const x = ((flipped ? 7 - col : col) + 0.5) * 100;
+      const y = ((flipped ? 7 - row : row) + 0.5) * 100;
+      return [x, y];
+    };
+    const drawArrow = (from, to, kind, label) => {
+      if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to < 0 || from > 63 || to > 63) return;
+      const [x1, y1] = squarePoint(from), [x2, y2] = squarePoint(to);
+      const line = document.createElementNS(namespace, 'line');
+      line.setAttribute('x1', String(x1)); line.setAttribute('y1', String(y1));
+      line.setAttribute('x2', String(x2)); line.setAttribute('y2', String(y2));
+      line.setAttribute('class', `board-arrow-drawing board-arrow-${kind}`);
+      line.setAttribute('marker-end', 'url(#board-arrow-head)');
+      line.setAttribute('aria-label', label);
+      layer.append(line);
+    };
+    if (highlightedSquare >= 0) {
+      const [x, y] = squarePoint(highlightedSquare);
+      const circle = document.createElementNS(namespace, 'circle');
+      circle.setAttribute('cx', String(x)); circle.setAttribute('cy', String(y)); circle.setAttribute('r', '44');
+      circle.setAttribute('class', 'board-arrow-drawing board-square-highlight'); layer.append(circle);
+    }
+    manualArrows.forEach(({ from, to }) => drawArrow(from, to, 'manual', 'Flecha manual'));
+    const candidates = [];
+    const add = (token, kind) => {
+      const match = String(token || '').match(/^([a-h][1-8])([a-h][1-8])/);
+      if (!match) return;
+      const idxFrom = (8 - Number(match[1][1])) * 8 + match[1].charCodeAt(0) - 97;
+      const idxTo = (8 - Number(match[2][1])) * 8 + match[2].charCodeAt(0) - 97;
+      if (!candidates.some((item) => item.from === idxFrom && item.to === idxTo)) candidates.push({ from: idxFrom, to: idxTo, kind });
+    };
+    const visibleAnalysis = arrowAnalysis?.fen === fen ? arrowAnalysis : lookupAnalysis(fen, selectedDepth);
+    if (visibleAnalysis?.fen === fen || visibleAnalysis?.bestMove) {
+      add(visibleAnalysis.bestMove || visibleAnalysis.pvUci || visibleAnalysis.pv, 'best');
+      for (const variation of visibleAnalysis.variations || []) {
+        add(String(variation.pv || '').trim().split(/\s+/)[0], 'alternative');
+        if (candidates.length >= 3) break;
+      }
+    }
+    candidates.forEach((move, index) => drawArrow(move.from, move.to, index ? 'alternative' : 'best', index ? `Alternativa ${index + 1} do Stockfish` : 'Melhor lance do Stockfish'));
+  }
+
+  function finishManualGesture(event, cancelled = false) {
+    if (!manualGesture || manualGesture.pointerId !== event.pointerId) return;
+    const gesture = manualGesture; manualGesture = null;
+    clearTimeout(gesture.timer);
+    if (cancelled || !gesture.armed) return;
+    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('.square');
+    const to = target && boardElement.contains(target) ? Number(target.dataset.square) : gesture.from;
+    if (to === gesture.from) highlightedSquare = highlightedSquare === to ? -1 : to;
+    else {
+      const existing = manualArrows.findIndex((arrow) => arrow.from === gesture.from && arrow.to === to);
+      if (existing >= 0) manualArrows.splice(existing, 1);
+      else manualArrows.push({ from: gesture.from, to });
+    }
+    suppressSquareClick = true;
+    window.setTimeout(() => { suppressSquareClick = false; }, 250);
+    renderBoardArrows();
+  }
+
   function beginPointerDrag(event, square, origin) {
     const piece = position.board[square];
     if (event.button !== 0 || piece === '.' || color(piece) !== position.turn) return;
@@ -940,6 +1023,8 @@
   window.addEventListener('pointermove', updatePointerDrag, { passive: false, capture: true });
   window.addEventListener('pointerup', (event) => finishPointerDrag(event), true);
   window.addEventListener('pointercancel', (event) => finishPointerDrag(event, true), true);
+  window.addEventListener('pointerup', (event) => finishManualGesture(event), true);
+  window.addEventListener('pointercancel', (event) => finishManualGesture(event, true), true);
   boardElement.addEventListener('click', (event) => {
     const squareElement = event.target?.closest?.('.square');
     if (!squareElement || !boardElement.contains(squareElement)) return;
@@ -950,8 +1035,30 @@
   });
   boardElement.addEventListener('pointerdown', (event) => {
     const squareElement = event.target?.closest?.('.square');
-    if (squareElement && boardElement.contains(squareElement)) beginPointerDrag(event, Number(squareElement.dataset.square), squareElement);
+    if (!squareElement || !boardElement.contains(squareElement)) return;
+    const square = Number(squareElement.dataset.square);
+    if (event.button === 2) {
+      manualGesture = { pointerId: event.pointerId, from: square, armed: true };
+      event.preventDefault(); return;
+    }
+    if (event.pointerType === 'touch') {
+      const gesture = manualGesture = { pointerId: event.pointerId, from: square, armed: false, startX: event.clientX, startY: event.clientY, timer: 0 };
+      gesture.timer = window.setTimeout(() => {
+        if (manualGesture === gesture) {
+          gesture.armed = true; pointerDrag = null;
+          selected = -1; legalTargets = []; paintSelection(-1);
+        }
+      }, 480);
+    }
+    beginPointerDrag(event, square, squareElement);
   });
+  boardElement.addEventListener('pointermove', (event) => {
+    if (!manualGesture || manualGesture.pointerId !== event.pointerId || event.pointerType !== 'touch') return;
+    if (Math.hypot(event.clientX - manualGesture.startX, event.clientY - manualGesture.startY) > 10 && !manualGesture.armed) {
+      clearTimeout(manualGesture.timer); manualGesture = null;
+    }
+  });
+  boardElement.addEventListener('contextmenu', (event) => event.preventDefault());
   function pieceName(piece) {
     const names = { K:'rei branco', Q:'dama branca', R:'torre branca', B:'bispo branco', N:'cavalo branco', P:'peão branco', k:'rei preto', q:'dama preta', r:'torre preta', b:'bispo preto', n:'cavalo preto', p:'peão preto' };
     return names[piece] || 'peça';
@@ -977,6 +1084,7 @@
   }
 
   function commitMove(move, deferVariationAnalysis = false) {
+    manualArrows = []; highlightedSquare = -1;
     if (exerciseActiveHere()) { recordExerciseGuess(move); return; }
     exerciseState = null;
     if (punishmentPlayback && !punishmentPlayback.applying) punishmentPlayback = null;
@@ -1016,6 +1124,7 @@
     const boardWasVisible = Boolean(boardRectBefore && boardRectBefore.bottom > 0 && boardRectBefore.top < window.innerHeight);
     index = Math.max(0, Math.min(index, history.length - 1));
     if (index === historyIndex) return;
+    manualArrows = []; highlightedSquare = -1;
     const previousIndex = historyIndex;
     exerciseOnNavigate(index);
     // Navegar não deve interromper a análise da partida: o lote trabalha com instantâneos próprios.
@@ -1235,6 +1344,10 @@
   window.addEventListener('resize', applyBoardSize, { passive: true });
 
   document.querySelector('#flip-board').addEventListener('click', () => { flipped = !flipped; render(); });
+  document.querySelector('#clear-board-markings').addEventListener('click', () => {
+    manualArrows = []; highlightedSquare = -1; renderBoardArrows();
+    document.querySelector('#board-marking-status').textContent = 'Marcações removidas.';
+  });
   navButtons.first.addEventListener('click', () => goTo(0));
   navButtons.previous.addEventListener('click', () => goTo(historyIndex - 1));
   navButtons.next.addEventListener('click', () => goTo(historyIndex + 1));
@@ -1250,7 +1363,27 @@
   // Teclado no tabuleiro: as setas movem o foco entre as casas (padrão de grade do WAI-ARIA).
   boardElement.addEventListener('keydown', (event) => {
     const cell = event.target?.closest?.('.square');
-    if (!cell || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (!cell) return;
+    if (event.key === 'Escape' && keyboardMarkFrom >= 0) {
+      keyboardMarkFrom = -1; document.querySelector('#board-marking-status').textContent = 'Desenho de flecha cancelado.'; event.preventDefault(); return;
+    }
+    if (event.key.toLowerCase() === 'm' && !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey) {
+      const square = Number(cell.dataset.square);
+      if (keyboardMarkFrom < 0) {
+        keyboardMarkFrom = square;
+        document.querySelector('#board-marking-status').textContent = `Origem ${squareName(square)} selecionada. Pressione M em outra casa para desenhar, ou Escape para cancelar.`;
+      } else {
+        const from = keyboardMarkFrom; keyboardMarkFrom = -1;
+        if (from === square) highlightedSquare = highlightedSquare === square ? -1 : square;
+        else {
+          const existing = manualArrows.findIndex((arrow) => arrow.from === from && arrow.to === square);
+          if (existing >= 0) manualArrows.splice(existing, 1); else manualArrows.push({ from, to: square });
+        }
+        renderBoardArrows(); document.querySelector('#board-marking-status').textContent = `Marcação em ${squareName(square)} atualizada.`;
+      }
+      event.preventDefault(); return;
+    }
+    if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
     const deltas = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [-1, 0], ArrowDown: [1, 0] };
     const delta = deltas[event.key];
     if (!delta) return;

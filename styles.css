@@ -115,6 +115,16 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .board-actions .tool-button:focus-visible,.variation-banner .return-original-button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .board-actions .tool-button svg,.variation-banner .return-original-button svg{width:16px;height:16px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .board-actions .board-flip-button{min-width:38px}
+.board-marking-help{margin:0;padding:0 16px 10px;color:#91a195;font-size:10px;line-height:1.45}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.board-arrow-layer{position:absolute;z-index:5;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);overflow:visible;pointer-events:none}
+.board-arrow-drawing{pointer-events:none;vector-effect:non-scaling-stroke}
+.board-arrow-layer line{stroke-width:10;stroke-linecap:round;opacity:.88}
+.board-arrow-layer marker path{fill:context-stroke}
+.board-arrow-manual{stroke:#e3a832;marker-end:url(#board-arrow-head);filter:drop-shadow(0 1px 2px #0009)}
+.board-arrow-best{stroke:#37d4a0;stroke-width:13!important;opacity:.96}
+.board-arrow-alternative{stroke:#62a9ee;stroke-width:9!important;opacity:.82}
+.board-square-highlight{fill:#f1ca43;fill-opacity:.32;stroke:#f4d35e;stroke-width:2.5}
 .variation-banner .return-original-button{border-color:#638351;background:#273a29;color:#dff2d3}
 @media(max-width:650px){.variation-banner{align-items:flex-start;flex-direction:column;padding:9px 12px}.variation-banner .tool-button{align-self:flex-end}}
 @media(max-width:650px){.piece-drag-ghost{width:clamp(44px,13vw,68px)}}
