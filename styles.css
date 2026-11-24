@@ -862,3 +862,7 @@ body.has-game .page-shell{padding-bottom:100px}
 .chart-quality-dot.quality-missed{background:#c28a52}
 .chart-point-tooltip-symbol.quality-mark-missed{color:#d6a36d;background:#d6a36d22}
 .summary-quality-missed th{color:#d6a36d!important}
+.chart-point-tooltip-symbol{width:29px;height:29px;font-size:15px}
+.chart-point-tooltip-copy strong{font-size:12px}
+.chart-point-tooltip-copy small{font-size:10px}
+.chart-point-tooltip-copy small:last-child{color:#8fd6c9;font-weight:700}

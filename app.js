@@ -126,6 +126,7 @@
   const chartTooltipSymbol = document.querySelector('#chart-point-tooltip-symbol');
   const chartTooltipQuality = document.querySelector('#chart-point-tooltip-quality');
   const chartTooltipMove = document.querySelector('#chart-point-tooltip-move');
+  const chartTooltipEvaluation = document.querySelector('#chart-point-tooltip-evaluation');
   let chartSelectPointAt = null;
   function hideChartPointTooltip() { chartPointTooltip.hidden = true; }
   function showChartPointTooltip(point, moveLabel) {
@@ -134,6 +135,8 @@
     chartTooltipSymbol.className = `chart-point-tooltip-symbol quality-mark-${mark.kind}`;
     chartTooltipQuality.textContent = point.result.quality?.label || mark.title;
     chartTooltipMove.textContent = moveLabel;
+    const perspective = point.value > 0.15 ? 'brancas' : point.value < -0.15 ? 'pretas' : 'igualado';
+    chartTooltipEvaluation.textContent = `Avaliação ${point.evaluation} · ${perspective}`;
     chartPointTooltip.hidden = false;
     const matrix = advantageChart.getScreenCTM?.();
     if (!matrix || !advantageChart.createSVGPoint) return;
@@ -3869,7 +3872,7 @@
     svg.append(make('text', { x: right, y: height - 9, class: 'chart-axis-caption', 'text-anchor': 'end' }, 'Final'));
 
     const points = results.map((result, index) => result && scoreFor(result) !== null
-      ? { result, index, value: scoreFor(result), x: xFor(index), y: yFor(scoreFor(result)) }
+      ? { result, index, value: scoreFor(result), evaluation: scoreText(result), x: xFor(index), y: yFor(scoreFor(result)) }
       : null).filter(Boolean);
     if (!points.length) {
       svg.append(make('text', { x: (left + right) / 2, y: baseline - 5, class: 'chart-empty-label', 'text-anchor': 'middle' }, 'Aguardando avaliações do Stockfish'));
