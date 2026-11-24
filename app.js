@@ -918,11 +918,16 @@
       line.setAttribute('class', `board-arrow-drawing board-arrow-${kind}`);
       line.setAttribute('aria-label', label);
       const dx = x2 - x1, dy = y2 - y1, length = Math.hypot(dx, dy) || 1;
-      const ux = dx / length, uy = dy / length, baseX = x2 - ux * 18, baseY = y2 - uy * 18;
-      const px = -uy * 8, py = ux * 8;
+      const ux = dx / length, uy = dy / length;
+      const unitsPerPixel = 800 / Math.max(1, boardElement.getBoundingClientRect().width);
+      const headLength = 15 * unitsPerPixel, halfWidth = 9 * unitsPerPixel;
+      const baseX = x2 - ux * headLength, baseY = y2 - uy * headLength;
+      const px = -uy * halfWidth, py = ux * halfWidth;
       const head = document.createElementNS(namespace, 'path');
       head.setAttribute('d', `M ${x2} ${y2} L ${baseX + px} ${baseY + py} L ${baseX - px} ${baseY - py} Z`);
       head.setAttribute('class', `board-arrow-drawing board-arrow-head board-arrow-${kind}`);
+      head.setAttribute('fill', kind === 'manual' ? '#e3a832' : kind === 'best' ? '#37d4a0' : '#62a9ee');
+      head.setAttribute('stroke', 'none');
       layer.append(line, head);
     };
     if (highlightedSquare >= 0) {
@@ -1336,6 +1341,7 @@
         : Math.min(window.innerWidth * 0.42, 560);
       boardEvalMeter.style.height = `${Math.round(baseHeight * scale)}px`;
     }
+    renderBoardArrows();
   }
 
   try {
