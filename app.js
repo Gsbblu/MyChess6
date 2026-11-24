@@ -103,7 +103,6 @@
   const depthDialog = document.querySelector('#depth-dialog');
   const depthDialogForm = depthDialog.querySelector('form');
   const analyzeGameButton = document.querySelector('#analyze-game');
-  const analyzeGameButtonLabel = analyzeGameButton.querySelector('.game-analyze-label');
   const gameAnalysisPanel = document.querySelector('#game-analysis');
   const gameProgressLabel = document.querySelector('#game-progress-label');
   const gameProgressCount = document.querySelector('#game-progress-count');
@@ -112,7 +111,7 @@
   const gameSummary = document.querySelector('#game-summary');
   const gameSummaryStatus = document.querySelector('#game-summary-status');
   const gameSummaryOverview = document.querySelector('#game-summary-overview');
-  const gameSummarySides = document.querySelector('#game-summary-sides');
+  const gameSummaryMetrics = document.querySelector('#game-summary-metrics');
   const gameSummaryCoach = document.querySelector('#game-summary-coach');
   const gameSummaryOpening = document.querySelector('#game-summary-opening');
   const gameSummaryQualities = document.querySelector('#game-summary-qualities');
@@ -2446,7 +2445,7 @@
     analysisModes.forEach((button) => { button.disabled = busy; });
     analyzeGameButton.disabled = busy || history.length < 2;
     const gameBusy = gameBatch || pendingAnalysis?.kind === 'game' || activeAnalysis?.kind === 'game';
-    analyzeGameButtonLabel.textContent = gameBusy ? (variationSession ? 'Analisando variação…' : 'Analisando partida…') : variationSession ? 'Reanalisar variação' : 'Analisar partida';
+    analyzeGameButton.textContent = gameBusy ? (variationSession ? 'Analisando variação…' : 'Analisando partida…') : variationSession ? 'Reanalisar variação' : 'Analisar partida';
     if (engineState === 'loading' && pendingAnalysis?.kind !== 'game' && pendingAnalysis) analyzeButton.innerHTML = '<span aria-hidden="true">…</span> Carregando Stockfish';
     else if (activeAnalysis?.kind === 'game' || pendingAnalysis?.kind === 'game') analyzeButton.innerHTML = variationSession ? '<span aria-hidden="true">…</span> Análise da variação em andamento' : '<span aria-hidden="true">…</span> Análise da partida em andamento';
     else if (activeAnalysis || analysisStopping) analyzeButton.innerHTML = '<span aria-hidden="true">…</span> Analisando posição';
@@ -3594,42 +3593,30 @@
     for (const item of classified) bySide[item.result.playedMove.side].push(item);
     const concerningKinds = new Set(['inaccuracy', 'mistake', 'blunder']);
     const goodKinds = new Set(coach.goodKinds);
-    gameSummaryOverview.replaceChildren();
-    const evalCard = document.createElement('div'); evalCard.className = 'summary-eval-card';
-    const evalLabel = document.createElement('span'); evalLabel.className = 'summary-eval-label'; evalLabel.textContent = 'AVALIAÇÃO DO MOTOR';
-    const evalLine = document.createElement('strong'); evalLine.className = 'summary-eval-line';
-    const formatEval = (score, turn) => {
-      const value = scoreForSide(score, turn, 'w');
-      if (value === null) return '—';
-      if (score.type === 'mate') {
-        const whiteMate = score.value === 0 ? (turn === 'w' ? -1 : 1) : score.value * (turn === 'w' ? 1 : -1);
-        return `${whiteMate > 0 ? '+' : '−'}M${Math.abs(score.value)}`;
-      }
-      const pawns = value / 100;
-      return `${pawns > 0 ? '+' : pawns < 0 ? '−' : ''}${Math.abs(pawns).toFixed(1)}`;
-    };
-    evalLine.append(document.createTextNode(formatEval(first.score, first.turn)));
-    const arrow = document.createElement('span'); arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '→'; evalLine.append(arrow, document.createTextNode(formatEval(last.score, last.turn)));
-    const evalNote = document.createElement('span'); evalNote.className = 'summary-eval-note'; evalNote.textContent = `${analyzed.length} de ${history.length} posições · ${startEval} no início e ${endEval} no fim`;
-    evalCard.append(evalLabel, evalLine, evalNote);
-    if (gameResult !== '*' && !variationSession) { const result = document.createElement('span'); result.className = 'summary-game-result'; result.textContent = `Resultado PGN ${gameResult}`; evalCard.append(result); }
-    gameSummaryOverview.append(evalCard);
-
-    gameSummarySides.replaceChildren();
-    for (const side of ['w', 'b']) {
+    const sideLines = ['w', 'b'].map((side) => {
       const moves = bySide[side];
+      const concerning = moves.filter(({ result }) => concerningKinds.has(result.quality.kind));
       const sound = moves.filter(({ result }) => goodKinds.has(result.quality.kind)).length;
-      const review = moves.filter(({ result }) => concerningKinds.has(result.quality.kind)).length;
-      const card = document.createElement('article'); card.className = `summary-player-card ${side === 'w' ? 'summary-white' : 'summary-black'}`;
-      const heading = document.createElement('div'); heading.className = 'summary-player-heading';
-      const dot = document.createElement('span'); dot.className = 'summary-player-dot'; dot.setAttribute('aria-hidden', 'true');
-      const name = document.createElement('strong'); name.textContent = summarySideLabel(side);
-      const count = document.createElement('small'); count.textContent = `${moves.length} lances analisados`;
-      heading.append(dot, name, count);
-      const stats = document.createElement('div'); stats.className = 'summary-player-stats';
-      const soundStat = document.createElement('span'); soundStat.className = 'summary-sound-stat'; soundStat.textContent = `${sound} bons ou melhores`;
-      const reviewStat = document.createElement('span'); reviewStat.className = review ? 'summary-review-stat has-reviews' : 'summary-review-stat'; reviewStat.textContent = `${review} a rever`;
-      stats.append(soundStat, reviewStat); card.append(heading, stats); gameSummarySides.append(card);
+      return `${summarySideLabel(side)}: ${sound} lances bons ou melhores, ${concerning.length} a rever.`;
+    });
+    gameSummaryOverview.replaceChildren();
+    const overview = document.createElement('p');
+    const gameResultText = gameResult !== '*' && !variationSession ? ` Resultado registrado no PGN: ${gameResult}.` : '';
+    overview.textContent = `${analyzed.length} posições analisadas. A avaliação começou em ${startEval} e terminou em ${endEval}.${gameResultText} ${sideLines.join(' ')}`;
+    gameSummaryOverview.append(overview);
+    gameSummaryMetrics.replaceChildren();
+    const solidMoves = classified.filter(({ result }) => goodKinds.has(result.quality.kind)).length;
+    const reviewMoves = classified.filter(({ result }) => concerningKinds.has(result.quality.kind)).length;
+    const metrics = [
+      { value: `${analyzed.length}/${history.length}`, label: 'posições analisadas', kind: 'metric-progress' },
+      { value: String(solidMoves), label: 'lances bons ou melhores', kind: 'metric-positive' },
+      { value: String(reviewMoves), label: 'lances para rever', kind: reviewMoves ? 'metric-attention' : 'metric-positive' }
+    ];
+    for (const metric of metrics) {
+      const card = document.createElement('div'); card.className = `summary-metric ${metric.kind}`;
+      const value = document.createElement('strong'); value.textContent = metric.value;
+      const label = document.createElement('span'); label.textContent = metric.label;
+      card.append(value, label); gameSummaryMetrics.append(card);
     }
 
     // Revisão guiada: momentos críticos (ambos os lados) + um lance para repetir.
@@ -3856,7 +3843,7 @@
       const kind = result.quality?.kind;
       return ({
         best: '#78e58b', excellent: '#55c6ed', good: '#c5df78',
-        inaccuracy: '#ffd34f', mistake: '#ff995b', blunder: '#ff696e', missed: '#eb6eae',
+        inaccuracy: '#ffd34f', mistake: '#ff995b', blunder: '#ff696e', missed: '#d94452',
         brilliant: '#43d5e8', great: '#bc91ff'
       })[kind] || (index === 0 ? '#d8e3d5' : '#89958b');
     };

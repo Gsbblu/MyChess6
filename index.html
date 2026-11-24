@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-cloud-review-cache-20261123-8">
+    <link rel="stylesheet" href="styles.css?v=mychess6-review-style-20261123-9">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -168,13 +168,31 @@
       </section>
 
       <section class="moves-card" aria-labelledby="moves-title">
-        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled><span class="game-analyze-label">Analisar partida</span></button></div>
+        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled>Analisar partida</button></div>
         <div class="move-list" id="move-list" role="group" aria-label="Lances da partida"><p class="move-list-empty">Importe uma partida PGN para ver e navegar pelos lances.</p></div>
         <p class="move-quality-legend">Ícones após a análise: ★ brilhante · 👍 grande lance · ♛ melhor · ⚡ excelente · ✓ bom · ?! imprecisão · ? erro · ?? erro grave · × chance perdida</p>
         <p class="keyboard-hint">Atalhos: ← e → navegam pelos lances. Com o foco no tabuleiro, as setas movem o foco entre as casas e Shift + ← / → navegam pelos lances. Botão direito + arraste desenha ou remove uma seta.</p>
         <details class="rating-settings"><summary>Ajustar rating para avaliar os lances</summary><div class="rating-fields"><label>Rating das brancas <input id="white-rating" type="number" min="400" max="3000" step="50" value="1200"></label><label>Rating das pretas <input id="black-rating" type="number" min="400" max="3000" step="50" value="1200"></label></div><p>Os ratings do PGN são preenchidos automaticamente. Sem eles, usamos 1200. Isso ajusta uma estimativa própria de pontos esperados; a Chess.com não publica o modelo interno completo.</p></details>
         <section class="game-analysis" id="game-analysis" hidden aria-label="Análise da partida" aria-live="polite">
           <div class="game-analysis-progress"><div class="progress-copy"><span id="game-progress-label">Aguardando análise.</span><span id="game-progress-count"></span></div><progress id="game-progress" max="100" value="0"></progress></div>
+          <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">
+            <div class="game-summary-heading"><div><p class="eyebrow">APRENDIZADO</p><h3 id="game-summary-title">Resumo da partida</h3></div><span id="game-summary-status"></span></div>
+            <div class="summary-overview-card"><span class="summary-overview-kicker">VISÃO RÁPIDA</span><div class="game-summary-overview" id="game-summary-overview"></div></div>
+            <div class="game-summary-metrics" id="game-summary-metrics" aria-label="Indicadores da análise"></div>
+            <section class="game-summary-block game-summary-coach-block"><h4>Revisão guiada · pense antes de abrir</h4><div id="game-summary-coach"></div></section>
+            <details class="summary-more"><summary>Ver estatísticas e diagnóstico detalhado</summary>
+              <div class="summary-more-content">
+                <div class="game-summary-openings" id="game-summary-opening"></div>
+                <section class="game-summary-block game-summary-quality-block"><h4>Qualidade dos lances</h4><div id="game-summary-qualities"></div></section>
+                <div class="game-summary-columns">
+                  <section class="game-summary-block"><h4>Desempenho por fase</h4><div id="game-summary-phases"></div></section>
+                  <section class="game-summary-block"><h4>Tática · padrões a rever</h4><div id="game-summary-themes"></div></section>
+                  <section class="game-summary-block"><h4>Estratégia · ideias observadas</h4><div id="game-summary-strategy"></div></section>
+                </div>
+                <section class="game-summary-block game-summary-turning-block"><h4>Lances que mais custaram chances</h4><div id="game-summary-turning-points"></div></section>
+              </div>
+            </details>
+          </section>
           <section class="advantage-chart-card" aria-labelledby="advantage-chart-title">
             <div class="advantage-chart-heading">
               <div><h3 id="advantage-chart-title">Avaliação da partida</h3><p>Em peões · escala ajustada à partida · selecione um ponto para rever o lance.</p></div>
@@ -191,30 +209,12 @@
               <span><i class="chart-quality-dot quality-great"></i>Grande lance</span>
               <span><i class="chart-quality-dot quality-missed"></i>Chance perdida</span>
             </div>
-            <svg class="advantage-chart" id="advantage-chart" viewBox="0 0 900 250" role="group" aria-label="Gráfico interativo da vantagem e qualidade dos lances"></svg>
+            <svg class="advantage-chart" id="advantage-chart" viewBox="0 0 900 220" role="group" aria-label="Gráfico interativo da vantagem e qualidade dos lances"></svg>
             <div class="chart-point-tooltip" id="chart-point-tooltip" role="tooltip" hidden>
               <span class="chart-point-tooltip-symbol" id="chart-point-tooltip-symbol" aria-hidden="true"></span>
               <span class="chart-point-tooltip-copy"><strong id="chart-point-tooltip-quality"></strong><small id="chart-point-tooltip-move"></small></span>
             </div>
             <p class="advantage-chart-status" id="advantage-chart-status" aria-live="polite">A análise do Stockfish preencherá o gráfico.</p>
-          </section>
-          <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">
-            <div class="game-summary-heading"><div><p class="eyebrow">RELATÓRIO</p><h3 id="game-summary-title">Resumo da partida</h3></div><span id="game-summary-status"></span></div>
-            <div class="game-summary-overview" id="game-summary-overview"></div>
-            <div class="game-summary-sides" id="game-summary-sides" aria-label="Desempenho por cor"></div>
-            <section class="game-summary-block game-summary-coach-block"><h4>Momentos para rever</h4><div id="game-summary-coach"></div></section>
-            <details class="summary-more"><summary>Ver estatísticas e diagnóstico detalhado</summary>
-              <div class="summary-more-content">
-                <div class="game-summary-openings" id="game-summary-opening"></div>
-                <section class="game-summary-block game-summary-quality-block"><h4>Qualidade dos lances</h4><div id="game-summary-qualities"></div></section>
-                <div class="game-summary-columns">
-                  <section class="game-summary-block"><h4>Desempenho por fase</h4><div id="game-summary-phases"></div></section>
-                  <section class="game-summary-block"><h4>Tática · padrões a rever</h4><div id="game-summary-themes"></div></section>
-                  <section class="game-summary-block"><h4>Estratégia · ideias observadas</h4><div id="game-summary-strategy"></div></section>
-                </div>
-                <section class="game-summary-block game-summary-turning-block"><h4>Lances que mais custaram chances</h4><div id="game-summary-turning-points"></div></section>
-              </div>
-            </details>
           </section>
           <details class="all-positions"><summary>Ver todas as posições analisadas</summary><div class="game-analysis-rows" id="game-analysis-rows"></div></details>
         </section>
@@ -248,6 +248,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=mychess6-cloud-review-cache-20261123-8" defer></script>
+    <script src="app.js?v=mychess6-review-style-20261123-9" defer></script>
   </body>
 </html>
