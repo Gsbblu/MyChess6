@@ -228,6 +228,7 @@
   let highlightedSquare = -1;
   let manualGesture = null;
   let arrowAnalysis = null;
+  let stockfishArrowsEnabled = false;
   let manualAnnotationFen = currentFen(position);
   let keyboardMarkFrom = -1;
   let exerciseState = null;
@@ -949,7 +950,7 @@
       if (!candidates.some((item) => item.from === idxFrom && item.to === idxTo)) candidates.push({ from: idxFrom, to: idxTo, kind });
     };
     const visibleAnalysis = arrowAnalysis?.fen === fen ? arrowAnalysis : lookupAnalysis(fen, selectedDepth);
-    if (visibleAnalysis?.fen === fen || visibleAnalysis?.bestMove) {
+    if (stockfishArrowsEnabled && (visibleAnalysis?.fen === fen || visibleAnalysis?.bestMove)) {
       add(visibleAnalysis.bestMove || visibleAnalysis.pvUci || visibleAnalysis.pv, 'best');
       for (const variation of visibleAnalysis.variations || []) {
         add(String(variation.pv || '').trim().split(/\s+/)[0], 'alternative');
@@ -1360,6 +1361,13 @@
   window.addEventListener('resize', applyBoardSize, { passive: true });
 
   document.querySelector('#flip-board').addEventListener('click', () => { flipped = !flipped; render(); });
+  const stockfishArrowsButton = document.querySelector('#toggle-stockfish-arrows');
+  stockfishArrowsButton.addEventListener('click', () => {
+    stockfishArrowsEnabled = !stockfishArrowsEnabled;
+    stockfishArrowsButton.setAttribute('aria-pressed', String(stockfishArrowsEnabled));
+    stockfishArrowsButton.title = stockfishArrowsEnabled ? 'Ocultar flechas do Stockfish' : 'Mostrar flechas do Stockfish';
+    renderBoardArrows();
+  });
   document.querySelector('#clear-board-markings').addEventListener('click', () => {
     manualArrows = []; highlightedSquare = -1; renderBoardArrows();
     document.querySelector('#board-marking-status').textContent = 'Marcações removidas.';

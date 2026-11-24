@@ -111,6 +111,7 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .board-actions{display:flex;align-items:center;gap:7px}
 .board-actions .tool-button,.variation-banner .return-original-button{min-height:34px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:6px 10px;border:1px solid #3a4b3c;border-radius:7px;background:linear-gradient(180deg,#263328,#1b241d);color:#dce8d5;font-size:10px;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
 .board-actions .tool-button:hover,.variation-banner .return-original-button:hover{border-color:#789b62;background:#2a392c}
+.board-actions .stockfish-arrows-button[aria-pressed="true"]{border-color:#3f9a86;background:linear-gradient(180deg,#245047,#1a3934);color:#bcf3df;box-shadow:inset 0 0 0 1px #5ec7a533}
 .board-actions .tool-button:active,.variation-banner .return-original-button:active{transform:translateY(1px)}
 .board-actions .tool-button:focus-visible,.variation-banner .return-original-button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .board-actions .tool-button svg,.variation-banner .return-original-button svg{width:16px;height:16px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
