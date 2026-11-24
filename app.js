@@ -594,13 +594,17 @@
 
   const qualityMarks = {
     brilliant: '✦', great: '👍', best: '♛', excellent: '⚡', good: '✓',
-    inaccuracy: '?!', mistake: '?', blunder: '??', unknown: '—'
+    inaccuracy: '?!', mistake: '?', blunder: '??', missed: '×', unknown: '—'
   };
+
+  function qualityKindForDisplay(quality) {
+    return quality?.label === 'Chance perdida' ? 'missed' : quality?.kind || 'unknown';
+  }
 
   function qualityMark(quality) {
     if (!quality) return { symbol: '·', title: 'Ainda não analisado', kind: 'pending' };
-    if (quality.label === 'Chance perdida') return { symbol: '×', title: 'Chance perdida', kind: 'missed' };
-    return { symbol: qualityMarks[quality.kind] || '·', title: quality.label, kind: quality.kind };
+    const kind = qualityKindForDisplay(quality);
+    return { symbol: qualityMarks[kind] || '·', title: quality.label, kind };
   }
 
   function updateMoveQualityMark(index, quality) {
@@ -643,7 +647,7 @@
   }
 
   function setGameReviewQualityBadge(quality) {
-    const kind = quality.label === 'Chance perdida' ? 'missed' : quality.kind;
+    const kind = qualityKindForDisplay(quality);
     const panelKinds = ['best', 'excellent', 'good', 'great', 'brilliant', 'inaccuracy', 'mistake', 'blunder', 'missed', 'unknown'];
     gameReviewQuality.classList.remove(...panelKinds.map((item) => `quality-panel-${item}`));
     gameReviewQuality.classList.add(`quality-panel-${kind}`);
@@ -2153,7 +2157,7 @@
       if (!result) return;
       result.ui = appendGameResult(result);
       if (index > 0 && result.quality) {
-        const badge = document.createElement('span'); badge.className = `move-quality-badge quality-${result.quality.kind}`; badge.textContent = result.quality.label;
+        const badge = document.createElement('span'); badge.className = `move-quality-badge quality-${qualityKindForDisplay(result.quality)}`; badge.textContent = result.quality.label;
         const explanation = document.createElement('p'); explanation.className = 'move-quality-explanation'; explanation.textContent = result.quality.explanation;
         result.ui.details.append(badge, explanation);
       }
@@ -3206,7 +3210,7 @@
 
   function addMoveQuality(result, previous, playedMove) {
     const quality = moveQuality(previous, result, playedMove);
-    const badge = document.createElement('span'); badge.className = `move-quality-badge quality-${quality.kind}`;
+    const badge = document.createElement('span'); badge.className = `move-quality-badge quality-${qualityKindForDisplay(quality)}`;
     badge.textContent = quality.label;
     if (quality.loss !== null) badge.title = `Perda estimada de ${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(quality.loss * 100)} pontos percentuais, na profundidade escolhida.`;
     const explanation = document.createElement('p'); explanation.className = 'move-quality-explanation'; explanation.textContent = quality.explanation;
@@ -3687,7 +3691,9 @@
     head.append(headRow); qualityTable.append(head);
     const body = document.createElement('tbody');
     for (const [label, kind] of qualityRows) {
-      const row = document.createElement('tr'), title = document.createElement('th'); title.scope = 'row'; title.textContent = label; row.append(title);
+      const row = document.createElement('tr'), title = document.createElement('th');
+      if (kind === 'miss') row.className = 'summary-quality-missed';
+      title.scope = 'row'; title.textContent = label; row.append(title);
       for (const side of ['w', 'b']) {
         const cell = document.createElement('td');
         cell.textContent = String(bySide[side].filter(({ result }) => kind === 'miss' ? result.quality.label === 'Chance perdida' : result.quality.kind === kind && result.quality.label !== 'Chance perdida').length);
@@ -3840,10 +3846,10 @@
       return entry ? `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'} ${entry.san}` : `Posição ${index}`;
     };
     const qualityColor = (result, index) => {
-      const kind = result.quality?.kind;
+      const kind = qualityKindForDisplay(result.quality);
       return ({
         best: '#78e58b', excellent: '#55c6ed', good: '#c5df78',
-        inaccuracy: '#ffd34f', mistake: '#ff995b', blunder: '#ff696e', missed: '#d94452',
+        inaccuracy: '#ffd34f', mistake: '#ff995b', blunder: '#ff696e', missed: '#c28a52',
         brilliant: '#43d5e8', great: '#bc91ff'
       })[kind] || (index === 0 ? '#d8e3d5' : '#89958b');
     };
