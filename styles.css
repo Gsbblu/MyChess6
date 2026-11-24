@@ -94,7 +94,7 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .rank-labels,.file-labels{color:#dce8c8;text-shadow:0 1px 3px #10170e}
 .square:focus-visible{outline-color:#f5d34b}
 .move-quality-badge{grid-column:1/-1;justify-self:start;border-radius:99px;padding:4px 8px;font-size:9px;font-weight:700;letter-spacing:.2px}
-.quality-best{background:#263b2a;color:#a9dc92}.quality-excellent{background:#283a2d;color:#b9d787}.quality-good{background:#333a29;color:#d8d289}.quality-inaccuracy{background:#403923;color:#efd279}.quality-mistake{background:#48342b;color:#f0aa71}.quality-blunder{background:#4b2c2a;color:#f08c7d}.quality-unknown{background:#303632;color:#bac3bb}
+.quality-best{background:#263b2a;color:#a9dc92}.quality-excellent{background:#283a2d;color:#b9d787}.quality-good{background:#333a29;color:#d8d289}.quality-inaccuracy{background:#403923;color:#efd279}.quality-mistake{background:#48342b;color:#f0aa71}.quality-blunder{background:#4b2c2a;color:#f08c7d}.quality-missed{background:#4b2c34;color:#f08c9a}.quality-unknown{background:#303632;color:#bac3bb}
 .quality-brilliant{background:#263b43;color:#82d9dc}
 .quality-great{background:#343047;color:#c5a9f2}
 .move-quality-explanation{grid-column:1/-1;margin:0;color:#b9c5b8;font-size:10px;line-height:1.55;overflow-wrap:anywhere}
@@ -343,11 +343,22 @@ body.has-game .page-shell{padding-bottom:100px}
 .advantage-chart-heading p{font-size:12px}
 .chart-current-eval{font-size:12px}
 .analysis-card>.eval-summary,.analysis-results>.principal-line{display:none!important}
-.game-review-quality{margin-top:8px;padding:15px;border-color:#435342;border-radius:9px;background:radial-gradient(ellipse at 8% 0%,#263528 0,transparent 58%),linear-gradient(145deg,#18231b,#141b16);box-shadow:inset 0 1px #ffffff09,0 6px 16px #0002}
+.game-review-quality{--quality-accent:#9dbb89;--quality-wash:#26352844;--quality-border:#435342;margin-top:8px;padding:15px;border-color:var(--quality-border);border-radius:9px;background:radial-gradient(ellipse at 8% 0%,var(--quality-wash) 0,transparent 62%),linear-gradient(145deg,#18231b,#141b16);box-shadow:inset 0 1px #ffffff09,0 6px 16px #0002;transition:background .25s,border-color .25s}
+.game-review-quality.quality-panel-best{--quality-accent:#69c777;--quality-wash:#69c77728;--quality-border:#69c77770}
+.game-review-quality.quality-panel-excellent{--quality-accent:#55c1ba;--quality-wash:#55c1ba28;--quality-border:#55c1ba70}
+.game-review-quality.quality-panel-good{--quality-accent:#a9c96c;--quality-wash:#a9c96c26;--quality-border:#a9c96c70}
+.game-review-quality.quality-panel-great{--quality-accent:#b29be0;--quality-wash:#b29be02b;--quality-border:#b29be070}
+.game-review-quality.quality-panel-brilliant{--quality-accent:#82d9dc;--quality-wash:#82d9dc2b;--quality-border:#82d9dc70}
+.game-review-quality.quality-panel-inaccuracy{--quality-accent:#efd279;--quality-wash:#efd27928;--quality-border:#efd27970}
+.game-review-quality.quality-panel-mistake{--quality-accent:#f0aa71;--quality-wash:#f0aa7128;--quality-border:#f0aa7170}
+.game-review-quality.quality-panel-blunder{--quality-accent:#f08c7d;--quality-wash:#f08c7d2b;--quality-border:#f08c7d70}
+.game-review-quality.quality-panel-missed{--quality-accent:#f08c9a;--quality-wash:#f08c9a2b;--quality-border:#f08c9a70}
+.game-review-quality.quality-panel-unknown{--quality-accent:#bac3bb;--quality-wash:#bac3bb20;--quality-border:#bac3bb55}
 .game-review-quality-heading{display:grid;justify-items:start;gap:9px}
-.game-review-quality-heading>span{color:#a7b8a5;font-size:10px;font-weight:700;letter-spacing:1px}
+.game-review-quality-heading>span{color:var(--quality-accent);font-size:10px;font-weight:700;letter-spacing:1px}
 .game-review-quality-heading .move-quality-badge{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border:1px solid currentColor;border-radius:12px;font-size:15px;font-weight:800;letter-spacing:.1px;line-height:1.2;box-shadow:inset 0 1px #ffffff12,0 3px 10px #0002}
-.game-review-quality-heading .move-quality-badge::before{content:"✦";font-size:14px;opacity:.9}
+.game-review-quality-heading .move-quality-badge .board-quality-icon{width:19px;height:19px;flex:0 0 19px}
+.game-review-quality-heading .quality-card-symbol{min-width:19px;color:currentColor;font:800 15px/1 Arial,sans-serif;text-align:center}
 .game-review-quality>p{margin-top:12px}
 .chart-quality-legend{font-size:11.5px}
 .advantage-chart-status{font-size:11.5px;color:#93a195}
@@ -416,7 +427,7 @@ body.has-game .page-shell{padding-bottom:100px}
 .punishment-step-button{width:100%;margin:0;justify-content:center;cursor:pointer}
 .punishment-step-button:disabled{opacity:.65;cursor:default}
 .board-quality-marker{position:absolute;z-index:9;top:2px;right:2px;width:clamp(19px,2.2vw,25px);height:clamp(19px,2.2vw,25px);display:grid;place-items:center;border:1.5px solid #f4f7ed;border-radius:50%;box-shadow:0 1px 5px #000b;font:800 clamp(10px,1.25vw,14px)/1 Arial,sans-serif;text-shadow:0 1px 2px #0008;pointer-events:none}
-.game-review-quality>#game-review-explanation{margin:12px 0 9px;padding:12px 14px;border:1px solid #3d523f;border-left:3px solid #b7e181;border-radius:6px;background:linear-gradient(135deg,#202d22,#19231c);box-shadow:inset 0 1px #ffffff08,0 4px 14px #0002;color:#edf4e8;font-size:15px;line-height:1.65}
+.game-review-quality>#game-review-explanation{margin:12px 0 9px;padding:12px 14px;border:1px solid #3d523f;border-left:3px solid var(--quality-accent,#b7e181);border-radius:6px;background:linear-gradient(135deg,#202d22,#19231c);box-shadow:inset 0 1px #ffffff08,0 4px 14px #0002;color:#edf4e8;font-size:15px;line-height:1.65}
 .super-analysis-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0;padding:9px;border:1px solid #35483a;border-radius:6px;background:#151e18}.game-review-quality .super-analysis-actions button{min-height:34px;margin:0;padding:7px 10px}.super-analysis-actions small{flex:1 1 100%;color:#859587;font-size:9px;line-height:1.45}.super-analysis-challenge{flex:1 1 100%;min-height:0}.super-analysis-result{flex:1 1 100%;padding:11px 12px;border:1px solid #35483a;border-left:3px solid #b7e181;border-radius:5px;background:#1b251e;color:#e4ebdf;font-size:12px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.super-analysis-status{flex:1 1 100%;min-height:0;color:#b7d39f;font-size:10px;line-height:1.4}.super-analysis-status:empty{display:none}
 .square.quality-reviewed-square{z-index:9}
 .board-quality-marker.quality-best,.board-quality-marker.quality-excellent,.board-quality-marker.quality-good,.board-quality-marker.quality-great{background:#78ad55;color:#fff}

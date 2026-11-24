@@ -608,6 +608,27 @@
     return icon;
   }
 
+  function setGameReviewQualityBadge(quality) {
+    const kind = quality.label === 'Chance perdida' ? 'missed' : quality.kind;
+    const panelKinds = ['best', 'excellent', 'good', 'great', 'brilliant', 'inaccuracy', 'mistake', 'blunder', 'missed', 'unknown'];
+    gameReviewQuality.classList.remove(...panelKinds.map((item) => `quality-panel-${item}`));
+    gameReviewQuality.classList.add(`quality-panel-${kind}`);
+    gameReviewBadge.className = `move-quality-badge quality-${kind}`;
+    gameReviewBadge.replaceChildren();
+    const icon = createBoardQualityIcon(kind);
+    if (icon) gameReviewBadge.append(icon);
+    else {
+      const symbol = document.createElement('span');
+      symbol.className = 'quality-card-symbol';
+      symbol.setAttribute('aria-hidden', 'true');
+      symbol.textContent = boardQualitySymbol({ ...quality, kind });
+      gameReviewBadge.append(symbol);
+    }
+    const label = document.createElement('span');
+    label.textContent = quality.label;
+    gameReviewBadge.append(label);
+  }
+
   function renderBoardQualityMarker() {
     boardElement.querySelectorAll('.board-quality-marker').forEach((marker) => marker.remove());
     boardElement.querySelectorAll('.quality-reviewed-square').forEach((square) => square.classList.remove('quality-reviewed-square'));
@@ -2518,10 +2539,10 @@
     gameReviewQuestion.hidden = true;
     if (result.quality) {
       gameReviewBadge.hidden = false;
-      gameReviewBadge.className = `move-quality-badge quality-${result.quality.kind}`;
-      gameReviewBadge.textContent = result.quality.label;
+      setGameReviewQualityBadge(result.quality);
       gameReviewExplanation.textContent = result.quality.explanation;
     } else {
+      gameReviewQuality.classList.remove('quality-panel-best', 'quality-panel-excellent', 'quality-panel-good', 'quality-panel-great', 'quality-panel-brilliant', 'quality-panel-inaccuracy', 'quality-panel-mistake', 'quality-panel-blunder', 'quality-panel-missed', 'quality-panel-unknown');
       gameReviewBadge.hidden = true;
       gameReviewExplanation.textContent = 'Esta é a posição inicial: ainda não há um lance anterior para classificar.';
       gameReviewQuestion.hidden = true;
@@ -3250,8 +3271,7 @@
     currentBoardQuality = { fen: currentFen(position), move: playedMove, quality };
     renderBoardQualityMarker();
     gameReviewBadge.hidden = false;
-    gameReviewBadge.className = `move-quality-badge quality-${quality.kind}`;
-    gameReviewBadge.textContent = quality.label;
+    setGameReviewQualityBadge(quality);
     gameReviewExplanation.textContent = quality.explanation;
   }
 
