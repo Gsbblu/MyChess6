@@ -832,7 +832,6 @@
     arrowLayer.classList.add('board-arrow-layer');
     arrowLayer.setAttribute('viewBox', '0 0 800 800');
     arrowLayer.setAttribute('aria-hidden', 'true');
-    arrowLayer.innerHTML = '<defs><marker id="board-arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>';
     boardElement.append(arrowLayer);
     renderBoardArrows(arrowLayer);
     if (movingPieceClone && sourceRectBeforeRender && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
@@ -917,9 +916,14 @@
       line.setAttribute('x1', String(x1)); line.setAttribute('y1', String(y1));
       line.setAttribute('x2', String(x2)); line.setAttribute('y2', String(y2));
       line.setAttribute('class', `board-arrow-drawing board-arrow-${kind}`);
-      line.setAttribute('marker-end', 'url(#board-arrow-head)');
       line.setAttribute('aria-label', label);
-      layer.append(line);
+      const dx = x2 - x1, dy = y2 - y1, length = Math.hypot(dx, dy) || 1;
+      const ux = dx / length, uy = dy / length, baseX = x2 - ux * 18, baseY = y2 - uy * 18;
+      const px = -uy * 8, py = ux * 8;
+      const head = document.createElementNS(namespace, 'path');
+      head.setAttribute('d', `M ${x2} ${y2} L ${baseX + px} ${baseY + py} L ${baseX - px} ${baseY - py} Z`);
+      head.setAttribute('class', `board-arrow-drawing board-arrow-head board-arrow-${kind}`);
+      layer.append(line, head);
     };
     if (highlightedSquare >= 0) {
       const [x, y] = squarePoint(highlightedSquare);
