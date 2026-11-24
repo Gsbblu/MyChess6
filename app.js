@@ -14,8 +14,6 @@
   const boardEvalMeter = document.querySelector('.eval-meter');
   const boardSizeInput = document.querySelector('#board-size');
   const boardSizeValue = document.querySelector('#board-size-value');
-  const annotationArrowsElement = document.querySelector('#annotation-arrows');
-  const moveArrowsElement = document.querySelector('#move-arrows');
   const rankLabels = document.querySelector('.rank-labels');
   const fileLabels = document.querySelector('.file-labels');
   const turnLabel = document.querySelector('#turn-indicator');
@@ -225,15 +223,9 @@
   const analysisCacheLimit = 256;
   let pointerDrag = null;
   let suppressSquareClick = false;
-  let visibleArrowAnalysis = null;
   let exerciseState = null;
   let punishmentPlayback = null;
   let boardFocusSquare = 52;
-  let boardAnnotations = [];
-  let annotationFen = null;
-  let arrowGesture = null;
-  let touchArrowPending = null;
-  let touchArrowTimer = 0;
   let pendingMoveAnimation = null;
   let activeMoveAnimationCleanup = null;
   let compactPieceMode = false;
@@ -798,7 +790,6 @@
   }
 
   function render() {
-    if (annotationFen && annotationFen !== currentFen(position)) { boardAnnotations = []; annotationFen = null; }
     const moveAnimation = pendingMoveAnimation;
     pendingMoveAnimation = null;
     activeMoveAnimationCleanup?.();
@@ -825,7 +816,6 @@
       if (square === selected) button.classList.add('selected');
       if (legalTargetSquares.has(square)) button.classList.add(position.board[square] === '.' ? 'legal-target' : 'legal-capture');
       if (lastMove && (square === lastMove.from || square === lastMove.to)) button.classList.add('last-move');
-      if (boardAnnotations.some((annotation) => annotation.type === 'square' && annotation.square === square)) button.classList.add('annotation-square');
       rowElement.append(button);
     }
     }
@@ -881,8 +871,6 @@
     bestMoveCaption.textContent = `MELHOR LANCE · ${position.turn === 'w' ? 'BRANCAS' : 'PRETAS'} A JOGAR`;
     renderGameReviewAtCurrentPosition();
     renderBoardQualityMarker();
-    renderAnnotationArrows();
-    renderMoveArrows();
     updateAdvantageChartSelection();
     updateAnalysisControls();
     // Como o tabuleiro e a lista são recriados, devolve o foco a quem o tinha (teclado e leitor de tela).
@@ -894,201 +882,7 @@
     }
   }
 
-  function renderAnnotationArrows() {
-    annotationArrowsElement.replaceChildren();
-    if (!boardAnnotations.length) { annotationArrowsElement.hidden = true; return; }
-    const namespace = 'http://www.w3.org/2000/svg';
-    if (boardAnnotations.some((annotation) => annotation.type === 'arrow')) {
-      const defs = document.createElementNS(namespace, 'defs');
-      const marker = document.createElementNS(namespace, 'marker');
-      marker.setAttribute('id', 'board-annotation-arrowhead'); marker.setAttribute('viewBox', '0 0 10 10');
-      marker.setAttribute('refX', '8'); marker.setAttribute('refY', '5'); marker.setAttribute('markerWidth', '.48');
-      marker.setAttribute('markerHeight', '.48'); marker.setAttribute('markerUnits', 'userSpaceOnUse'); marker.setAttribute('orient', 'auto');
-      const head = document.createElementNS(namespace, 'path'); head.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); head.setAttribute('fill', '#f0c84b');
-      marker.append(head); defs.append(marker); annotationArrowsElement.append(defs);
-    }
-    for (const arrow of boardAnnotations.filter((annotation) => annotation.type === 'arrow')) {
-      const fromRow = Math.floor(arrow.from / 8), fromCol = arrow.from % 8;
-      const toRow = Math.floor(arrow.to / 8), toCol = arrow.to % 8;
-      const x1 = (flipped ? 7 - fromCol : fromCol) + 0.5, y1 = (flipped ? 7 - fromRow : fromRow) + 0.5;
-      const x2 = (flipped ? 7 - toCol : toCol) + 0.5, y2 = (flipped ? 7 - toRow : toRow) + 0.5;
-      const length = Math.hypot(x2 - x1, y2 - y1) || 1, inset = 0.25;
-      const line = document.createElementNS(namespace, 'line');
-      line.setAttribute('x1', String(x1 + (x2 - x1) * inset / length)); line.setAttribute('y1', String(y1 + (y2 - y1) * inset / length));
-      line.setAttribute('x2', String(x2 - (x2 - x1) * inset / length)); line.setAttribute('y2', String(y2 - (y2 - y1) * inset / length));
-      line.setAttribute('class', 'annotation-arrow'); line.setAttribute('marker-end', 'url(#board-annotation-arrowhead)');
-      annotationArrowsElement.append(line);
-    }
-    annotationArrowsElement.hidden = false;
-  }
-
-  function beginArrowGesture(event) {
-    const cell = event.target?.closest?.('.square');
-    if (!cell || !boardElement.contains(cell)) return false;
-    if (event.pointerType === 'touch' && event.button === 0) {
-      clearTimeout(touchArrowTimer);
-      touchArrowPending = {
-        pointerId: event.pointerId,
-        from: Number(cell.dataset.square),
-        startX: event.clientX,
-        startY: event.clientY
-      };
-      touchArrowTimer = window.setTimeout(() => {
-        const pending = touchArrowPending;
-        if (!pending) return;
-        touchArrowPending = null;
-        touchArrowTimer = 0;
-        pointerDrag = null;
-        selected = -1; legalTargets = [];
-        paintSelection(-1);
-        arrowGesture = {
-          pointerId: pending.pointerId,
-          from: pending.from,
-          to: pending.from,
-          startX: pending.startX,
-          startY: pending.startY,
-          moved: false,
-          drawOnlyOnDrag: true,
-          suppressClick: true
-        };
-        try { boardElement.setPointerCapture(pending.pointerId); } catch {}
-      }, 420);
-      return false;
-    }
-    const modifiedPrimary = event.button === 0 && (event.shiftKey || event.ctrlKey);
-    if (event.button !== 2 && !modifiedPrimary) return false;
-    event.preventDefault();
-    arrowGesture = {
-      pointerId: event.pointerId,
-      from: Number(cell.dataset.square),
-      to: Number(cell.dataset.square),
-      startX: event.clientX,
-      startY: event.clientY,
-      moved: false,
-      suppressClick: modifiedPrimary
-    };
-    if (Number.isInteger(event.pointerId)) {
-      try { event.currentTarget.setPointerCapture(event.pointerId); } catch {}
-    }
-    return true;
-  }
-
-  function cancelPendingTouchArrow(pointerId) {
-    if (!touchArrowPending || (Number.isInteger(pointerId) && pointerId !== touchArrowPending.pointerId)) return;
-    clearTimeout(touchArrowTimer);
-    touchArrowTimer = 0;
-    touchArrowPending = null;
-  }
-
-  function squareAtPoint(clientX, clientY) {
-    const cell = document.elementFromPoint(clientX, clientY)?.closest('.square');
-    return cell && boardElement.contains(cell) ? Number(cell.dataset.square) : -1;
-  }
-
-  function updateArrowGesture(event) {
-    if (!arrowGesture || (Number.isInteger(event.pointerId) && event.pointerId !== arrowGesture.pointerId)) return false;
-    if (Math.hypot(event.clientX - arrowGesture.startX, event.clientY - arrowGesture.startY) >= 6) arrowGesture.moved = true;
-    const to = squareAtPoint(event.clientX, event.clientY);
-    if (to >= 0) arrowGesture.to = to;
-    event.preventDefault();
-    return true;
-  }
-
-  function finishArrowGesture(event, cancelled = false) {
-    if (!arrowGesture || (Number.isInteger(event.pointerId) && event.pointerId !== arrowGesture.pointerId)) return false;
-    const gesture = arrowGesture; arrowGesture = null;
-    if (!cancelled) {
-      if (Math.hypot(event.clientX - gesture.startX, event.clientY - gesture.startY) >= 6) gesture.moved = true;
-      const pointSquare = squareAtPoint(event.clientX, event.clientY);
-      const to = pointSquare >= 0 ? pointSquare : gesture.to;
-      const shouldAnnotate = gesture.drawOnlyOnDrag
-        ? gesture.moved && to >= 0 && to !== gesture.from
-        : to >= 0 && ((gesture.moved && to !== gesture.from) || (!gesture.moved && to === gesture.from));
-      if (shouldAnnotate) {
-        if (to === gesture.from) {
-          const existing = boardAnnotations.findIndex((annotation) => annotation.type === 'square' && annotation.square === to);
-          if (existing >= 0) boardAnnotations.splice(existing, 1);
-          else boardAnnotations.push({ type: 'square', square: to });
-          boardElement.querySelector(`[data-square="${to}"]`)?.classList.toggle('annotation-square', existing < 0);
-        } else {
-          const existing = boardAnnotations.findIndex((annotation) => annotation.type === 'arrow' && annotation.from === gesture.from && annotation.to === to);
-          if (existing >= 0) boardAnnotations.splice(existing, 1);
-          else boardAnnotations.push({ type: 'arrow', from: gesture.from, to });
-        }
-        annotationFen = currentFen(position);
-        renderAnnotationArrows();
-        if (gesture.suppressClick) {
-          suppressSquareClick = true;
-          window.setTimeout(() => { suppressSquareClick = false; }, 200);
-        }
-      }
-    }
-    return true;
-  }
-
-  function renderMoveArrows() {
-    moveArrowsElement.replaceChildren();
-    const analysis = visibleArrowAnalysis;
-    if (!analysis?.fen || analysis.fen !== currentFen(position)) {
-      moveArrowsElement.hidden = true;
-      return;
-    }
-    const pos = positionFromFen(analysis.fen);
-    const candidates = [];
-    const addCandidate = (token) => {
-      const move = token && parseUciMove(pos, token);
-      if (move && !candidates.some((candidate) => candidate.move.from === move.from && candidate.move.to === move.to)) {
-        candidates.push({ move, san: moveToSan(pos, move) });
-      }
-    };
-    addCandidate(analysis.bestMove);
-    for (const variation of analysis.variations || []) {
-      if (candidates.length >= 3) break;
-      addCandidate(String(variation.pv || '').trim().split(/\s+/)[0]);
-    }
-    if (!candidates.length) {
-      moveArrowsElement.hidden = true;
-      return;
-    }
-
-    const namespace = 'http://www.w3.org/2000/svg';
-    const defs = document.createElementNS(namespace, 'defs');
-    const arrowColors = ['#168b3c', '#247eb5', '#bc8422'];
-    moveArrowsElement.append(defs);
-
-    candidates.forEach(({ move, san }, index) => {
-      const marker = document.createElementNS(namespace, 'marker');
-      marker.setAttribute('id', `analysis-arrowhead-${index + 1}`); marker.setAttribute('viewBox', '0 0 10 10');
-      marker.setAttribute('refX', '8'); marker.setAttribute('refY', '5'); marker.setAttribute('markerWidth', '.42');
-      marker.setAttribute('markerHeight', '.42'); marker.setAttribute('markerUnits', 'userSpaceOnUse'); marker.setAttribute('orient', 'auto-start-reverse');
-      const head = document.createElementNS(namespace, 'path');
-      head.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); head.setAttribute('fill', arrowColors[index]);
-      marker.append(head); defs.append(marker);
-      const fromRow = Math.floor(move.from / 8), fromCol = move.from % 8;
-      const toRow = Math.floor(move.to / 8), toCol = move.to % 8;
-      const x1 = (flipped ? 7 - fromCol : fromCol) + 0.5;
-      const y1 = (flipped ? 7 - fromRow : fromRow) + 0.5;
-      const x2 = (flipped ? 7 - toCol : toCol) + 0.5;
-      const y2 = (flipped ? 7 - toRow : toRow) + 0.5;
-      const length = Math.hypot(x2 - x1, y2 - y1) || 1;
-      const inset = 0.26;
-      const line = document.createElementNS(namespace, 'line');
-      line.setAttribute('x1', String(x1 + (x2 - x1) * inset / length));
-      line.setAttribute('y1', String(y1 + (y2 - y1) * inset / length));
-      line.setAttribute('x2', String(x2 - (x2 - x1) * inset / length));
-      line.setAttribute('y2', String(y2 - (y2 - y1) * inset / length));
-      line.setAttribute('class', `analysis-arrow analysis-arrow-${index + 1}`);
-      line.setAttribute('marker-end', `url(#analysis-arrowhead-${index + 1})`);
-      line.setAttribute('aria-label', `${index === 0 ? 'Melhor lance' : `Alternativa ${index + 1}`}: ${san}`);
-      const title = document.createElementNS(namespace, 'title'); title.textContent = `${index === 0 ? 'Melhor lance' : `Alternativa ${index + 1}`}: ${san}`;
-      line.append(title); moveArrowsElement.append(line);
-    });
-    moveArrowsElement.setAttribute('aria-label', candidates.length === 1 ? `Melhor lance do Stockfish: ${candidates[0].san}` : `Melhores lances do Stockfish: ${candidates.map(({ san }) => san).join(', ')}`);
-    moveArrowsElement.hidden = false;
-  }
-
   function beginPointerDrag(event, square, origin) {
-    if (arrowGesture) return;
     const piece = position.board[square];
     if (event.button !== 0 || piece === '.' || color(piece) !== position.turn) return;
     pointerDrag = { pointerId: event.pointerId, from: square, origin, startX: event.clientX, startY: event.clientY, moved: false, target: null };
@@ -1109,11 +903,6 @@
   }
 
   function updatePointerDrag(event) {
-    if (updateArrowGesture(event)) return;
-    if (touchArrowPending && touchArrowPending.pointerId === event.pointerId
-      && Math.hypot(event.clientX - touchArrowPending.startX, event.clientY - touchArrowPending.startY) >= 6) {
-      cancelPendingTouchArrow(event.pointerId);
-    }
     if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
     const dx = event.clientX - pointerDrag.startX, dy = event.clientY - pointerDrag.startY;
     if (!pointerDrag.moved && Math.hypot(dx, dy) < 7) return;
@@ -1133,8 +922,6 @@
   }
 
   function finishPointerDrag(event, cancelled = false) {
-    if (finishArrowGesture(event, cancelled)) return;
-    cancelPendingTouchArrow(event.pointerId);
     if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
     const drag = pointerDrag; pointerDrag = null;
     drag.ghost?.remove(); drag.origin.classList.remove('piece-being-dragged'); drag.target?.classList.remove('drag-over');
@@ -1165,12 +952,6 @@
     const squareElement = event.target?.closest?.('.square');
     if (squareElement && boardElement.contains(squareElement)) beginPointerDrag(event, Number(squareElement.dataset.square), squareElement);
   });
-  boardElement.addEventListener('pointerdown', beginArrowGesture, true);
-  window.addEventListener('blur', () => { arrowGesture = null; cancelPendingTouchArrow(); });
-  boardElement.addEventListener('contextmenu', (event) => {
-    event.preventDefault();
-  }, true);
-
   function pieceName(piece) {
     const names = { K:'rei branco', Q:'dama branca', R:'torre branca', B:'bispo branco', N:'cavalo branco', P:'peão branco', k:'rei preto', q:'dama preta', r:'torre preta', b:'bispo preto', n:'cavalo preto', p:'peão preto' };
     return names[piece] || 'peça';
@@ -1342,7 +1123,7 @@
       : 'Esta é a posição antes do lance. Toque no lance que você jogaria como palpite (a partida não é alterada) ou apenas pense e revele a análise.';
     gameReviewQuestion.hidden = false;
     gameReviewQuestion.textContent = after.quality?.lesson ? after.quality.lesson.questions.decision : 'Lembre o que você pretendia e pense nas respostas do adversário antes de revelar.';
-    gameReviewDepth.textContent = 'A classificação, as setas e a avaliação ficam ocultas até você revelar.';
+    gameReviewDepth.textContent = 'A classificação e a avaliação ficam ocultas até você revelar.';
     moveAlternatives.hidden = true;
     updateMoveAnalysisPanels();
     revealExerciseButton.hidden = false;
@@ -2522,8 +2303,6 @@
   }
 
   function clearAnalysisView(message = 'Use o Stockfish para avaliar esta posição.') {
-    visibleArrowAnalysis = null;
-    renderMoveArrows();
     renderBestMoves(null);
     analysisPlaceholder.hidden = false;
     analysisResults.hidden = true;
@@ -2611,7 +2390,6 @@
   function renderGameReviewAtCurrentPosition() {
     const result = gameReviewResults[historyIndex];
     updateSuperAnalysisActions();
-    visibleArrowAnalysis = result || null;
     renderBestMoves(result);
     renderBoardQualityMarker();
     revealExerciseButton.hidden = true; exerciseFeedback.hidden = true;
@@ -2646,7 +2424,6 @@
     gameReviewDepth.textContent = `Análise da partida · profundidade ${result.depth || selectedDepth} · calculada pelo Stockfish`;
     if (exerciseState?.revealed && exerciseState.feedback && historyIndex === exerciseState.moveIndex) { exerciseFeedback.textContent = exerciseState.feedback; exerciseFeedback.hidden = false; }
     engineStatusText.textContent = `Exibindo a análise da partida para ${move ? `o lance ${move.moveNumber}${move.side === 'w' ? '.' : '…'} ${move.san}` : 'a posição inicial'}.`;
-    renderMoveArrows();
     renderPunishmentControls();
   }
 
@@ -3308,8 +3085,6 @@
   function renderCachedPosition(cached, fen, turn, depth) {
     const pos = positionFromFen(fen);
     const move = cached.bestMove && cached.bestMove !== '(none)' && cached.bestMove !== '0000' ? parseUciMove(pos, cached.bestMove) : null;
-    visibleArrowAnalysis = { fen, bestMove: cached.bestMove, variations: cached.variations || [] };
-    renderMoveArrows();
     renderBestMoves({ fen, turn, bestMove: cached.bestMove, pvUci: cached.pv || '', score: cached.score, variations: cached.variations || [] });
     analysisPlaceholder.hidden = true; analysisResults.hidden = false; analysisProgress.hidden = true;
     analysisResults.classList.remove('from-game-review'); gameReviewQuality.hidden = true; moveAlternatives.hidden = true;
@@ -3531,8 +3306,6 @@
     } else if (completed) {
       const moveToken = line.match(/^bestmove\s+(\S+)/)?.[1];
       const variations = completed.latestVariations || [];
-      visibleArrowAnalysis = { fen: completed.fen, bestMove: moveToken, variations };
-      renderMoveArrows();
       renderBestMoves({ fen: completed.fen, turn: completed.turn, bestMove: moveToken, pvUci: completed.latestPv || '', score: completed.latestScore, variations });
       rememberAnalysis(completed.fen, completed.depth, { score: completed.latestScore, pv: completed.latestPv || '', variations, bestMove: moveToken, depth: completed.depth });
       if (moveToken && moveToken !== '(none)' && moveToken !== '0000') {
@@ -4144,8 +3917,6 @@
       return;
     }
     const job = { id: ++analysisSerial, fen: currentFen(position), turn: position.turn, depth: selectedDepth };
-    visibleArrowAnalysis = null;
-    renderMoveArrows();
     renderBestMoves(null);
     analysisResults.classList.remove('from-game-review'); gameReviewQuality.hidden = true; moveAlternatives.hidden = true;
     const cached = lookupAnalysis(job.fen, job.depth);

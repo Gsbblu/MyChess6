@@ -7,7 +7,7 @@
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=gabes-chess-fluid-ui-1">
+    <link rel="stylesheet" href="styles.css?v=gabes-chess-all-arrows-removed-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -93,8 +93,6 @@
               <div class="rank-labels" aria-hidden="true"><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span></div>
               <div class="board-surface">
                 <div class="chessboard" id="chessboard" role="grid" aria-label="Tabuleiro de xadrez interativo"></div>
-                <svg class="annotation-arrows" id="annotation-arrows" viewBox="0 0 8 8" preserveAspectRatio="none" aria-hidden="true" hidden></svg>
-                <svg class="move-arrows" id="move-arrows" viewBox="0 0 8 8" preserveAspectRatio="none" role="img" aria-label="Sugestões de lances do Stockfish" hidden></svg>
               </div>
               <div class="file-labels" aria-hidden="true"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div>
             </div>
@@ -168,7 +166,7 @@
         <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled>Analisar partida</button></div>
         <div class="move-list" id="move-list" role="group" aria-label="Lances da partida"><p class="move-list-empty">Importe uma partida PGN para ver e navegar pelos lances.</p></div>
         <p class="move-quality-legend">Ícones após a análise: ★ brilhante · 👍 grande lance · ♛ melhor · ⚡ excelente · ✓ bom · ?! imprecisão · ? erro · ?? erro grave · × chance perdida</p>
-        <p class="keyboard-hint">Atalhos: ← e → navegam pelos lances. Com o foco no tabuleiro, as setas movem o foco entre as casas e Shift + ← / → navegam pelos lances. Desenhe setas com o botão direito ou Shift + arraste; no celular, toque e segure uma casa e arraste.</p>
+        <p class="keyboard-hint">Atalhos: ← e → navegam pelos lances. Com o foco no tabuleiro, as setas movem o foco entre as casas e Shift + ← / → navegam pelos lances.</p>
         <details class="rating-settings"><summary>Ajustar rating para avaliar os lances</summary><div class="rating-fields"><label>Rating das brancas <input id="white-rating" type="number" min="400" max="3000" step="50" value="1200"></label><label>Rating das pretas <input id="black-rating" type="number" min="400" max="3000" step="50" value="1200"></label></div><p>Os ratings do PGN são preenchidos automaticamente. Sem eles, usamos 1200. Isso ajusta uma estimativa própria de pontos esperados; a Chess.com não publica o modelo interno completo.</p></details>
         <section class="game-analysis" id="game-analysis" hidden aria-label="Análise da partida" aria-live="polite">
           <div class="game-analysis-progress"><div class="progress-copy"><span id="game-progress-label">Aguardando análise.</span><span id="game-progress-count"></span></div><progress id="game-progress" max="100" value="0"></progress></div>
@@ -248,6 +246,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=gabes-chess-board-arrows-1" defer></script>
+    <script src="app.js?v=gabes-chess-all-arrows-removed-1" defer></script>
   </body>
 </html>
