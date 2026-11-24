@@ -7,7 +7,7 @@
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=gabes-chess-brand-1">
+    <link rel="stylesheet" href="styles.css?v=gabes-chess-mobile-polish-1">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -206,7 +206,10 @@
               <span><i class="chart-quality-dot quality-great"></i>Grande lance</span>
               <span><i class="chart-quality-dot quality-missed"></i>Chance perdida</span>
             </div>
-            <svg class="advantage-chart" id="advantage-chart" viewBox="0 0 900 220" role="group" aria-label="Gráfico interativo da vantagem e qualidade dos lances"></svg>
+            <div class="advantage-chart-scroll" tabindex="0" aria-label="Gráfico da avaliação. Deslize na horizontal para percorrer os lances.">
+              <svg class="advantage-chart" id="advantage-chart" viewBox="0 0 900 220" role="group" aria-label="Gráfico interativo da vantagem e qualidade dos lances"></svg>
+            </div>
+            <p class="chart-mobile-hint">Deslize para os lados para percorrer os lances.</p>
             <div class="chart-point-tooltip" id="chart-point-tooltip" role="tooltip" hidden>
               <span class="chart-point-tooltip-symbol" id="chart-point-tooltip-symbol" aria-hidden="true"></span>
               <span class="chart-point-tooltip-copy"><strong id="chart-point-tooltip-quality"></strong><small id="chart-point-tooltip-move"></small><small id="chart-point-tooltip-evaluation"></small></span>
