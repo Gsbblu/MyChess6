@@ -920,7 +920,7 @@
       const dx = x2 - x1, dy = y2 - y1, length = Math.hypot(dx, dy) || 1;
       const ux = dx / length, uy = dy / length;
       const unitsPerPixel = 800 / Math.max(1, boardElement.getBoundingClientRect().width);
-      const headLength = 15 * unitsPerPixel, halfWidth = 9 * unitsPerPixel;
+      const headLength = 24 * unitsPerPixel, halfWidth = 12 * unitsPerPixel;
       const baseX = x2 - ux * headLength, baseY = y2 - uy * headLength;
       const px = -uy * halfWidth, py = ux * halfWidth;
       const head = document.createElementNS(namespace, 'path');
