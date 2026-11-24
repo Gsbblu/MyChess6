@@ -912,16 +912,18 @@
     const drawArrow = (from, to, kind, label) => {
       if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to < 0 || from > 63 || to > 63) return;
       const [x1, y1] = squarePoint(from), [x2, y2] = squarePoint(to);
-      const line = document.createElementNS(namespace, 'line');
-      line.setAttribute('x1', String(x1)); line.setAttribute('y1', String(y1));
-      line.setAttribute('x2', String(x2)); line.setAttribute('y2', String(y2));
-      line.setAttribute('class', `board-arrow-drawing board-arrow-${kind}`);
-      line.setAttribute('aria-label', label);
       const dx = x2 - x1, dy = y2 - y1, length = Math.hypot(dx, dy) || 1;
       const ux = dx / length, uy = dy / length;
       const unitsPerPixel = 800 / Math.max(1, boardElement.getBoundingClientRect().width);
       const headLength = 24 * unitsPerPixel, halfWidth = 12 * unitsPerPixel;
       const baseX = x2 - ux * headLength, baseY = y2 - uy * headLength;
+      const lineOverlap = 1.5 * unitsPerPixel;
+      const line = document.createElementNS(namespace, 'line');
+      line.setAttribute('x1', String(x1)); line.setAttribute('y1', String(y1));
+      line.setAttribute('x2', String(baseX + ux * lineOverlap));
+      line.setAttribute('y2', String(baseY + uy * lineOverlap));
+      line.setAttribute('class', `board-arrow-drawing board-arrow-${kind}`);
+      line.setAttribute('aria-label', label);
       const px = -uy * halfWidth, py = ux * halfWidth;
       const head = document.createElementNS(namespace, 'path');
       head.setAttribute('d', `M ${x2} ${y2} L ${baseX + px} ${baseY + py} L ${baseX - px} ${baseY - py} Z`);
