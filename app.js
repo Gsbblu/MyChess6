@@ -231,11 +231,18 @@
   let arrowGesture = null;
   let pendingMoveAnimation = null;
   let activeMoveAnimationCleanup = null;
+  let compactPieceMode = false;
+
+  const pieceAssetUrl = (piece) => {
+    const colorCode = white(piece) ? 'w' : 'b';
+    const folder = compactPieceMode ? 'compact/' : '';
+    const version = compactPieceMode ? 'compact-1' : 'chessboart-2';
+    return `public/assets/chessboart/pieces/${folder}${colorCode}${piece.toUpperCase()}.svg?v=${version}`;
+  };
 
   const pieceArtwork = (piece) => {
     if (piece === '.') return '';
-    const colorCode = white(piece) ? 'w' : 'b';
-    return `<img class="piece piece-${white(piece) ? 'white' : 'black'}" src="public/assets/chessboart/pieces/${colorCode}${piece.toUpperCase()}.svg?v=chessboart-2" alt="" aria-hidden="true" draggable="false">`;
+    return `<img class="piece piece-${white(piece) ? 'white' : 'black'}" src="${pieceAssetUrl(piece)}" alt="" aria-hidden="true" draggable="false">`;
   };
   const pieceMarkup = pieceArtwork;
 
@@ -1358,6 +1365,16 @@
     const baseWidth = Math.min(maxWidth, availableWidth);
     boardWrapElement.style.flex = '0 0 auto';
     boardWrapElement.style.width = `${Math.round(baseWidth * scale)}px`;
+    const useCompactPieces = scale < 0.9;
+    if (useCompactPieces !== compactPieceMode) {
+      compactPieceMode = useCompactPieces;
+      boardWrapElement.classList.toggle('compact-piece-mode', compactPieceMode);
+      for (const image of boardElement.querySelectorAll('.piece')) {
+        const square = image.closest('.square');
+        const piece = position.board[Number(square?.dataset.square)];
+        if (piece && piece !== '.') image.src = pieceAssetUrl(piece);
+      }
+    }
     if (meterVisible) {
       const baseHeight = window.innerWidth <= 850
         ? Math.min(window.innerWidth * 0.5, 500)
