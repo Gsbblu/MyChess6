@@ -1107,9 +1107,13 @@ body:before{background:radial-gradient(ellipse at 14% 20%,#50bdb02b 0,transparen
 /* Reduz repinturas frequentes durante navegação, arraste e revisão do gráfico. */
 .piece-white,.piece-black{filter:none}
 .piece{transition:transform .14s cubic-bezier(.2,.75,.25,1)}
-.square:hover .piece{transform:translateY(-2px)}
+.square:hover .piece{transform:translateY(-1px)}
 .board-wrap{filter:none}
 .piece-drag-ghost{top:0;left:0;will-change:transform}
+.piece-drag-ghost{filter:none}
+.piece-pointer-dragging .square:hover .piece{transform:translateY(-1px)}
+.topbar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body:before{animation:none!important;transform:none!important}
 .chart-advantage-segment,.chart-point-marker,.chart-point.selected .chart-point-marker{filter:none}
 .chart-point-marker{transition:r .12s ease}
 #punishment-walkthrough{display:none!important}

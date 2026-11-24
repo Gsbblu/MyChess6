@@ -222,6 +222,10 @@
   const analysisCache = new Map();
   const analysisCacheLimit = 256;
   let pointerDrag = null;
+  let pointerMoveFrame = 0;
+  let queuedPointerPosition = null;
+  const requestUiFrame = window.requestAnimationFrame?.bind(window) || ((callback) => window.setTimeout(callback, 16));
+  const cancelUiFrame = window.cancelAnimationFrame?.bind(window) || window.clearTimeout.bind(window);
   let suppressSquareClick = false;
   // The annotation layer is independent from the board's move-selection state.
   let manualArrows = [];
@@ -848,6 +852,7 @@
         const endX = destinationRect.left - layerRect.left + (destinationRect.width - sourceRectBeforeRender.width) / 2;
         const endY = destinationRect.top - layerRect.top + (destinationRect.height - sourceRectBeforeRender.height) / 2;
         movingPieceClone.style.cssText = `position:absolute;left:${startX}px;top:${startY}px;width:${sourceRectBeforeRender.width}px;height:${sourceRectBeforeRender.height}px;z-index:1;pointer-events:none;transition:none;`;
+        movingPieceClone.style.willChange = 'transform';
         boardWrapElement.append(animationLayer);
         animationLayer.append(movingPieceClone);
         destinationPiece.style.visibility = 'hidden';
@@ -1002,24 +1007,40 @@
     if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
     const dx = event.clientX - pointerDrag.startX, dy = event.clientY - pointerDrag.startY;
     if (!pointerDrag.moved && Math.hypot(dx, dy) < 7) return;
-    if (!pointerDrag.moved) {
-      pointerDrag.moved = true;
+    pointerDrag.moved = true;
+    event.preventDefault();
+    queuedPointerPosition = { pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY };
+    if (pointerMoveFrame) return;
+    pointerMoveFrame = requestUiFrame(() => {
+      pointerMoveFrame = 0;
+      const point = queuedPointerPosition; queuedPointerPosition = null;
+      if (!point || !pointerDrag || pointerDrag.pointerId !== point.pointerId) return;
+      paintPointerDrag(point);
+    });
+  }
+
+  function paintPointerDrag(point) {
+    if (!pointerDrag || pointerDrag.pointerId !== point.pointerId) return;
+    if (!pointerDrag.ghost) {
       const ghost = document.createElement('div'); ghost.className = 'piece-drag-ghost'; ghost.innerHTML = pieceMarkup(position.board[pointerDrag.from]);
       document.body.append(ghost); pointerDrag.ghost = ghost;
+      document.body.classList.add('piece-pointer-dragging');
       pointerDrag.origin.classList.add('piece-being-dragged');
     }
-    pointerDrag.ghost.style.transform = `translate3d(${event.clientX}px,${event.clientY}px,0) translate(-50%,-50%)`;
-    const over = document.elementFromPoint(event.clientX, event.clientY)?.closest('.square');
+    pointerDrag.ghost.style.transform = `translate3d(${point.clientX}px,${point.clientY}px,0) translate(-50%,-50%)`;
+    const over = document.elementFromPoint(point.clientX, point.clientY)?.closest('.square');
     const targetIndex = over ? Number(over.dataset.square) : -1;
     if (pointerDrag.target && Number(pointerDrag.target.dataset.square) !== targetIndex) pointerDrag.target.classList.remove('drag-over');
     pointerDrag.target = over;
     if (over && legalTargets.some((move) => move.to === targetIndex)) over.classList.add('drag-over');
-    event.preventDefault();
   }
 
   function finishPointerDrag(event, cancelled = false) {
     if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+    if (pointerMoveFrame) cancelUiFrame(pointerMoveFrame);
+    pointerMoveFrame = 0; queuedPointerPosition = null;
     const drag = pointerDrag; pointerDrag = null;
+    document.body.classList.remove('piece-pointer-dragging');
     drag.ghost?.remove(); drag.origin.classList.remove('piece-being-dragged'); drag.target?.classList.remove('drag-over');
     if (cancelled) return;
     if (drag.moved) {
