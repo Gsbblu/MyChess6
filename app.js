@@ -3674,6 +3674,11 @@
       .filter(({ result }) => goodKinds.has(result.quality.kind) && summaryItemLesson({ result })?.explanation === 'verified' && summaryItemLesson({ result }).positives.some((entry) => entry.kind === 'fact'))
       .sort((a, b) => ['brilliant', 'great'].includes(b.result.quality.kind) - ['brilliant', 'great'].includes(a.result.quality.kind))[0];
     if (standout) addCoachCard(standout, true);
+    if (!gameSummaryCoach.childElementCount) {
+      const note = document.createElement('p'); note.className = 'game-summary-note';
+      note.textContent = 'Esta análise salva não contém explicações guiadas para exibir.';
+      gameSummaryCoach.append(note);
+    }
 
     gameSummaryOpening.replaceChildren();
     const opening = document.createElement('p'); opening.className = 'game-summary-note';
