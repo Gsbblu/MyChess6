@@ -239,7 +239,7 @@
   const pieceArtwork = (piece) => {
     if (piece === '.') return '';
     const colorCode = white(piece) ? 'w' : 'b';
-    return `<img class="piece piece-${white(piece) ? 'white' : 'black'}" src="public/assets/chessboart/pieces/${colorCode}${piece.toUpperCase()}.svg" alt="" aria-hidden="true" draggable="false">`;
+    return `<img class="piece piece-${white(piece) ? 'white' : 'black'}" src="public/assets/chessboart/pieces/${colorCode}${piece.toUpperCase()}.svg?v=chessboart-2" alt="" aria-hidden="true" draggable="false">`;
   };
   const pieceMarkup = pieceArtwork;
 
