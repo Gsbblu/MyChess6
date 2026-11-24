@@ -232,6 +232,8 @@
   let boardAnnotations = [];
   let annotationFen = null;
   let arrowGesture = null;
+  let touchArrowPending = null;
+  let touchArrowTimer = 0;
   let pendingMoveAnimation = null;
   let activeMoveAnimationCleanup = null;
   let compactPieceMode = false;
@@ -921,9 +923,40 @@
   }
 
   function beginArrowGesture(event) {
-    if (event.button !== 2) return false;
     const cell = event.target?.closest?.('.square');
     if (!cell || !boardElement.contains(cell)) return false;
+    if (event.pointerType === 'touch' && event.button === 0) {
+      clearTimeout(touchArrowTimer);
+      touchArrowPending = {
+        pointerId: event.pointerId,
+        from: Number(cell.dataset.square),
+        startX: event.clientX,
+        startY: event.clientY
+      };
+      touchArrowTimer = window.setTimeout(() => {
+        const pending = touchArrowPending;
+        if (!pending) return;
+        touchArrowPending = null;
+        touchArrowTimer = 0;
+        pointerDrag = null;
+        selected = -1; legalTargets = [];
+        paintSelection(-1);
+        arrowGesture = {
+          pointerId: pending.pointerId,
+          from: pending.from,
+          to: pending.from,
+          startX: pending.startX,
+          startY: pending.startY,
+          moved: false,
+          drawOnlyOnDrag: true,
+          suppressClick: true
+        };
+        try { boardElement.setPointerCapture(pending.pointerId); } catch {}
+      }, 420);
+      return false;
+    }
+    const modifiedPrimary = event.button === 0 && (event.shiftKey || event.ctrlKey);
+    if (event.button !== 2 && !modifiedPrimary) return false;
     event.preventDefault();
     arrowGesture = {
       pointerId: event.pointerId,
@@ -931,12 +964,20 @@
       to: Number(cell.dataset.square),
       startX: event.clientX,
       startY: event.clientY,
-      moved: false
+      moved: false,
+      suppressClick: modifiedPrimary
     };
     if (Number.isInteger(event.pointerId)) {
       try { event.currentTarget.setPointerCapture(event.pointerId); } catch {}
     }
     return true;
+  }
+
+  function cancelPendingTouchArrow(pointerId) {
+    if (!touchArrowPending || (Number.isInteger(pointerId) && pointerId !== touchArrowPending.pointerId)) return;
+    clearTimeout(touchArrowTimer);
+    touchArrowTimer = 0;
+    touchArrowPending = null;
   }
 
   function squareAtPoint(clientX, clientY) {
@@ -960,7 +1001,10 @@
       if (Math.hypot(event.clientX - gesture.startX, event.clientY - gesture.startY) >= 6) gesture.moved = true;
       const pointSquare = squareAtPoint(event.clientX, event.clientY);
       const to = pointSquare >= 0 ? pointSquare : gesture.to;
-      if (to >= 0 && ((gesture.moved && to !== gesture.from) || (!gesture.moved && to === gesture.from))) {
+      const shouldAnnotate = gesture.drawOnlyOnDrag
+        ? gesture.moved && to >= 0 && to !== gesture.from
+        : to >= 0 && ((gesture.moved && to !== gesture.from) || (!gesture.moved && to === gesture.from));
+      if (shouldAnnotate) {
         if (to === gesture.from) {
           const existing = boardAnnotations.findIndex((annotation) => annotation.type === 'square' && annotation.square === to);
           if (existing >= 0) boardAnnotations.splice(existing, 1);
@@ -973,6 +1017,10 @@
         }
         annotationFen = currentFen(position);
         renderAnnotationArrows();
+        if (gesture.suppressClick) {
+          suppressSquareClick = true;
+          window.setTimeout(() => { suppressSquareClick = false; }, 200);
+        }
       }
     }
     return true;
@@ -1040,6 +1088,7 @@
   }
 
   function beginPointerDrag(event, square, origin) {
+    if (arrowGesture) return;
     const piece = position.board[square];
     if (event.button !== 0 || piece === '.' || color(piece) !== position.turn) return;
     pointerDrag = { pointerId: event.pointerId, from: square, origin, startX: event.clientX, startY: event.clientY, moved: false, target: null };
@@ -1061,6 +1110,10 @@
 
   function updatePointerDrag(event) {
     if (updateArrowGesture(event)) return;
+    if (touchArrowPending && touchArrowPending.pointerId === event.pointerId
+      && Math.hypot(event.clientX - touchArrowPending.startX, event.clientY - touchArrowPending.startY) >= 6) {
+      cancelPendingTouchArrow(event.pointerId);
+    }
     if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
     const dx = event.clientX - pointerDrag.startX, dy = event.clientY - pointerDrag.startY;
     if (!pointerDrag.moved && Math.hypot(dx, dy) < 7) return;
@@ -1081,6 +1134,7 @@
 
   function finishPointerDrag(event, cancelled = false) {
     if (finishArrowGesture(event, cancelled)) return;
+    cancelPendingTouchArrow(event.pointerId);
     if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
     const drag = pointerDrag; pointerDrag = null;
     drag.ghost?.remove(); drag.origin.classList.remove('piece-being-dragged'); drag.target?.classList.remove('drag-over');
@@ -1112,7 +1166,7 @@
     if (squareElement && boardElement.contains(squareElement)) beginPointerDrag(event, Number(squareElement.dataset.square), squareElement);
   });
   boardElement.addEventListener('pointerdown', beginArrowGesture, true);
-  window.addEventListener('blur', () => { arrowGesture = null; });
+  window.addEventListener('blur', () => { arrowGesture = null; cancelPendingTouchArrow(); });
   boardElement.addEventListener('contextmenu', (event) => {
     event.preventDefault();
   }, true);
