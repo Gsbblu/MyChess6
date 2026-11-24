@@ -975,3 +975,4 @@ footer{height:auto;min-height:75px;padding:14px 0 12px;flex-wrap:wrap}
 .piece-drag-ghost{top:0;left:0;will-change:transform}
 .chart-advantage-segment,.chart-point-marker,.chart-point.selected .chart-point-marker{filter:none}
 .chart-point-marker{transition:r .12s ease}
+#punishment-walkthrough{display:none!important}

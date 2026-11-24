@@ -7,7 +7,7 @@
     <meta name="description" content="MyChess 6 — revisão de xadrez e análise automática de partidas.">
     <title>MyChess 6 — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=mychess6-review-style-20261123-21">
+    <link rel="stylesheet" href="styles.css?v=mychess6-review-style-20261124-22">
   </head>
   <body>
     <noscript><p class="import-status error" role="alert">O MyChess 6 precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -16,7 +16,6 @@
         <span class="brand-mark" aria-hidden="true">♞</span>
         <span>MyChess<strong>6</strong></span>
       </a>
-      <span class="free-badge"><span></span> Gratuito e aberto</span>
     </header>
 
     <main id="analisar" class="page-shell">
@@ -26,7 +25,6 @@
           <h1 id="page-title">Entenda o que <em>decidiu</em> a partida.</h1>
           <p class="intro-copy">Encontre os momentos importantes e aprenda com suas decisões.</p>
         </div>
-        <div class="engine-pill"><span class="pulse-dot"></span><span id="engine-pill-label">Motor local desconectado</span></div>
       </section>
 
       <section class="import-card" aria-label="Importar partida">
@@ -56,7 +54,6 @@
             <div class="archive-pane-title"><h3 id="chesscom-title">Partidas públicas de Gab0bu</h3><span class="archive-tag">PERFIL CONFIGURADO</span></div>
             <form class="chesscom-search" id="chesscom-search"><label for="chesscom-username">Seu perfil Chess.com</label><div><input id="chesscom-username" name="username" value="Gab0bu" autocomplete="off" readonly required><button class="primary-button" type="submit">Atualizar</button></div></form>
             <div class="archive-filters"><label for="chesscom-month">Arquivo mensal</label><select id="chesscom-month" disabled><option>Busque um jogador</option></select><label for="chesscom-timeclass">Ritmo</label><select id="chesscom-timeclass"><option value="all">Todos</option><option value="bullet">Bullet</option><option value="blitz">Blitz</option><option value="rapid">Rápidas</option><option value="daily">Diárias</option></select></div>
-            <label class="auto-analysis-setting"><input id="auto-analyze-chesscom" type="checkbox"> Também analisar partidas nesta página quando ela estiver aberta</label>
             <p class="archive-footnote">A análise em nuvem roda por conta própria. A API pública do Chess.com pode atualizar as partidas com atraso.</p>
             <p class="archive-status" id="chesscom-status" role="status" aria-live="polite">As partidas públicas de Gab0bu serão carregadas automaticamente.</p>
             <div class="external-games-list" id="chesscom-games"></div>
@@ -130,7 +127,7 @@
               <p id="game-review-explanation"></p>
               <p class="coach-question" id="game-review-question" hidden></p>
               <p class="exercise-feedback" id="exercise-feedback" hidden></p>
-              <div class="punishment-walkthrough" id="punishment-walkthrough" hidden>
+              <div class="punishment-walkthrough" id="punishment-walkthrough" hidden aria-hidden="true">
                 <span class="punishment-eyebrow">LINHA DO STOCKFISH</span>
                 <p id="punishment-status" aria-live="polite"></p>
                 <button class="text-button punishment-step-button" id="punishment-step" type="button">Ver a resposta, lance a lance</button>
@@ -248,6 +245,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=mychess6-review-style-20261123-21" defer></script>
+    <script src="app.js?v=mychess6-review-style-20261124-22" defer></script>
   </body>
 </html>
