@@ -83,10 +83,9 @@ h1,h2,p{margin-top:0}h1{font:700 clamp(28px,3.1vw,39px)/1.2 Manrope,sans-serif;l
 .square.drag-over{box-shadow:inset 0 0 0 4px #f5d34b;z-index:1}
 .square.legal-target:after{background:#1b251b55}
 .square.legal-capture:after{border-color:#1b251b66}
-.piece{display:block;width:86%;height:86%;overflow:visible;pointer-events:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round;transition:transform .12s ease}
-.piece-white{fill:#f6f3e7;stroke:#77735f;filter:drop-shadow(0 2px 1px #2228)}
-.piece-black{fill:#39443b;stroke:#172019;filter:drop-shadow(0 2px 1px #0008)}
-.piece-eye{fill:#151b15;stroke:none}
+.piece{display:block;width:90%;height:90%;overflow:visible;object-fit:contain;pointer-events:none;transition:transform .12s ease}
+.piece-white{filter:drop-shadow(0 1px 1.5px #020807a8)}
+.piece-black{filter:drop-shadow(0 1px 1.5px #020807cc)}
 .piece-being-dragged>.piece{opacity:.2}
 .piece-drag-ghost{position:fixed;z-index:1000;width:clamp(48px,8vw,84px);aspect-ratio:1;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 8px #0008)}
 .piece-drag-ghost .piece{width:100%;height:100%}
@@ -942,14 +941,15 @@ footer span:first-child{color:#a8d8cc}
 @media(max-width:650px){.archive-heading h2{font-size:22px}.board-card:hover,.analysis-card:hover,.archive-card:hover{transform:none}.free-badge{padding:6px 8px}.import-card:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.intro,.sparkle{animation:none!important}*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
-/* Tabuleiro gravado: casas hachuradas e peças vetoriais com detalhes à tinta. */
+/* Tema ChessboArt: textura original monocromática e peças SVG sem filtros de cor. */
 .board-wrap{filter:drop-shadow(0 12px 22px #0004)}
 .board-surface{border:1px solid #6b8277;border-radius:5px;background:linear-gradient(145deg,#182220,#0d1312);box-shadow:0 0 0 3px #111a18,0 0 0 4px #31443e,0 16px 38px #0007}
-.chessboard{gap:1px;padding:4px;border:0;border-radius:4px;background:linear-gradient(145deg,#40564c,#1a2422 45%,#31433d);box-shadow:inset 0 0 0 1px #82988a66,0 8px 26px #0007}
-.square.light,.square.dark{position:relative;isolation:isolate;color:inherit;text-shadow:none}
-.square.light{background-color:#283a35;background-image:linear-gradient(145deg,#30453e,#253833)}
-.square.dark{background-color:#192522;background-image:linear-gradient(145deg,#1d2b28,#17211f)}
-.square.light:after{position:absolute;z-index:-1;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%2399cbb5' stroke-opacity='.16' stroke-width='1.15'%3E%3Cpath d='M-8 7C7 13 13 26 28 30s21 3 51-6M-10 24c20-5 27 13 45 17s22 3 47-6M-8 43c18-6 24 11 42 16s24 3 47-6M-4 65c17-9 26 8 45 12s20 1 40-9M8-5C4 9 19 14 20 28s-6 17 3 30 11 13 8 22M42-5c-6 15 9 24 7 37s-7 16 4 28 13 12 9 20'/%3E%3C/g%3E%3C/svg%3E");background-size:72px 72px;content:"";pointer-events:none}
+.chessboard{position:relative;isolation:isolate;gap:0;padding:4px;border:0;border-radius:4px;background:linear-gradient(145deg,#40564c,#1a2422 45%,#31433d);box-shadow:inset 0 0 0 1px #82988a66,0 8px 26px #0007}
+.chessboard:before{position:absolute;z-index:0;inset:4px;background:url("public/assets/chessboart/board/chessboart.svg") center/100% 100% no-repeat;filter:grayscale(100%) contrast(150%);content:"";pointer-events:none}
+.square.light,.square.dark{position:relative;z-index:1;isolation:isolate;color:inherit;text-shadow:none;background:transparent!important}
+.square.light:not(.legal-target):not(.legal-capture):after{content:none}
+.square.legal-capture:after{background:none}
+.square:hover{filter:none}
 .square.last-move:before{background:linear-gradient(135deg,#62c8ba40,#6688dc32)}
 .square.selected,.square.drag-over{z-index:1;box-shadow:inset 0 0 0 3px #8fe2d1,0 0 15px #62c8ba34}
 .square:focus-visible{z-index:2;outline:2px solid #b9f2e4;outline-offset:-3px}
@@ -959,8 +959,10 @@ footer span:first-child{color:#a8d8cc}
 .square:hover .piece{transform:translateY(-3px) scale(1.035)}
 .piece-white{--piece-etch:#394b43;fill:#e4e9d9;stroke:#5e7063;filter:drop-shadow(0 2px 1.5px #030807aa)}
 .piece-black{--piece-etch:#b4d2c3;fill:#111918;stroke:#9ab5a8;filter:drop-shadow(0 2px 1.5px #030807cc)}
-.piece-engraving{fill:none;stroke:var(--piece-etch);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;opacity:.88;pointer-events:none}
-.piece-eye{fill:var(--piece-etch);stroke:none}
 .rank-labels,.file-labels{color:#85b8aa;text-shadow:0 1px 5px #08110f}
 .turn-indicator span{background:#b8e8da;box-shadow:0 0 0 2px #42635a,0 0 10px #62c8ba55}
+.asset-credit{flex:1 0 100%;order:4;padding-top:2px;color:#758d84;font-size:9px;line-height:1.5;text-align:center}
+.asset-credit a{color:#91bdb0;text-decoration-color:#52786d;text-underline-offset:2px;transition:color .18s ease,text-decoration-color .18s ease}
+.asset-credit a:hover{color:#c3e8dc;text-decoration-color:#8ddace}
+footer{height:auto;min-height:75px;padding:14px 0 12px;flex-wrap:wrap}
 @media(prefers-reduced-motion:reduce){.piece,.square{transition:none!important}}

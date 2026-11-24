@@ -13,7 +13,7 @@ O envio torna os arquivos da pasta `publicacao` disponíveis ao serviço de hosp
 
 ## Atualizar o site publicado
 
-Antes de publicar mudanças futuras, copie para `publicacao/` as versões atualizadas de `index.html`, `styles.css`, `app.js`, `coach.js` e `insights.js`. Se os arquivos do motor ou a licença mudarem, atualize também `publicacao/public/engine/`. Rode `python3 tests/verificar_projeto.py`: ele falha se a cópia em `publicacao/` estiver diferente dos arquivos principais. Depois, arraste novamente a pasta `publicacao` à área de deploy do projeto existente no Netlify.
+Antes de publicar mudanças futuras, copie para `publicacao/` as versões atualizadas de `index.html`, `styles.css`, `app.js`, `coach.js` e `insights.js`. Mantenha também `public/assets/chessboart/` sincronizada em `publicacao/public/assets/chessboart/`, incluindo a atribuição e a licença dos assets. Se os arquivos do motor ou a licença mudarem, atualize também `publicacao/public/engine/`. Rode `python3 tests/verificar_projeto.py`: ele falha se a cópia em `publicacao/` estiver diferente dos arquivos principais. Depois, arraste novamente a pasta `publicacao` à área de deploy do projeto existente no Netlify.
 
 ## Observações
 

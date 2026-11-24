@@ -103,6 +103,7 @@ Dê dois cliques em `INICIAR-MYCHESS5.desktop` e escolha **Permitir iniciar** ou
 - `insights.js` — Visão geral: transforma as análises salvas em diagnóstico, prioridades de treino e evidências (módulo puro, testável em Node).
 - `coach.js` — treinador: transforma duas análises do motor em fatos calculados, indícios e incertezas (módulo puro, testável em Node).
 - `public/engine/` — compilação local do Stockfish.js e texto da licença GPL-3.0.
+- `public/assets/chessboart/` — peças e textura originais ChessboArt, créditos, licença e comandos `curl` para baixar novamente.
 - `iniciar-servidor.py`, `abrir-xadrez-livre.sh` e `INICIAR-MYCHESS5.desktop` — iniciador local opcional.
 - `cloud-data/index.json` e `cloud-data/shards/` — biblioteca compartilhada e cursor do processamento automático; cada shard tem limite de 5 MiB.
 - `scripts/cloud_analyze.py` e `scripts/cloud_data_guard.py` — geração da biblioteca e bloqueio de arquivos acima do limite interno antes da publicação.
