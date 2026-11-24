@@ -832,7 +832,7 @@
     arrowLayer.classList.add('board-arrow-layer');
     arrowLayer.setAttribute('viewBox', '0 0 800 800');
     arrowLayer.setAttribute('aria-hidden', 'true');
-    arrowLayer.innerHTML = '<defs><marker id="board-arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>';
+    arrowLayer.innerHTML = '<defs><marker id="board-arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>';
     boardElement.append(arrowLayer);
     renderBoardArrows(arrowLayer);
     if (movingPieceClone && sourceRectBeforeRender && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
@@ -923,9 +923,10 @@
     };
     if (highlightedSquare >= 0) {
       const [x, y] = squarePoint(highlightedSquare);
-      const circle = document.createElementNS(namespace, 'circle');
-      circle.setAttribute('cx', String(x)); circle.setAttribute('cy', String(y)); circle.setAttribute('r', '44');
-      circle.setAttribute('class', 'board-arrow-drawing board-square-highlight'); layer.append(circle);
+      const squareHighlight = document.createElementNS(namespace, 'rect');
+      squareHighlight.setAttribute('x', String(x - 50)); squareHighlight.setAttribute('y', String(y - 50));
+      squareHighlight.setAttribute('width', '100'); squareHighlight.setAttribute('height', '100');
+      squareHighlight.setAttribute('class', 'board-arrow-drawing board-square-highlight'); layer.append(squareHighlight);
     }
     manualArrows.forEach(({ from, to }) => drawArrow(from, to, 'manual', 'Flecha manual'));
     const candidates = [];

@@ -65,7 +65,7 @@ Na revisão de um lance analisado, **Ver a melhor alternativa** inicia uma linha
 ### Flechas e destaques no tabuleiro
 
 - **Mouse:** clique com o botão direito numa casa e arraste até outra para criar uma flecha. Repita o mesmo gesto para removê-la.
-- **Toque:** mantenha uma casa pressionada por cerca de meio segundo e arraste até outra. A pressão sem arraste destaca a casa; repita para remover o destaque.
+- **Toque:** mantenha uma casa pressionada por cerca de meio segundo e arraste até outra. A pressão sem arraste destaca a casa inteira em vermelho translúcido; repita para remover o destaque.
 - O botão **Limpar** remove as anotações manuais. Elas são apagadas ao mudar a posição e acompanham a orientação visual quando o tabuleiro é invertido.
 - Depois de analisar uma posição ou navegar por uma análise da partida, uma flecha verde mostra o melhor lance e até duas azuis mostram as alternativas principais calculadas pelo Stockfish. Elas acompanham a posição exibida e não são marcações manuais.
 - As flechas são uma camada visual sem captura de ponteiro; seleção, movimento por clique/toque e arraste de peças continuam usando as casas do tabuleiro. O desenho é decorativo e não recebe foco de teclado; as jogadas também aparecem como texto acessível no painel de análise.
