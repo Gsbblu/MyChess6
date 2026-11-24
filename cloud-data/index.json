@@ -1,12 +1,12 @@
 {
   "format": "MyChess cloud library",
   "version": 2,
-  "revision": "ef44529e1f6c732f1db789a473833644a9da5e6c4f247fd9646ffe507b77e91a",
+  "revision": "74cb09b485c2b0dcff395928771209395421259b37c2f317467476f800b3cce9",
   "lastSeenGameUrl": "https://www.chess.com/game/live/187862075762",
   "backfillArchiveUrl": "",
   "backfillComplete": true,
   "pendingInArchive": 0,
-  "gameCount": 391,
+  "gameCount": 393,
   "shards": [
     {
       "path": "games-00.json",
@@ -286,9 +286,9 @@
     },
     {
       "path": "games-7.json",
-      "gameCount": 16,
-      "bytes": 2693511,
-      "sha256": "8c5f951f69fbefc29195781961c57420c896b66b27cf4ad3fe9b9b1c79d73a7d"
+      "gameCount": 17,
+      "bytes": 2767192,
+      "sha256": "8216e44f03561daa8139e69350a38aa11becd03db592b0b295cf12ba06517e64"
     },
     {
       "path": "games-8.json",
@@ -484,9 +484,9 @@
     },
     {
       "path": "games-f.json",
-      "gameCount": 22,
-      "bytes": 3241147,
-      "sha256": "619f0383653b2fb8d26a9a5a5b9847b6b4fd23c8e47a38a00be78ddfd599fe17"
+      "gameCount": 23,
+      "bytes": 3640642,
+      "sha256": "4dfc5082f89b4c13fc1d38e159f12b1cc078d991760fcb706ecedd14728b7ff9"
     }
   ]
 }
