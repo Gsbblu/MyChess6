@@ -182,6 +182,7 @@
   let analysisSerial = 0;
   let gameBatch = null;
   let gameReviewResults = [];
+  const siteSuperAnalysisCache = new Map();
   let siteSuperAnalysisResultKey = '';
   let siteSuperAnalysisRequestId = 0;
   let siteSuperAnalysisTurnstileWidget = null;
@@ -2787,14 +2788,23 @@
     const config = window.MYCHESS_SUPER_ANALYSIS || {};
     runSiteSuperAnalysisButton.hidden = !config.endpoint || !config.turnstileSiteKey;
     superAnalysisActions.classList.toggle('has-internal-analysis', !runSiteSuperAnalysisButton.hidden);
-    const currentKey = prompt ? `${currentFen(history[historyIndex - 1].position)}|${currentFen(history[historyIndex].position)}` : '';
-    if (siteSuperAnalysisResultKey !== currentKey) {
+    const currentKey = prompt || '';
+    const keyChanged = siteSuperAnalysisResultKey !== currentKey;
+    if (keyChanged) {
       siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
       siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
       siteSuperAnalysisResultKey = currentKey;
-      superAnalysisResult.hidden = true;
-      superAnalysisResult.textContent = '';
       superAnalysisChallenge.hidden = true;
+    }
+    const cachedAnswer = currentKey ? siteSuperAnalysisCache.get(currentKey) : null;
+    if (cachedAnswer) {
+      renderSuperAnalysisMarkdown(cachedAnswer);
+      superAnalysisResult.hidden = false;
+      superAnalysisChallenge.hidden = true;
+      superAnalysisStatus.textContent = 'Análise recuperada desta sessão.';
+    } else if (keyChanged) {
+      superAnalysisResult.hidden = true;
+      superAnalysisResult.replaceChildren();
       superAnalysisStatus.textContent = '';
     }
     if (superAnalysisActions.hidden) superAnalysisStatus.textContent = '';
@@ -2960,6 +2970,7 @@
       const answer = typeof payload.answer === 'string' ? payload.answer.trim() : '';
       if (!answer) throw new Error('O modelo não retornou uma análise. Tente novamente.');
       if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisResultKey) {
+        siteSuperAnalysisCache.set(resultKey, answer);
         renderSuperAnalysisMarkdown(answer);
         superAnalysisResult.hidden = false;
         superAnalysisStatus.textContent = 'Análise concluída.';
