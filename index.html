@@ -192,6 +192,10 @@
               <span><i class="chart-quality-dot quality-missed"></i>Chance perdida</span>
             </div>
             <svg class="advantage-chart" id="advantage-chart" viewBox="0 0 900 250" role="group" aria-label="Gráfico interativo da vantagem e qualidade dos lances"></svg>
+            <div class="chart-point-tooltip" id="chart-point-tooltip" role="tooltip" hidden>
+              <span class="chart-point-tooltip-symbol" id="chart-point-tooltip-symbol" aria-hidden="true"></span>
+              <span class="chart-point-tooltip-copy"><strong id="chart-point-tooltip-quality"></strong><small id="chart-point-tooltip-move"></small></span>
+            </div>
             <p class="advantage-chart-status" id="advantage-chart-status" aria-live="polite">A análise do Stockfish preencherá o gráfico.</p>
           </section>
           <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">

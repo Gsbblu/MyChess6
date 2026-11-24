@@ -833,3 +833,41 @@ body.has-game .page-shell{padding-bottom:100px}
   .chart-quality-legend>span{font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){.move-pair,.move-entry,.game-analyze-button,.chart-point-marker{transition:none!important}}
+
+/* Marcadores com contraste alto e balão de classificação no ponto ativo. */
+.advantage-chart-card{position:relative}
+.chart-quality-dot{width:8px;height:8px;border:1px solid #101512;border-radius:50%}
+.chart-quality-dot.quality-best{background:#78e58b}
+.chart-quality-dot.quality-excellent{background:#55c6ed}
+.chart-quality-dot.quality-good{background:#c5df78}
+.chart-quality-dot.quality-inaccuracy{background:#ffd34f}
+.chart-quality-dot.quality-mistake{background:#ff995b}
+.chart-quality-dot.quality-blunder{background:#ff696e}
+.chart-quality-dot.quality-missed{background:#eb6eae}
+.chart-quality-dot.quality-brilliant{background:#43d5e8}
+.chart-quality-dot.quality-great{background:#bc91ff}
+.chart-point-marker{stroke:#0e1411;stroke-width:1.8;paint-order:stroke;filter:drop-shadow(0 0 2px #000b);transition:r .14s ease,filter .14s ease}
+.chart-point.selected .chart-point-marker{stroke:#f7fff3;stroke-width:2.2;filter:drop-shadow(0 0 5px #f3ffe6cc)}
+.chart-point:focus-visible .chart-point-marker{stroke:#fff;stroke-width:2.6}
+.chart-point-tooltip{position:absolute;z-index:4;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px;min-width:155px;max-width:min(225px,calc(100vw - 36px));padding:9px 11px;border:1px solid #536257;border-radius:9px;background:linear-gradient(145deg,#26332a,#1a241d);box-shadow:0 8px 24px #0009,0 0 0 1px #0b100d;pointer-events:none;transform:translate(-50%,calc(-100% - 11px));animation:chart-tooltip-in .12s ease-out}
+.chart-point-tooltip[hidden]{display:none!important}
+.chart-point-tooltip:after{position:absolute;bottom:-7px;left:50%;width:12px;height:12px;border-right:1px solid #536257;border-bottom:1px solid #536257;background:#202b23;content:"";transform:translateX(-50%) rotate(45deg)}
+.chart-point-tooltip.is-below{transform:translate(-50%,11px)}
+.chart-point-tooltip.is-below:after{top:-7px;bottom:auto;border:0;border-top:1px solid #536257;border-left:1px solid #536257}
+.chart-point-tooltip-symbol{display:grid;place-items:center;width:27px;height:27px;border:1px solid currentColor;border-radius:7px;font-size:14px;font-weight:800;line-height:1}
+.chart-point-tooltip-copy{display:grid;gap:3px;min-width:0}
+.chart-point-tooltip-copy strong{overflow:hidden;color:#edf4eb;font-size:11px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.chart-point-tooltip-copy small{overflow:hidden;color:#a6b4a8;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.chart-point-tooltip-symbol.quality-mark-best{color:#78e58b;background:#78e58b1d}
+.chart-point-tooltip-symbol.quality-mark-excellent{color:#55c6ed;background:#55c6ed1d}
+.chart-point-tooltip-symbol.quality-mark-good{color:#c5df78;background:#c5df781d}
+.chart-point-tooltip-symbol.quality-mark-inaccuracy{color:#ffd34f;background:#ffd34f1d}
+.chart-point-tooltip-symbol.quality-mark-mistake{color:#ff995b;background:#ff995b1d}
+.chart-point-tooltip-symbol.quality-mark-blunder{color:#ff696e;background:#ff696e1d}
+.chart-point-tooltip-symbol.quality-mark-missed{color:#eb6eae;background:#eb6eae1d}
+.chart-point-tooltip-symbol.quality-mark-brilliant{color:#43d5e8;background:#43d5e81d}
+.chart-point-tooltip-symbol.quality-mark-great{color:#bc91ff;background:#bc91ff1d}
+.chart-point-tooltip-symbol.quality-mark-unknown{color:#bdc8be;background:#bdc8be1d}
+.chart-point-tooltip-symbol.quality-mark-pending{color:#bdc8be;background:#bdc8be1d}
+@keyframes chart-tooltip-in{from{opacity:0;translate:0 3px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.chart-point-tooltip{animation:none}}

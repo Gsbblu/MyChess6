@@ -123,7 +123,32 @@
   const advantageChart = document.querySelector('#advantage-chart');
   const advantageChartStatus = document.querySelector('#advantage-chart-status');
   const chartCurrentEval = document.querySelector('#chart-current-eval');
+  const chartPointTooltip = document.querySelector('#chart-point-tooltip');
+  const chartTooltipSymbol = document.querySelector('#chart-point-tooltip-symbol');
+  const chartTooltipQuality = document.querySelector('#chart-point-tooltip-quality');
+  const chartTooltipMove = document.querySelector('#chart-point-tooltip-move');
   let chartSelectPointAt = null;
+  function hideChartPointTooltip() { chartPointTooltip.hidden = true; }
+  function showChartPointTooltip(point, moveLabel) {
+    const mark = point.index === 0 ? { symbol: '·', title: 'Posição inicial', kind: 'unknown' } : qualityMark(point.result.quality);
+    chartTooltipSymbol.textContent = mark.symbol;
+    chartTooltipSymbol.className = `chart-point-tooltip-symbol quality-mark-${mark.kind}`;
+    chartTooltipQuality.textContent = point.result.quality?.label || mark.title;
+    chartTooltipMove.textContent = moveLabel;
+    chartPointTooltip.hidden = false;
+    const matrix = advantageChart.getScreenCTM?.();
+    if (!matrix || !advantageChart.createSVGPoint) return;
+    const marker = advantageChart.createSVGPoint(); marker.x = point.x; marker.y = point.y;
+    const screen = marker.matrixTransform(matrix);
+    const chartRect = advantageChart.closest('.advantage-chart-card').getBoundingClientRect();
+    const tooltipWidth = chartPointTooltip.offsetWidth;
+    const left = Math.max(tooltipWidth / 2 + 8, Math.min(chartRect.width - tooltipWidth / 2 - 8, screen.x - chartRect.left));
+    const top = screen.y - chartRect.top;
+    const placeBelow = top < chartPointTooltip.offsetHeight + 22;
+    chartPointTooltip.classList.toggle('is-below', placeBelow);
+    chartPointTooltip.style.left = `${left}px`;
+    chartPointTooltip.style.top = `${top}px`;
+  }
   advantageChart.addEventListener('click', (event) => {
     if (!chartSelectPointAt || !advantageChart.getScreenCTM || !advantageChart.createSVGPoint) return;
     const matrix = advantageChart.getScreenCTM(); if (!matrix) return;
@@ -3825,9 +3850,9 @@
     const qualityColor = (result, index) => {
       const kind = result.quality?.kind;
       return ({
-        best: '#9edb83', excellent: '#b9d787', good: '#d8d289',
-        inaccuracy: '#efd279', mistake: '#f0aa71', blunder: '#f08c7d', missed: '#f08c9a',
-        brilliant: '#82d9dc', great: '#c5a9f2'
+        best: '#78e58b', excellent: '#55c6ed', good: '#c5df78',
+        inaccuracy: '#ffd34f', mistake: '#ff995b', blunder: '#ff696e', missed: '#eb6eae',
+        brilliant: '#43d5e8', great: '#bc91ff'
       })[kind] || (index === 0 ? '#d8e3d5' : '#89958b');
     };
 
@@ -3886,12 +3911,17 @@
         'data-move-index': point.index,
         role: 'button',
         tabindex: '0',
+        'aria-describedby': 'chart-point-tooltip',
         'aria-label': `${moveText(point.index)}: ${scoreText(point.result)}, ${quality}. Ir para esta posição no tabuleiro.`
       });
       group.append(make('title', {}, `${moveText(point.index)} · ${scoreText(point.result)} · ${quality}`));
       group.append(make('circle', { cx: point.x, cy: point.y, r: 4.5, class: 'chart-point-hit-area' }));
-      group.append(make('circle', { cx: point.x, cy: point.y, r: point.index === historyIndex ? 5.5 : 3.2, class: 'chart-point-marker' }));
+      group.append(make('circle', { cx: point.x, cy: point.y, r: point.index === historyIndex ? 6.3 : 4.1, class: 'chart-point-marker' }));
       group.lastChild.setAttribute('fill', qualityColor(point.result, point.index));
+      group.addEventListener('pointerenter', () => showChartPointTooltip(point, moveText(point.index)));
+      group.addEventListener('pointerleave', hideChartPointTooltip);
+      group.addEventListener('focus', () => showChartPointTooltip(point, moveText(point.index)));
+      group.addEventListener('blur', hideChartPointTooltip);
       group.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectPoint(point); }
       });
@@ -3911,7 +3941,7 @@
       point.classList.toggle('selected', selectedPoint);
       point.setAttribute('aria-pressed', String(selectedPoint));
       const marker = point.querySelector('.chart-point-marker');
-      if (marker) marker.setAttribute('r', selectedPoint ? '5.5' : '3.2');
+      if (marker) marker.setAttribute('r', selectedPoint ? '6.3' : '4.1');
     });
   }
 
