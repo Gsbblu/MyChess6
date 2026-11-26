@@ -96,6 +96,10 @@
   const evaluationFill = document.querySelector('.eval-bar span');
   const evaluationBarLabel = document.querySelector('#eval-bar-value');
   const analysisModes = [...document.querySelectorAll('.mode-tab')];
+  const analysisPaneTab = document.querySelector('#analysis-view-tab-stockfish');
+  const guidedPaneTab = document.querySelector('#analysis-view-tab-guided');
+  const analysisPane = document.querySelector('#analysis-view-stockfish');
+  const guidedPane = document.querySelector('#analysis-view-guided');
   const depthDialog = document.querySelector('#depth-dialog');
   const depthDialogForm = depthDialog.querySelector('form');
   const analyzeGameButton = document.querySelector('#analyze-game');
@@ -103,6 +107,7 @@
   const runGuidedGameAnalysisButton = document.querySelector('#run-guided-game-analysis');
   const guidedGameChallenge = document.querySelector('#guided-game-challenge');
   const guidedGameResult = document.querySelector('#guided-game-result');
+  const guidedGameMoves = document.querySelector('#guided-game-moves');
   const guidedGameStatus = document.querySelector('#guided-game-status');
   const gameProgressLabel = document.querySelector('#game-progress-label');
   const gameProgressCount = document.querySelector('#game-progress-count');
@@ -193,6 +198,9 @@
   let siteSuperAnalysisAbortController = null;
   let siteSuperAnalysisRequestMode = 'move';
   let siteSuperAnalysisActiveKey = '';
+  let guidedGamePaneAvailable = false;
+  let guidedGameCriticalIndexes = new Set();
+  let guidedGameMoveButtons = [];
   let currentBoardQuality = null;
   let gameSummaryRenderedCount = -1;
   let variationSession = null;
@@ -1184,6 +1192,7 @@
     lastMove = cloneMove(history[historyIndex].move); selected = -1; legalTargets = [];
     if (batchRunning && !gameReviewResults[historyIndex]) clearAnalysisView('A análise da partida continua; esta posição ainda não foi calculada.');
     render();
+    syncGuidedGameMoveSelection();
     // A revisão atualiza painéis com alturas diferentes; não deixe o scroll anchoring deslocar a página.
     void boardElement.offsetHeight;
     const boardRectAfter = boardCard?.getBoundingClientRect();
@@ -2445,14 +2454,7 @@
         parsed = { history: [{ position: clone(start), move: null, san: '', side: start.turn, moveNumber: start.fullmove }], headers: {}, result: '*', extraGames: 0 };
       } else parsed = parsePgn(source);
       invalidateAnalysis(fenOnly ? 'Posição FEN carregada.' : 'Partida PGN carregada.');
-      if (siteSuperAnalysisRequestMode === 'game') {
-        siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
-        siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runGuidedGameAnalysisButton.disabled = false;
-        siteSuperAnalysisActiveKey = '';
-        if (siteSuperAnalysisTurnstileWidget !== null && window.turnstile) window.turnstile.remove(siteSuperAnalysisTurnstileWidget);
-        siteSuperAnalysisTurnstileWidget = null;
-      }
-      guidedGameChallenge.hidden = true; guidedGameResult.hidden = true; guidedGameResult.replaceChildren(); guidedGameStatus.textContent = '';
+      resetGuidedGamePane();
       exerciseState = null;
       punishmentPlayback = null;
       loadedPgnGame = !fenOnly; // com um FEN avulso o tabuleiro fica livre: lances novos seguem a partir da posição
@@ -2862,14 +2864,88 @@
     }).join('\n\n');
     return {
       key: matchKey,
+      criticalIndexes: moments.map((moment) => moment.index),
       prompt: [
         'Faça uma APG (Análise de Partida Guiada) da partida inteira usando a cronologia completa e os dados do Stockfish na profundidade 16.',
-        'A lista cronológica contém todos os lances, avaliações antes/depois, classificação e perda estimada. Considere a trajetória completa da partida, não trate só a lista de momentos detalhados como se fosse a partida toda. Aprofunde-se em todos os momentos detalhados, sejam positivos ou negativos; explique consequências concretas e cite as variantes fornecidas. Lances sem impacto importante podem ser comentados brevemente para conectar as fases. Não atribua intenção, plano ou causa que os dados não provem; avaliações são do ponto de vista das brancas. Separe fatos demonstrados pelo motor de hipóteses e admita incerteza.',
+        'A lista cronológica contém todos os lances, avaliações antes/depois, classificação e perda estimada. Considere a trajetória completa da partida, não trate só a lista de momentos detalhados como se fosse a partida toda. Depois da visão geral, acompanhe a partida em ordem cronológica do primeiro ao último lance sem omitir nenhum lance jogado: comente lances rotineiros em frases curtas e aprofunde todos os momentos detalhados, sejam positivos ou negativos, explicando consequências concretas e citando as variantes fornecidas. Não atribua intenção, plano ou causa que os dados não provem; avaliações são do ponto de vista das brancas. Separe fatos demonstrados pelo motor de hipóteses e admita incerteza.',
         `Cronologia completa (${history.length - 1} lances):`, timeline.join('\n'),
         moments.length ? `Momentos para explicar com mais profundidade (${moments.length}, sem limite fixo de quantidade):\n${evidence}` : 'Não foram detectados erros relevantes nem mudanças positivas grandes; explique o desenvolvimento geral com prudência usando a cronologia, sem inventar táticas.',
-        'Responda em português com: resumo do rumo da partida; análise por fases; explicação em ordem cronológica de cada momento detalhado, destacando o que mudou e por quê; conclusão com o principal aprendizado. Não invente linhas nem afirme causalidade além do que as variantes e avaliações sustentam.'
+        'Responda em português com: visão geral; acompanhamento cronológico completo, citando cada lance na ordem e conectando os momentos decisivos ao rumo geral; conclusão com o principal aprendizado. Seja econômico nos lances comuns, mas não pule nenhum. Não invente linhas nem afirme causalidade além do que as variantes e avaliações sustentam.'
       ].join('\n\n')
     };
+  }
+
+  function selectAnalysisPane(name) {
+    const showGuided = name === 'guided' && guidedGamePaneAvailable;
+    analysisPane.hidden = showGuided;
+    guidedPane.hidden = !showGuided;
+    analysisPaneTab.classList.toggle('selected', !showGuided);
+    guidedPaneTab.classList.toggle('selected', showGuided);
+    analysisPaneTab.setAttribute('aria-selected', String(!showGuided));
+    guidedPaneTab.setAttribute('aria-selected', String(showGuided));
+  }
+
+  function syncGuidedGameMoveSelection() {
+    guidedGameMoveButtons.forEach((button) => {
+      const index = Number(button.dataset.moveIndex);
+      const selected = index === historyIndex;
+      button.classList.toggle('selected', selected);
+      if (selected) button.setAttribute('aria-current', 'step');
+      else button.removeAttribute('aria-current');
+    });
+  }
+
+  function renderGuidedGameMoveNavigation() {
+    guidedGameMoves.replaceChildren();
+    guidedGameMoveButtons = [];
+    const addPosition = (index, label, title = '') => {
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'guided-ply'; button.textContent = label;
+      button.dataset.moveIndex = String(index);
+      if (guidedGameCriticalIndexes.has(index)) button.classList.add('is-critical');
+      if (title) button.title = title;
+      button.setAttribute('aria-label', index === 0 ? 'Abrir posição inicial' : `Abrir posição após ${label}${guidedGameCriticalIndexes.has(index) ? ', momento destacado na APG' : ''}`);
+      button.addEventListener('click', () => { goTo(index); showBoard(); });
+      guidedGameMoves.append(button); guidedGameMoveButtons.push(button);
+    };
+    addPosition(0, 'Início');
+    for (let index = 1; index < history.length; index += 1) {
+      const entry = history[index], result = gameReviewResults[index];
+      const label = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'}${entry.san}`;
+      const quality = result?.quality?.label || '';
+      addPosition(index, label, quality ? `${quality}${guidedGameCriticalIndexes.has(index) ? ' · momento de impacto na APG' : ''}` : 'Posição da partida');
+    }
+    syncGuidedGameMoveSelection();
+  }
+
+  function presentGuidedGameAnalysis(answer, analysis) {
+    guidedGameCriticalIndexes = new Set(analysis?.criticalIndexes || []);
+    renderSuperAnalysisMarkdown(answer, guidedGameResult);
+    guidedGameResult.hidden = false;
+    renderGuidedGameMoveNavigation();
+    guidedGamePaneAvailable = true;
+    guidedPaneTab.disabled = false;
+    selectAnalysisPane('guided');
+    guidedPane.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetGuidedGamePane() {
+    if (siteSuperAnalysisRequestMode === 'game') {
+      siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
+      siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runGuidedGameAnalysisButton.disabled = false;
+      siteSuperAnalysisActiveKey = '';
+      if (siteSuperAnalysisTurnstileWidget !== null && window.turnstile) window.turnstile.remove(siteSuperAnalysisTurnstileWidget);
+      siteSuperAnalysisTurnstileWidget = null;
+    }
+    siteSuperAnalysisRequestMode = 'move';
+    guidedGamePaneAvailable = false;
+    guidedGameCriticalIndexes = new Set();
+    guidedGameMoveButtons = [];
+    guidedPaneTab.disabled = true;
+    guidedGameChallenge.hidden = true;
+    guidedGameResult.hidden = true; guidedGameResult.replaceChildren();
+    guidedGameMoves.replaceChildren(); guidedGameStatus.textContent = '';
+    selectAnalysisPane('stockfish');
   }
 
   function updateSuperAnalysisActions() {
@@ -3076,10 +3152,8 @@
       if (!answer) throw new Error('O modelo não retornou uma análise. Tente novamente.');
       if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisActiveKey) {
         (mode === 'game' ? guidedGameAnalysisCache : siteSuperAnalysisCache).set(resultKey, answer);
-        renderSuperAnalysisMarkdown(answer, result);
-        result.hidden = false;
-        if (mode === 'game') guidedGameChallenge.hidden = true;
-        else superAnalysisChallenge.hidden = true;
+        if (mode === 'game') presentGuidedGameAnalysis(answer, analysis);
+        else { renderSuperAnalysisMarkdown(answer, result); result.hidden = false; superAnalysisChallenge.hidden = true; }
         status.textContent = mode === 'game' ? 'Análise guiada concluída.' : 'Análise concluída.';
       }
     } catch (error) {
@@ -3110,14 +3184,20 @@
     }
     const cached = gameMode ? guidedGameAnalysisCache.get(requestKey) : siteSuperAnalysisCache.get(requestKey);
     if (cached) {
-      renderSuperAnalysisMarkdown(cached, result);
-      result.hidden = false;
+      if (gameMode) presentGuidedGameAnalysis(cached, analysis);
+      else { renderSuperAnalysisMarkdown(cached, result); result.hidden = false; }
       status.textContent = 'Análise recuperada desta sessão.';
       return;
     }
     if (!config.endpoint || !config.turnstileSiteKey) {
       status.textContent = 'A integração da super análise ainda não está configurada.';
       return;
+    }
+    if (gameMode) {
+      guidedGamePaneAvailable = false; guidedPaneTab.disabled = true;
+      guidedGameResult.hidden = true; guidedGameResult.replaceChildren(); guidedGameMoves.replaceChildren();
+      guidedGameCriticalIndexes = new Set(); guidedGameMoveButtons = [];
+      selectAnalysisPane('stockfish');
     }
     challenge.hidden = false;
     siteSuperAnalysisBusy = true;
@@ -3135,6 +3215,7 @@
       }
       challenge.replaceChildren();
       status.textContent = 'Confirme a verificação para iniciar a análise.';
+      if (gameMode) challenge.scrollIntoView({ behavior: 'smooth', block: 'center' });
       siteSuperAnalysisTurnstileWidget = turnstile.render(challenge, {
         sitekey: config.turnstileSiteKey,
         action: 'mychess-super-analysis',
@@ -4143,12 +4224,7 @@
     punishmentPlayback = null;
     variationNeedsAnalysis = false;
     gameReviewResults = [];
-    if (siteSuperAnalysisRequestMode === 'game') {
-      siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
-      siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runGuidedGameAnalysisButton.disabled = false;
-      siteSuperAnalysisActiveKey = '';
-    }
-    guidedGameChallenge.hidden = true; guidedGameResult.hidden = true; guidedGameResult.replaceChildren(); guidedGameStatus.textContent = '';
+    resetGuidedGamePane();
     renderMoveList();
     renderAdvantageChart(gameReviewResults);
     clearAnalysisView('Análise da partida solicitada para os lances importados.');
@@ -4289,6 +4365,9 @@
       mode.classList.toggle('selected', selected); mode.setAttribute('aria-selected', String(selected));
     });
   }));
+  analysisPaneTab.addEventListener('click', () => selectAnalysisPane('stockfish'));
+  guidedPaneTab.addEventListener('click', () => selectAnalysisPane('guided'));
+  selectAnalysisPane('stockfish');
 
   document.addEventListener('visibilitychange', () => {
     document.body.classList.toggle('page-hidden', document.hidden);

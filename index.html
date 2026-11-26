@@ -7,7 +7,7 @@
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=guided-toolbar-1">
+    <link rel="stylesheet" href="styles.css?v=guided-pane-2">
   </head>
   <body data-background="ocean">
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -113,6 +113,12 @@
 
         <aside class="analysis-card" aria-label="Painel de análise">
           <div class="panel-heading"><div><p class="eyebrow">STOCKFISH 19</p><h2>Análise</h2></div><span class="soon-tag">ANÁLISE LOCAL</span></div>
+          <div class="analysis-view-tabs" role="tablist" aria-label="Modo de análise">
+            <button class="analysis-view-tab selected" id="analysis-view-tab-stockfish" type="button" role="tab" aria-selected="true" aria-controls="analysis-view-stockfish">Análise</button>
+            <button class="analysis-view-tab" id="analysis-view-tab-guided" type="button" role="tab" aria-selected="false" aria-controls="analysis-view-guided" disabled>APG</button>
+          </div>
+          <section class="analysis-view-pane" id="analysis-view-stockfish" role="tabpanel" aria-labelledby="analysis-view-tab-stockfish">
+          <div class="guided-game-challenge" id="guided-game-challenge" hidden></div>
           <div class="mode-tabs" role="tablist" aria-label="Profundidade da análise">
             <button class="mode-tab selected" type="button" role="tab" aria-selected="true" data-depth="10" title="Analisar até a profundidade 10">Rápida</button>
             <button class="mode-tab" type="button" role="tab" aria-selected="false" data-depth="16" title="Analisar até a profundidade 16">Equilibrada</button>
@@ -163,6 +169,15 @@
           </section>
           <div class="analysis-actions"><button class="primary-button" id="analyze-position" type="button"><span aria-hidden="true">▶</span> Analisar posição</button><button class="cancel-button" id="cancel-analysis" type="button" hidden>Cancelar</button></div>
           <p class="engine-note" id="engine-status" role="status" aria-live="polite"><span class="shield" aria-hidden="true">◇</span> <span id="engine-status-text">O Stockfish inicia localmente ao analisar.</span></p>
+          </section>
+          <section class="analysis-view-pane guided-analysis-pane" id="analysis-view-guided" role="tabpanel" aria-labelledby="analysis-view-tab-guided" hidden>
+            <div class="guided-analysis-heading"><p class="eyebrow">ANÁLISE DE PARTIDA GUIADA</p><h3>Visão geral da partida</h3><p>Toque em qualquer lance abaixo para abrir aquela posição no tabuleiro e acompanhar a análise até o fim.</p></div>
+            <div class="super-analysis-result guided-game-result" id="guided-game-result" hidden aria-live="polite"></div>
+            <section class="guided-move-navigation" aria-label="Navegue por todos os lances da partida">
+              <div class="best-moves-heading"><span>LANCES DA PARTIDA</span><small>Selecione um lance para ver a posição</small></div>
+              <div class="guided-game-moves" id="guided-game-moves"></div>
+            </section>
+          </section>
         </aside>
       </section>
 
@@ -174,11 +189,6 @@
         <details class="rating-settings"><summary>Ajustar rating para avaliar os lances</summary><div class="rating-fields"><label>Rating das brancas <input id="white-rating" type="number" min="400" max="3000" step="50" value="1200"></label><label>Rating das pretas <input id="black-rating" type="number" min="400" max="3000" step="50" value="1200"></label></div><p>Os ratings do PGN são preenchidos automaticamente. Sem eles, usamos 1200. Isso ajusta uma estimativa própria de pontos esperados; a Chess.com não publica o modelo interno completo.</p></details>
         <section class="game-analysis" id="game-analysis" hidden aria-label="Análise da partida" aria-live="polite">
           <div class="game-analysis-progress"><div class="progress-copy"><span id="game-progress-label">Aguardando análise.</span><span id="game-progress-count"></span></div><progress id="game-progress" max="100" value="0"></progress></div>
-          <section class="guided-game-analysis" aria-labelledby="guided-game-title">
-            <div><p class="eyebrow">APG · ANÁLISE DE PARTIDA GUIADA</p><h3 id="guided-game-title">Entenda os momentos que mudaram a partida</h3><p>A IA se aprofunda nos lances de maior impacto, com base nas avaliações e variantes do Stockfish. Envia apenas essas posições e linhas, sem o PGN completo nem nomes dos jogadores.</p></div>
-            <div class="guided-game-challenge" id="guided-game-challenge" hidden></div>
-            <div class="super-analysis-result guided-game-result" id="guided-game-result" hidden aria-live="polite"></div>
-          </section>
           <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">
             <div class="game-summary-heading"><div><p class="eyebrow">APRENDIZADO</p><h3 id="game-summary-title">Resumo da partida</h3></div><span id="game-summary-status"></span></div>
             <div class="summary-overview-card"><span class="summary-overview-kicker">VISÃO RÁPIDA</span><div class="game-summary-overview" id="game-summary-overview"></div></div>
@@ -255,6 +265,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=guided-toolbar-1" defer></script>
+    <script src="app.js?v=guided-pane-2" defer></script>
   </body>
 </html>
