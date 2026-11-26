@@ -1,12 +1,12 @@
 {
   "format": "MyChess cloud library",
   "version": 2,
-  "revision": "de6a3f54fd4f65122c8764e31260a566ea4819d99f93ac9e92530e8471ab8d2e",
+  "revision": "e0c37a3916a9cff772b1daf60611240b5c26e2bb6754ed2250f2f0a74452f75a",
   "lastSeenGameUrl": "https://www.chess.com/game/live/187862075762",
   "backfillArchiveUrl": "",
   "backfillComplete": true,
-  "pendingInArchive": 0,
-  "gameCount": 412,
+  "pendingInArchive": 2,
+  "gameCount": 417,
   "shards": [
     {
       "path": "games-00.json",
@@ -148,9 +148,9 @@
     },
     {
       "path": "games-1a.json",
-      "gameCount": 2,
-      "bytes": 636525,
-      "sha256": "f95c9410e19e2c7b7bf5543af63c71be4c24634b32443e7d9db8ebbdacf2b990"
+      "gameCount": 3,
+      "bytes": 748619,
+      "sha256": "017d5922ac3e61c2b69c4f5815a2204cc6eae6a7fa86c1f23057bb24896f6cb1"
     },
     {
       "path": "games-1c.json",
@@ -160,9 +160,9 @@
     },
     {
       "path": "games-1d.json",
-      "gameCount": 3,
-      "bytes": 493108,
-      "sha256": "1ceff98190726534498a1a025565413345ea2eaf0f25cb7f12be9b29855edb05"
+      "gameCount": 4,
+      "bytes": 635105,
+      "sha256": "4ca14bde7030df220ae22cb1495270453ee63db8ea6d95f9ae1d447bc5acf027"
     },
     {
       "path": "games-1e.json",
@@ -292,15 +292,15 @@
     },
     {
       "path": "games-7.json",
-      "gameCount": 17,
-      "bytes": 2767192,
-      "sha256": "8216e44f03561daa8139e69350a38aa11becd03db592b0b295cf12ba06517e64"
+      "gameCount": 18,
+      "bytes": 2927033,
+      "sha256": "3dc5736ea71eb99f95076cdfda2e0362b73035b471246cf5acddeb12d68fca43"
     },
     {
       "path": "games-8.json",
-      "gameCount": 30,
-      "bytes": 4932704,
-      "sha256": "600b6c6ee1d332c80a3e2dca99002d2b28ae918cfeeefee9c3e88ba216d6afa8"
+      "gameCount": 31,
+      "bytes": 4996748,
+      "sha256": "2dd1804ae5595a937fbfde091ec8b909322eecaac943015a4f793389d6641fed"
     },
     {
       "path": "games-9.json",
@@ -490,9 +490,9 @@
     },
     {
       "path": "games-f.json",
-      "gameCount": 24,
-      "bytes": 4097266,
-      "sha256": "1bfeab14da99a01562e35704dc3b62a43b5611bd432a78954a187fabfc9b73b4"
+      "gameCount": 25,
+      "bytes": 4411866,
+      "sha256": "0a9eeb7c3befcb978f1007f953dd605e9aaa9a691229718ea141826bf41bc196"
     }
   ]
 }
