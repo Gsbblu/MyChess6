@@ -7,7 +7,7 @@
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=guided-move-only-3">
+    <link rel="stylesheet" href="styles.css?v=remove-apg-ocean-1">
   </head>
   <body data-background="ocean">
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -113,12 +113,6 @@
 
         <aside class="analysis-card" aria-label="Painel de análise">
           <div class="panel-heading"><div><p class="eyebrow">STOCKFISH 19</p><h2>Análise</h2></div><span class="soon-tag">ANÁLISE LOCAL</span></div>
-          <div class="analysis-view-tabs" role="tablist" aria-label="Modo de análise">
-            <button class="analysis-view-tab selected" id="analysis-view-tab-stockfish" type="button" role="tab" aria-selected="true" aria-controls="analysis-view-stockfish">Análise</button>
-            <button class="analysis-view-tab" id="analysis-view-tab-guided" type="button" role="tab" aria-selected="false" aria-controls="analysis-view-guided" disabled>APG</button>
-          </div>
-          <section class="analysis-view-pane" id="analysis-view-stockfish" role="tabpanel" aria-labelledby="analysis-view-tab-stockfish">
-          <div class="guided-game-challenge" id="guided-game-challenge" hidden></div>
           <div class="mode-tabs" role="tablist" aria-label="Profundidade da análise">
             <button class="mode-tab selected" type="button" role="tab" aria-selected="true" data-depth="10" title="Analisar até a profundidade 10">Rápida</button>
             <button class="mode-tab" type="button" role="tab" aria-selected="false" data-depth="16" title="Analisar até a profundidade 16">Equilibrada</button>
@@ -169,21 +163,11 @@
           </section>
           <div class="analysis-actions"><button class="primary-button" id="analyze-position" type="button"><span aria-hidden="true">▶</span> Analisar posição</button><button class="cancel-button" id="cancel-analysis" type="button" hidden>Cancelar</button></div>
           <p class="engine-note" id="engine-status" role="status" aria-live="polite"><span class="shield" aria-hidden="true">◇</span> <span id="engine-status-text">O Stockfish inicia localmente ao analisar.</span></p>
-          </section>
-          <section class="analysis-view-pane guided-analysis-pane" id="analysis-view-guided" role="tabpanel" aria-labelledby="analysis-view-tab-guided" hidden>
-            <div class="guided-analysis-heading"><p class="eyebrow">ANÁLISE DE PARTIDA GUIADA</p><h3>Visão geral da partida</h3><p>Toque em qualquer lance abaixo para abrir aquela posição no tabuleiro e acompanhar a análise até o fim.</p></div>
-            <div class="guided-game-step-heading"><span id="guided-game-step-context">VISÃO GERAL</span><h4 id="guided-game-step-title">Como a partida se desenvolveu</h4></div>
-            <div class="super-analysis-result guided-game-result" id="guided-game-result" hidden aria-live="polite"></div>
-            <section class="guided-move-navigation" aria-label="Navegue por todos os lances da partida">
-              <div class="best-moves-heading"><span>LANCES DA PARTIDA</span><small>Selecione um lance para ver a posição</small></div>
-              <div class="guided-game-moves" id="guided-game-moves"></div>
-            </section>
-          </section>
         </aside>
       </section>
 
       <section class="moves-card" aria-labelledby="moves-title">
-        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><div class="game-analysis-actions"><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled>Analisar partida</button><button class="secondary-button guided-game-button" id="run-guided-game-analysis" type="button"><span aria-hidden="true">✦</span> APG</button><span class="super-analysis-status guided-game-status" id="guided-game-status" role="status" aria-live="polite"></span></div></div>
+        <div class="moves-heading"><div><p class="eyebrow">PARTIDA</p><h2 id="moves-title">Lances</h2></div><span class="game-details" id="game-details">Partida local</span><span class="game-outcome-indicator" id="game-outcome-indicator" hidden></span><button class="secondary-button game-analyze-button" id="analyze-game" type="button" disabled>Analisar partida</button></div>
         <div class="move-list" id="move-list" role="group" aria-label="Lances da partida"><p class="move-list-empty">Importe uma partida PGN para ver e navegar pelos lances.</p></div>
         <p class="move-quality-legend">Ícones após a análise: ★ brilhante · 👍 grande lance · ♛ melhor · ⚡ excelente · ✓ bom · ?! imprecisão · ? erro · ?? erro grave · × chance perdida</p>
         <p class="keyboard-hint">Atalhos: ← e → navegam pelos lances. Com o foco no tabuleiro, as setas movem o foco entre as casas e Shift + ← / → navegam pelos lances.</p>
@@ -266,6 +250,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=guided-move-only-3" defer></script>
+    <script src="app.js?v=remove-apg-ocean-1" defer></script>
   </body>
 </html>

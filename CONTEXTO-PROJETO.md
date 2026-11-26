@@ -18,10 +18,6 @@ O trabalho mais recente é integrar a **Super análise com IA** ao painel da par
 - Widget Turnstile criado com hostname `gsbblu.github.io`. A secret key foi adicionada pelo usuário no Worker como secret `TURNSTILE_SECRET_KEY`; ela não deve ser pedida, copiada para o repositório nem incluída em mensagens. A site key pública e o endpoint estão em `super-analysis-config.js`.
 - GitHub Pages concluiu com sucesso o deploy do commit `9d8aba7` (execução: <https://github.com/Gsbblu/MyChess6/actions/runs/44528929207>).
 - Próximo passo: pedir ao usuário para recarregar o site com `Ctrl+Shift+R`, abrir uma partida já analisada, selecionar um lance e clicar em **Analisar aqui**, concluir o Turnstile e relatar o resultado. Não afirmar que a integração funciona até esse teste passar.
-
-### Atualização — APG
-
-A interface local inclui a **APG (Análise de Partida Guiada)**: usa análises completas na profundidade 16 e envia a cronologia de todos os lances com avaliações/classificações. A IA gera uma visão geral e comentários individuais em ordem, breves para lances comuns e mais profundos nos momentos de impacto. O painel mostra a visão geral na posição inicial e apenas o comentário do lance selecionado nas outras posições; todos os lances podem ser abertos no tabuleiro e os momentos de impacto ficam destacados. A aba APG fica desabilitada até a conclusão. Há entrada APG nas partidas do arquivo Chess.com (quando a análise já está sincronizada na biblioteca), na biblioteca salva e no painel da partida analisada. O Worker diferencia o prompt APG e permite resposta mais longa. A versão do painel de APG foi publicada no commit `b1d6109`; esta atualização de exibição por lance ainda precisa ser publicada no `main`, aguardar o deploy do Worker/Pages e passar por teste no navegador; não marcar como validada antes disso.
 - Se houver falha, registrar o texto exato do status no site e conferir **Workers & Pages → mychess6-super-analysis → Deployments/Observability**. Verificar também se o secret `TURNSTILE_SECRET_KEY` continua configurado e se o Workers Build não falhou.
 
 ### Funcionamento e limites da Super análise

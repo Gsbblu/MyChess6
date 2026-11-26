@@ -1,5 +1,5 @@
 const MODEL = '@cf/google/gemma-4-26b-a4b-it';
-const MAX_PROMPT_LENGTH = 48_000;
+const MAX_PROMPT_LENGTH = 12_000;
 
 function json(body, status, origin) {
   const headers = {
@@ -76,7 +76,6 @@ export default {
     if (typeof body.prompt !== 'string' || body.prompt.length < 1 || body.prompt.length > MAX_PROMPT_LENGTH) {
       return json({ error: 'Dados de análise inválidos.' }, 400, origin);
     }
-    const kind = body.kind === 'guided-game' ? 'guided-game' : 'move';
 
     try {
       const verification = await validTurnstile(body.turnstileToken, request, env);
@@ -102,14 +101,12 @@ export default {
         messages: [
           {
             role: 'system',
-            content: kind === 'guided-game'
-              ? 'Você é um treinador de xadrez. Faça uma análise guiada de partida em português, didática e rigorosa. Você recebeu a cronologia completa, com todos os lances e avaliações do Stockfish. Acompanhe todos os lances em ordem até o fim: seja breve nos rotineiros e aprofunde os momentos destacados, incluindo acertos e erros. Use as variantes fornecidas para demonstrar consequências; não atribua intenção nem invente motivos estratégicos. Avaliações são do ponto de vista indicado no pedido. Separe fatos de hipóteses e assuma incerteza quando a variante não provar uma causa. Não contradiga nem reclassifique o Stockfish. Siga exatamente o formato solicitado: um bloco de visão geral e um bloco separado para cada índice de lance, com os marcadores literais exigidos, sem omitir índices nem envolver tudo em um único bloco de código.'
-              : 'Você é um treinador de xadrez. Explique em português e com rigor. Trate as avaliações e variantes do Stockfish como evidência principal. Confira a legalidade e a sequência das variantes antes de afirmar uma tática. Não invente ameaças, peças ou planos. Separe fatos demonstrados de hipóteses e diga explicitamente quando a variante não prova a causa. Seja didático, direto e conciso.'
+            content: 'Você é um treinador de xadrez. Explique em português e com rigor. Trate as avaliações e variantes do Stockfish como evidência principal. Confira a legalidade e a sequência das variantes antes de afirmar uma tática. Não invente ameaças, peças ou planos. Separe fatos demonstrados de hipóteses e diga explicitamente quando a variante não prova a causa. Seja didático, direto e conciso.'
           },
           { role: 'user', content: body.prompt }
         ],
         chat_template_kwargs: { enable_thinking: false },
-        max_tokens: kind === 'guided-game' ? 4_000 : 700,
+        max_tokens: 700,
         temperature: 0.2
       });
       const answer = [
