@@ -108,6 +108,8 @@
   const guidedGameChallenge = document.querySelector('#guided-game-challenge');
   const guidedGameResult = document.querySelector('#guided-game-result');
   const guidedGameMoves = document.querySelector('#guided-game-moves');
+  const guidedGameStepContext = document.querySelector('#guided-game-step-context');
+  const guidedGameStepTitle = document.querySelector('#guided-game-step-title');
   const guidedGameStatus = document.querySelector('#guided-game-status');
   const gameProgressLabel = document.querySelector('#game-progress-label');
   const gameProgressCount = document.querySelector('#game-progress-count');
@@ -201,6 +203,8 @@
   let guidedGamePaneAvailable = false;
   let guidedGameCriticalIndexes = new Set();
   let guidedGameMoveButtons = [];
+  let guidedGameOverview = '';
+  let guidedGameMoveComments = new Map();
   let currentBoardQuality = null;
   let gameSummaryRenderedCount = -1;
   let variationSession = null;
@@ -1193,6 +1197,7 @@
     if (batchRunning && !gameReviewResults[historyIndex]) clearAnalysisView('A análise da partida continua; esta posição ainda não foi calculada.');
     render();
     syncGuidedGameMoveSelection();
+    renderCurrentGuidedGameCommentary();
     // A revisão atualiza painéis com alturas diferentes; não deixe o scroll anchoring deslocar a página.
     void boardElement.offsetHeight;
     const boardRectAfter = boardCard?.getBoundingClientRect();
@@ -2844,7 +2849,7 @@
       const negative = loss >= 0.06 || ['inaccuracy', 'mistake', 'blunder', 'miss'].includes(quality.kind);
       const positive = swing >= 0.10 && ['best', 'excellent', 'great', 'brilliant'].includes(quality.kind);
       const move = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'}${entry.san}`;
-      timeline.push(`${move} ${resultEvaluation(before.score, before.turn)}→${resultEvaluation(after.score, after.turn)} ${quality.label || 'sem classificação'}${loss ? ` (−${Math.round(loss * 100)} p.p.)` : ''}`);
+      timeline.push(`#${index} ${move} ${resultEvaluation(before.score, before.turn)}→${resultEvaluation(after.score, after.turn)} ${quality.label || 'sem classificação'}${loss ? ` (−${Math.round(loss * 100)} p.p.)` : ''}`);
       if (negative || positive) moments.push({ index, entry, before, after, quality, loss, swing, negative, positive, priority: negative ? 100 + loss * 100 : swing * 100 });
     }
     moments.sort((a, b) => a.index - b.index);
@@ -2870,7 +2875,15 @@
         'A lista cronológica contém todos os lances, avaliações antes/depois, classificação e perda estimada. Considere a trajetória completa da partida, não trate só a lista de momentos detalhados como se fosse a partida toda. Depois da visão geral, acompanhe a partida em ordem cronológica do primeiro ao último lance sem omitir nenhum lance jogado: comente lances rotineiros em frases curtas e aprofunde todos os momentos detalhados, sejam positivos ou negativos, explicando consequências concretas e citando as variantes fornecidas. Não atribua intenção, plano ou causa que os dados não provem; avaliações são do ponto de vista das brancas. Separe fatos demonstrados pelo motor de hipóteses e admita incerteza.',
         `Cronologia completa (${history.length - 1} lances):`, timeline.join('\n'),
         moments.length ? `Momentos para explicar com mais profundidade (${moments.length}, sem limite fixo de quantidade):\n${evidence}` : 'Não foram detectados erros relevantes nem mudanças positivas grandes; explique o desenvolvimento geral com prudência usando a cronologia, sem inventar táticas.',
-        'Responda em português com: visão geral; acompanhamento cronológico completo, citando cada lance na ordem e conectando os momentos decisivos ao rumo geral; conclusão com o principal aprendizado. Seja econômico nos lances comuns, mas não pule nenhum. Não invente linhas nem afirme causalidade além do que as variantes e avaliações sustentam.'
+        'Responda em português, sem introdução ou conclusão fora dos marcadores. Use exatamente este formato para que a interface mostre uma parte de cada vez:',
+        '[[APG:OVERVIEW]]',
+        'Uma visão geral curta do rumo da partida e das fases; não tente comentar todos os lances aqui.',
+        '[[/APG:OVERVIEW]]',
+        'Depois, crie um bloco para CADA índice da cronologia, do #1 ao último. Use o índice numérico exatamente como aparece na linha. Formato de cada bloco:',
+        '[[APG:MOVE:1]]',
+        'Comentário deste lance. Nos lances rotineiros, uma frase curta. Nos momentos de impacto, explique a consequência e use a variante fornecida. Relacione o comentário ao rumo geral sem repetir a visão geral.',
+        '[[/APG:MOVE]]',
+        'Não omita nenhum índice, não misture comentários de lances diferentes e não escreva as etiquetas como títulos Markdown. Não invente linhas nem afirme causalidade além do que as variantes e avaliações sustentam.'
       ].join('\n\n')
     };
   }
@@ -2893,6 +2906,37 @@
       if (selected) button.setAttribute('aria-current', 'step');
       else button.removeAttribute('aria-current');
     });
+  }
+
+  function parseGuidedGameAnswer(answer) {
+    const overviewMatch = answer.match(/\[\[APG:OVERVIEW\]\]([\s\S]*?)\[\[\/APG:OVERVIEW\]\]/i);
+    const moveComments = new Map();
+    const pattern = /\[\[APG:MOVE:(\d+)\]\]([\s\S]*?)\[\[\/APG:MOVE\]\]/gi;
+    for (const match of answer.matchAll(pattern)) {
+      const index = Number(match[1]);
+      if (Number.isInteger(index) && index > 0) moveComments.set(index, match[2].trim());
+    }
+    return { overview: overviewMatch?.[1]?.trim() || '', moveComments };
+  }
+
+  function renderCurrentGuidedGameCommentary() {
+    if (!guidedGamePaneAvailable) return;
+    const index = historyIndex;
+    if (index === 0) {
+      guidedGameStepContext.textContent = 'VISÃO GERAL';
+      guidedGameStepTitle.textContent = 'Como a partida se desenvolveu';
+      renderSuperAnalysisMarkdown(guidedGameOverview || 'A resposta não trouxe uma visão geral separada.', guidedGameResult);
+    } else {
+      const entry = history[index], result = gameReviewResults[index];
+      const move = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'} ${entry.san}`;
+      guidedGameStepContext.textContent = guidedGameCriticalIndexes.has(index) ? 'MOMENTO DE IMPACTO' : 'LANCE DA PARTIDA';
+      guidedGameStepTitle.textContent = `${move}${result?.quality?.label ? ` · ${result.quality.label}` : ''}`;
+      const commentary = guidedGameMoveComments.get(index);
+      const fallback = commentary || result?.quality?.explanation
+        || 'A IA não retornou comentário individual para este lance. Confira a avaliação e a linha do Stockfish na aba Análise.';
+      renderSuperAnalysisMarkdown(fallback, guidedGameResult);
+    }
+    guidedGameResult.hidden = false;
   }
 
   function renderGuidedGameMoveNavigation() {
@@ -2919,14 +2963,20 @@
   }
 
   function presentGuidedGameAnalysis(answer, analysis) {
+    const parsed = parseGuidedGameAnswer(answer);
     guidedGameCriticalIndexes = new Set(analysis?.criticalIndexes || []);
-    renderSuperAnalysisMarkdown(answer, guidedGameResult);
-    guidedGameResult.hidden = false;
+    guidedGameOverview = parsed.overview;
+    guidedGameMoveComments = parsed.moveComments;
+    if (!guidedGameOverview && !guidedGameMoveComments.size) guidedGameOverview = 'A IA não separou a resposta por lance. Tente gerar a APG novamente.';
     renderGuidedGameMoveNavigation();
     guidedGamePaneAvailable = true;
     guidedPaneTab.disabled = false;
+    if (historyIndex !== 0) goTo(0);
+    else renderCurrentGuidedGameCommentary();
     selectAnalysisPane('guided');
     guidedPane.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return Boolean(parsed.overview) && Array.from({ length: history.length - 1 }, (_, offset) => offset + 1)
+      .every((index) => guidedGameMoveComments.has(index));
   }
 
   function resetGuidedGamePane() {
@@ -2941,6 +2991,8 @@
     guidedGamePaneAvailable = false;
     guidedGameCriticalIndexes = new Set();
     guidedGameMoveButtons = [];
+    guidedGameOverview = '';
+    guidedGameMoveComments = new Map();
     guidedPaneTab.disabled = true;
     guidedGameChallenge.hidden = true;
     guidedGameResult.hidden = true; guidedGameResult.replaceChildren();
@@ -3151,10 +3203,14 @@
       const answer = typeof payload.answer === 'string' ? payload.answer.trim() : '';
       if (!answer) throw new Error('O modelo não retornou uma análise. Tente novamente.');
       if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisActiveKey) {
-        (mode === 'game' ? guidedGameAnalysisCache : siteSuperAnalysisCache).set(resultKey, answer);
-        if (mode === 'game') presentGuidedGameAnalysis(answer, analysis);
-        else { renderSuperAnalysisMarkdown(answer, result); result.hidden = false; superAnalysisChallenge.hidden = true; }
-        status.textContent = mode === 'game' ? 'Análise guiada concluída.' : 'Análise concluída.';
+        if (mode === 'game') {
+          const complete = presentGuidedGameAnalysis(answer, analysis);
+          if (complete) guidedGameAnalysisCache.set(resultKey, answer);
+          else guidedGameAnalysisCache.delete(resultKey);
+          status.textContent = complete ? 'APG concluída. Navegue pelos lances para acompanhar cada comentário.' : 'A APG abriu, mas a IA não separou todos os comentários por lance; os lances sem comentário usam a avaliação local.';
+        }
+        else { siteSuperAnalysisCache.set(resultKey, answer); renderSuperAnalysisMarkdown(answer, result); result.hidden = false; superAnalysisChallenge.hidden = true; }
+        if (mode !== 'game') status.textContent = 'Análise concluída.';
       }
     } catch (error) {
       if (requestId === siteSuperAnalysisRequestId) status.textContent = error.message || 'Falha de conexão. Tente novamente.';
@@ -3184,9 +3240,12 @@
     }
     const cached = gameMode ? guidedGameAnalysisCache.get(requestKey) : siteSuperAnalysisCache.get(requestKey);
     if (cached) {
-      if (gameMode) presentGuidedGameAnalysis(cached, analysis);
+      if (gameMode) {
+        const complete = presentGuidedGameAnalysis(cached, analysis);
+        status.textContent = complete ? 'APG recuperada. Navegue pelos lances para acompanhar cada comentário.' : 'A APG salva não separa todos os comentários por lance; os lances sem comentário usam a avaliação local.';
+      }
       else { renderSuperAnalysisMarkdown(cached, result); result.hidden = false; }
-      status.textContent = 'Análise recuperada desta sessão.';
+      if (!gameMode) status.textContent = 'Análise recuperada desta sessão.';
       return;
     }
     if (!config.endpoint || !config.turnstileSiteKey) {

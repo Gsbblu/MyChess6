@@ -7,7 +7,7 @@
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=guided-pane-2">
+    <link rel="stylesheet" href="styles.css?v=guided-move-only-3">
   </head>
   <body data-background="ocean">
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
@@ -172,6 +172,7 @@
           </section>
           <section class="analysis-view-pane guided-analysis-pane" id="analysis-view-guided" role="tabpanel" aria-labelledby="analysis-view-tab-guided" hidden>
             <div class="guided-analysis-heading"><p class="eyebrow">ANÁLISE DE PARTIDA GUIADA</p><h3>Visão geral da partida</h3><p>Toque em qualquer lance abaixo para abrir aquela posição no tabuleiro e acompanhar a análise até o fim.</p></div>
+            <div class="guided-game-step-heading"><span id="guided-game-step-context">VISÃO GERAL</span><h4 id="guided-game-step-title">Como a partida se desenvolveu</h4></div>
             <div class="super-analysis-result guided-game-result" id="guided-game-result" hidden aria-live="polite"></div>
             <section class="guided-move-navigation" aria-label="Navegue por todos os lances da partida">
               <div class="best-moves-heading"><span>LANCES DA PARTIDA</span><small>Selecione um lance para ver a posição</small></div>
@@ -265,6 +266,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="app.js?v=guided-pane-2" defer></script>
+    <script src="app.js?v=guided-move-only-3" defer></script>
   </body>
 </html>
