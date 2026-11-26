@@ -1184,3 +1184,9 @@ body[data-background="ocean"] .intro{background:radial-gradient(ellipse at 91% 0
 /* O movimento usa só transform na camada ambiente, mantendo a pintura leve. */
 body:before{animation:ambient-drift 42s ease-in-out infinite alternate;will-change:transform}
 @media(prefers-reduced-motion:reduce){body:before{animation:none!important;will-change:auto}}
+.game-analysis-actions{display:grid;grid-template-columns:auto auto;align-items:center;gap:7px;flex:none}
+.game-analysis-actions .game-analyze-button,.game-analysis-actions .guided-game-button{width:auto;min-height:40px;margin:0;white-space:nowrap}
+.game-analysis-actions .guided-game-button{border-color:#5aaea4;background:linear-gradient(120deg,#72d4c1,#53aaa9 62%,#6688c7);color:#10201e;font-weight:700}
+.game-analysis-actions .guided-game-button:hover:not(:disabled){border-color:#a0e4da;background:linear-gradient(120deg,#8ae2d2,#62bdbb 62%,#829ce1)}
+.game-analysis-actions .guided-game-status{grid-column:1/-1;text-align:right;font-size:10px}
+@media(max-width:650px){.moves-heading .game-analysis-actions{width:100%;grid-template-columns:auto auto;justify-content:end}.game-analysis-actions .game-analyze-button,.game-analysis-actions .guided-game-button{width:auto;min-height:42px}.game-analysis-actions .guided-game-status{max-width:100%}}
