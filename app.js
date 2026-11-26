@@ -100,6 +100,10 @@
   const depthDialogForm = depthDialog.querySelector('form');
   const analyzeGameButton = document.querySelector('#analyze-game');
   const gameAnalysisPanel = document.querySelector('#game-analysis');
+  const runGuidedGameAnalysisButton = document.querySelector('#run-guided-game-analysis');
+  const guidedGameChallenge = document.querySelector('#guided-game-challenge');
+  const guidedGameResult = document.querySelector('#guided-game-result');
+  const guidedGameStatus = document.querySelector('#guided-game-status');
   const gameProgressLabel = document.querySelector('#game-progress-label');
   const gameProgressCount = document.querySelector('#game-progress-count');
   const gameProgressBar = document.querySelector('#game-progress');
@@ -181,11 +185,14 @@
   let gameBatch = null;
   let gameReviewResults = [];
   const siteSuperAnalysisCache = new Map();
+  const guidedGameAnalysisCache = new Map();
   let siteSuperAnalysisResultKey = '';
   let siteSuperAnalysisRequestId = 0;
   let siteSuperAnalysisTurnstileWidget = null;
   let siteSuperAnalysisBusy = false;
   let siteSuperAnalysisAbortController = null;
+  let siteSuperAnalysisRequestMode = 'move';
+  let siteSuperAnalysisActiveKey = '';
   let currentBoardQuality = null;
   let gameSummaryRenderedCount = -1;
   let variationSession = null;
@@ -2088,9 +2095,16 @@
         const actions = document.createElement('div'); actions.className = 'saved-game-actions';
         const open = document.createElement('button'); open.type = 'button'; open.textContent = 'Abrir análise'; open.className = 'secondary-button';
         open.addEventListener('click', () => openSavedRecord(record));
+        const guided = document.createElement('button'); guided.type = 'button'; guided.textContent = 'APG'; guided.className = 'secondary-button';
+        guided.title = 'Gerar uma análise guiada dos momentos decisivos';
+        guided.addEventListener('click', () => {
+          openSavedRecord(record);
+          runGuidedGameAnalysisButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          runSiteSuperAnalysis('game');
+        });
         const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Excluir'; remove.className = 'text-button';
         remove.addEventListener('click', async () => { await libraryRequest('readwrite', 'delete', record.id); renderSavedGames(); });
-        actions.append(open, remove); card.append(title, details, actions); savedGamesList.append(card);
+        actions.append(open, guided, remove); card.append(title, details, actions); savedGamesList.append(card);
       }
       if (records.length > visibleRecords.length) {
         const remaining = records.length - visibleRecords.length;
@@ -2260,7 +2274,20 @@
         const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com', timeClass: game.time_class || '' };
         if (loadPgn(game.pgn)) { activeGameSource = source; document.querySelector('.moves-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); requestGameAnalysis(); }
       });
-      card.append(info, button); chessComGames.append(card);
+      const guided = document.createElement('button'); guided.type = 'button'; guided.textContent = 'APG'; guided.className = 'secondary-button';
+      guided.title = 'Usar a análise automática salva para gerar uma análise guiada';
+      guided.addEventListener('click', async () => {
+        try {
+          const source = { url: game.url || '', title: `${game.white?.username || 'Brancas'} × ${game.black?.username || 'Pretas'}`, platform: 'Chess.com', timeClass: game.time_class || '' };
+          const record = await libraryRequest('readonly', 'get', gameIdentity(game.pgn || '', source));
+          if (!record) { chessComStatus.textContent = 'Esta partida ainda não tem análise Stockfish salva. Use “Analisar” e escolha profundidade 16, ou aguarde a análise automática aparecer na biblioteca.'; return; }
+          openSavedRecord(record);
+          runGuidedGameAnalysisButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          runSiteSuperAnalysis('game');
+        } catch (error) { chessComStatus.textContent = error.message || 'Não consegui abrir a análise salva desta partida.'; }
+      });
+      const actions = document.createElement('div'); actions.className = 'external-game-actions'; actions.append(button, guided);
+      card.append(info, actions); chessComGames.append(card);
     }
     if (games.length > chessComShownGames) {
       const more = document.createElement('button'); more.type = 'button'; more.className = 'secondary-button archive-more'; more.textContent = `Mostrar mais (${games.length - chessComShownGames})`;
@@ -2418,6 +2445,14 @@
         parsed = { history: [{ position: clone(start), move: null, san: '', side: start.turn, moveNumber: start.fullmove }], headers: {}, result: '*', extraGames: 0 };
       } else parsed = parsePgn(source);
       invalidateAnalysis(fenOnly ? 'Posição FEN carregada.' : 'Partida PGN carregada.');
+      if (siteSuperAnalysisRequestMode === 'game') {
+        siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
+        siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runGuidedGameAnalysisButton.disabled = false;
+        siteSuperAnalysisActiveKey = '';
+        if (siteSuperAnalysisTurnstileWidget !== null && window.turnstile) window.turnstile.remove(siteSuperAnalysisTurnstileWidget);
+        siteSuperAnalysisTurnstileWidget = null;
+      }
+      guidedGameChallenge.hidden = true; guidedGameResult.hidden = true; guidedGameResult.replaceChildren(); guidedGameStatus.textContent = '';
       exerciseState = null;
       punishmentPlayback = null;
       loadedPgnGame = !fenOnly; // com um FEN avulso o tabuleiro fica livre: lances novos seguem a partir da posição
@@ -2791,6 +2826,52 @@
     ].filter(Boolean).join('\n');
   }
 
+  function guidedGameAnalysisPrompt() {
+    if (!history || history.length < 2 || gameReviewResults.length < history.length) return null;
+    const usable = gameReviewResults.slice(0, history.length).every((result) => result?.score && result.depth === 16);
+    if (!usable) return null;
+    const moments = [], timeline = [];
+    for (let index = 1; index < history.length; index += 1) {
+      const before = gameReviewResults[index - 1], after = gameReviewResults[index], entry = history[index];
+      if (!before?.score || !after?.score || before.depth !== 16 || after.depth !== 16) continue;
+      const quality = after.quality || {};
+      const loss = Number(quality.loss) || 0;
+      const rating = Number(entry.side === 'w' ? whiteRatingInput.value : blackRatingInput.value) || 1200;
+      const swing = (expectedPoints(after.score, after.turn, entry.side, rating) ?? 0)
+        - (expectedPoints(before.score, before.turn, entry.side, rating) ?? 0);
+      const negative = loss >= 0.06 || ['inaccuracy', 'mistake', 'blunder', 'miss'].includes(quality.kind);
+      const positive = swing >= 0.10 && ['best', 'excellent', 'great', 'brilliant'].includes(quality.kind);
+      const move = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'}${entry.san}`;
+      timeline.push(`${move} ${resultEvaluation(before.score, before.turn)}→${resultEvaluation(after.score, after.turn)} ${quality.label || 'sem classificação'}${loss ? ` (−${Math.round(loss * 100)} p.p.)` : ''}`);
+      if (negative || positive) moments.push({ index, entry, before, after, quality, loss, swing, negative, positive, priority: negative ? 100 + loss * 100 : swing * 100 });
+    }
+    moments.sort((a, b) => a.index - b.index);
+    const fingerprint = gameReviewResults.slice(0, history.length).map((result) => result
+      ? `${result.score?.type}:${result.score?.value}@${result.depth}:${result.quality?.label}:${result.quality?.loss}` : '-').join(',');
+    const matchKey = `${loadedPgnSource || history.map((item) => item.san).join(' ')}|${fingerprint}|${whiteRatingInput.value}|${blackRatingInput.value}`;
+    const evidence = moments.map(({ index, entry, before, after, quality, loss, swing, negative, positive }) => {
+      const move = `${entry.moveNumber}${entry.side === 'w' ? '.' : '…'} ${entry.san}`;
+      const mainMoment = loss >= 0.10 || swing >= 0.15 || ['blunder', 'miss', 'great', 'brilliant'].includes(quality.kind);
+      const clip = (line) => String(line || '').split(/\s+/).slice(0, 12).join(' ');
+      const detail = `${move} (${entry.side === 'w' ? 'brancas' : 'pretas'}) · ${negative ? 'negativo' : 'positivo'} · ${quality.label || 'sem classificação'} · perda ${Math.round(loss * 100)} p.p. · mudança de chance para quem jogou ${Math.round(swing * 100)} p.p. · avaliação ${resultEvaluation(before.score, before.turn)}→${resultEvaluation(after.score, after.turn)} · melhor antes ${before.best || '—'} · resposta depois ${after.best || '—'}`;
+      const lines = [detail];
+      if (mainMoment && before.pv) lines.push(`Variante antes: ${clip(before.pv)}.`);
+      if (mainMoment && after.pv) lines.push(`Variante depois: ${clip(after.pv)}.`);
+      if (mainMoment) lines.push(`FEN antes: ${currentFen(history[index - 1].position)}.`);
+      return lines.join('\n');
+    }).join('\n\n');
+    return {
+      key: matchKey,
+      prompt: [
+        'Faça uma APG (Análise de Partida Guiada) da partida inteira usando a cronologia completa e os dados do Stockfish na profundidade 16.',
+        'A lista cronológica contém todos os lances, avaliações antes/depois, classificação e perda estimada. Considere a trajetória completa da partida, não trate só a lista de momentos detalhados como se fosse a partida toda. Aprofunde-se em todos os momentos detalhados, sejam positivos ou negativos; explique consequências concretas e cite as variantes fornecidas. Lances sem impacto importante podem ser comentados brevemente para conectar as fases. Não atribua intenção, plano ou causa que os dados não provem; avaliações são do ponto de vista das brancas. Separe fatos demonstrados pelo motor de hipóteses e admita incerteza.',
+        `Cronologia completa (${history.length - 1} lances):`, timeline.join('\n'),
+        moments.length ? `Momentos para explicar com mais profundidade (${moments.length}, sem limite fixo de quantidade):\n${evidence}` : 'Não foram detectados erros relevantes nem mudanças positivas grandes; explique o desenvolvimento geral com prudência usando a cronologia, sem inventar táticas.',
+        'Responda em português com: resumo do rumo da partida; análise por fases; explicação em ordem cronológica de cada momento detalhado, destacando o que mudou e por quê; conclusão com o principal aprendizado. Não invente linhas nem afirme causalidade além do que as variantes e avaliações sustentam.'
+      ].join('\n\n')
+    };
+  }
+
   function updateSuperAnalysisActions() {
     const prompt = superAnalysisPrompt();
     superAnalysisActions.hidden = !prompt || Boolean(variationSession || exerciseActiveHere());
@@ -2800,8 +2881,10 @@
     const currentKey = prompt || '';
     const keyChanged = siteSuperAnalysisResultKey !== currentKey;
     if (keyChanged) {
-      siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
-      siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
+      if (siteSuperAnalysisRequestMode !== 'game') {
+        siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
+        siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runSiteSuperAnalysisButton.disabled = false;
+      }
       siteSuperAnalysisResultKey = currentKey;
       superAnalysisChallenge.hidden = true;
     }
@@ -2873,8 +2956,8 @@
     if (offset < text.length) parent.append(document.createTextNode(text.slice(offset)));
   }
 
-  function renderSuperAnalysisMarkdown(markdown) {
-    superAnalysisResult.replaceChildren();
+  function renderSuperAnalysisMarkdown(markdown, target = superAnalysisResult) {
+    target.replaceChildren();
     const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
     let paragraph = [];
     let list = null;
@@ -2888,7 +2971,7 @@
         if (index) block.append(document.createElement('br'));
         appendSuperAnalysisInlineMarkdown(block, line);
       });
-      superAnalysisResult.append(block);
+      target.append(block);
       paragraph = [];
     };
 
@@ -2899,7 +2982,7 @@
           const code = document.createElement('code');
           code.textContent = codeLines.join('\n');
           pre.append(code);
-          superAnalysisResult.append(pre);
+          target.append(pre);
           codeLines = null;
         } else codeLines.push(line);
         continue;
@@ -2916,7 +2999,7 @@
         closeList();
         const element = document.createElement(`h${heading[1].length}`);
         appendSuperAnalysisInlineMarkdown(element, heading[2]);
-        superAnalysisResult.append(element);
+        target.append(element);
         continue;
       }
       if (!line.trim()) {
@@ -2931,7 +3014,7 @@
         if (!list || list.tagName.toLowerCase() !== type) {
           closeList();
           list = document.createElement(type);
-          superAnalysisResult.append(list);
+          target.append(list);
         }
         const element = document.createElement('li');
         appendSuperAnalysisInlineMarkdown(element, item[3]);
@@ -2947,22 +3030,35 @@
       const code = document.createElement('code');
       code.textContent = codeLines.join('\n');
       pre.append(code);
-      superAnalysisResult.append(pre);
+      target.append(pre);
     }
   }
 
-  async function requestSiteSuperAnalysis(turnstileToken) {
+  async function requestSiteSuperAnalysis(turnstileToken, mode = 'move', requestedKey = siteSuperAnalysisResultKey) {
     const config = window.MYCHESS_SUPER_ANALYSIS || {};
-    const prompt = superAnalysisPrompt({ includeMatchDetails: false });
+    const analysis = mode === 'game' ? guidedGameAnalysisPrompt() : null;
+    const prompt = mode === 'game' ? analysis?.prompt : superAnalysisPrompt({ includeMatchDetails: false });
+    const result = mode === 'game' ? guidedGameResult : superAnalysisResult;
+    const status = mode === 'game' ? guidedGameStatus : superAnalysisStatus;
+    const button = mode === 'game' ? runGuidedGameAnalysisButton : runSiteSuperAnalysisButton;
+    if (mode === 'game' && analysis?.key !== requestedKey) {
+      status.textContent = 'A partida ou a análise mudou durante a verificação. Clique em APG novamente para confirmar os dados atualizados.';
+      guidedGameChallenge.hidden = true;
+      return;
+    }
     if (!prompt || !config.endpoint) {
-      superAnalysisStatus.textContent = 'A integração da super análise ainda não está configurada.';
+      status.textContent = mode === 'game'
+        ? 'A APG exige uma análise completa da partida na profundidade 16. Analise ou reanalise a partida nessa profundidade e tente novamente.'
+        : 'A integração da super análise ainda não está configurada.';
       return;
     }
     siteSuperAnalysisBusy = true;
-    runSiteSuperAnalysisButton.disabled = true;
-    superAnalysisStatus.textContent = 'Analisando a posição…';
+    button.disabled = true;
+    status.textContent = mode === 'game' ? 'Preparando a análise guiada…' : 'Analisando a posição…';
     const requestId = ++siteSuperAnalysisRequestId;
-    const resultKey = siteSuperAnalysisResultKey;
+    const resultKey = mode === 'game' ? analysis.key : requestedKey;
+    siteSuperAnalysisRequestMode = mode;
+    siteSuperAnalysisActiveKey = resultKey;
     siteSuperAnalysisAbortController = new AbortController();
     try {
       const response = await fetch(config.endpoint, {
@@ -2970,7 +3066,7 @@
         mode: 'cors',
         credentials: 'omit',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, turnstileToken }),
+        body: JSON.stringify({ prompt, turnstileToken, kind: mode === 'game' ? 'guided-game' : 'move' }),
         signal: siteSuperAnalysisAbortController.signal
       });
       let payload = {};
@@ -2978,58 +3074,81 @@
       if (!response.ok) throw new Error(inSiteSuperAnalysisErrorMessage(response.status, payload.error));
       const answer = typeof payload.answer === 'string' ? payload.answer.trim() : '';
       if (!answer) throw new Error('O modelo não retornou uma análise. Tente novamente.');
-      if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisResultKey) {
-        siteSuperAnalysisCache.set(resultKey, answer);
-        renderSuperAnalysisMarkdown(answer);
-        superAnalysisResult.hidden = false;
-        superAnalysisStatus.textContent = 'Análise concluída.';
+      if (requestId === siteSuperAnalysisRequestId && resultKey === siteSuperAnalysisActiveKey) {
+        (mode === 'game' ? guidedGameAnalysisCache : siteSuperAnalysisCache).set(resultKey, answer);
+        renderSuperAnalysisMarkdown(answer, result);
+        result.hidden = false;
+        if (mode === 'game') guidedGameChallenge.hidden = true;
+        else superAnalysisChallenge.hidden = true;
+        status.textContent = mode === 'game' ? 'Análise guiada concluída.' : 'Análise concluída.';
       }
     } catch (error) {
-      if (requestId === siteSuperAnalysisRequestId) superAnalysisStatus.textContent = error.message || 'Falha de conexão. Tente novamente.';
+      if (requestId === siteSuperAnalysisRequestId) status.textContent = error.message || 'Falha de conexão. Tente novamente.';
     } finally {
       if (requestId === siteSuperAnalysisRequestId) {
         siteSuperAnalysisAbortController = null;
         siteSuperAnalysisBusy = false;
-        runSiteSuperAnalysisButton.disabled = false;
+        button.disabled = false;
       }
     }
   }
 
-  async function runSiteSuperAnalysis() {
+  async function runSiteSuperAnalysis(mode = 'move') {
     if (siteSuperAnalysisBusy) return;
     const config = window.MYCHESS_SUPER_ANALYSIS || {};
-    if (!config.endpoint || !config.turnstileSiteKey) {
-      superAnalysisStatus.textContent = 'A análise integrada ainda não está configurada.';
+    const gameMode = mode === 'game';
+    const analysis = gameMode ? guidedGameAnalysisPrompt() : null;
+    const prompt = gameMode ? analysis?.prompt : superAnalysisPrompt();
+    const challenge = gameMode ? guidedGameChallenge : superAnalysisChallenge;
+    const result = gameMode ? guidedGameResult : superAnalysisResult;
+    const status = gameMode ? guidedGameStatus : superAnalysisStatus;
+    const button = gameMode ? runGuidedGameAnalysisButton : runSiteSuperAnalysisButton;
+    const requestKey = gameMode ? analysis?.key : siteSuperAnalysisResultKey;
+    if (gameMode && !prompt) {
+      status.textContent = 'A APG exige uma análise completa da partida na profundidade 16. Analise ou reanalise a partida nessa profundidade e tente novamente.';
       return;
     }
-    superAnalysisChallenge.hidden = false;
+    const cached = gameMode ? guidedGameAnalysisCache.get(requestKey) : siteSuperAnalysisCache.get(requestKey);
+    if (cached) {
+      renderSuperAnalysisMarkdown(cached, result);
+      result.hidden = false;
+      status.textContent = 'Análise recuperada desta sessão.';
+      return;
+    }
+    if (!config.endpoint || !config.turnstileSiteKey) {
+      status.textContent = 'A integração da super análise ainda não está configurada.';
+      return;
+    }
+    challenge.hidden = false;
     siteSuperAnalysisBusy = true;
-    runSiteSuperAnalysisButton.disabled = true;
-    superAnalysisStatus.textContent = 'Carregando verificação de segurança…';
-    const requestedKey = siteSuperAnalysisResultKey;
+    button.disabled = true;
+    status.textContent = 'Carregando verificação de segurança…';
+    const requestedKey = requestKey;
+    siteSuperAnalysisRequestMode = mode;
+    siteSuperAnalysisActiveKey = requestedKey;
     try {
       const turnstile = await loadTurnstileScript();
-      if (requestedKey !== siteSuperAnalysisResultKey) return;
+      if (requestedKey !== siteSuperAnalysisActiveKey) return;
       if (siteSuperAnalysisTurnstileWidget !== null) {
         turnstile.remove(siteSuperAnalysisTurnstileWidget);
         siteSuperAnalysisTurnstileWidget = null;
       }
-      superAnalysisChallenge.replaceChildren();
-      superAnalysisStatus.textContent = 'Confirme a verificação para iniciar a análise.';
-      siteSuperAnalysisTurnstileWidget = turnstile.render(superAnalysisChallenge, {
+      challenge.replaceChildren();
+      status.textContent = 'Confirme a verificação para iniciar a análise.';
+      siteSuperAnalysisTurnstileWidget = turnstile.render(challenge, {
         sitekey: config.turnstileSiteKey,
         action: 'mychess-super-analysis',
         theme: 'dark',
-        callback: (token) => { if (requestedKey === siteSuperAnalysisResultKey) requestSiteSuperAnalysis(token); },
-        'expired-callback': () => { if (!siteSuperAnalysisBusy) superAnalysisStatus.textContent = 'A verificação expirou. Clique em “Analisar aqui” para tentar novamente.'; },
-        'error-callback': () => { superAnalysisStatus.textContent = 'A verificação falhou. Confira sua conexão e tente novamente.'; }
+        callback: (token) => { if (requestedKey === siteSuperAnalysisActiveKey) requestSiteSuperAnalysis(token, mode, requestedKey); },
+        'expired-callback': () => { if (!siteSuperAnalysisBusy) status.textContent = 'A verificação expirou. Clique no botão de análise para tentar novamente.'; },
+        'error-callback': () => { status.textContent = 'A verificação falhou. Confira sua conexão e tente novamente.'; }
       });
       siteSuperAnalysisBusy = false;
-      runSiteSuperAnalysisButton.disabled = false;
+      button.disabled = false;
     } catch (error) {
-      superAnalysisStatus.textContent = error.message || 'Não consegui iniciar a verificação de segurança.';
+      status.textContent = error.message || 'Não consegui iniciar a verificação de segurança.';
       siteSuperAnalysisBusy = false;
-      runSiteSuperAnalysisButton.disabled = false;
+      button.disabled = false;
     }
   }
 
@@ -3043,7 +3162,8 @@
   }
 
   openSuperAnalysisButton.addEventListener('click', openSuperAnalysis);
-  runSiteSuperAnalysisButton.addEventListener('click', runSiteSuperAnalysis);
+  runSiteSuperAnalysisButton.addEventListener('click', () => runSiteSuperAnalysis('move'));
+  runGuidedGameAnalysisButton.addEventListener('click', () => runSiteSuperAnalysis('game'));
 
   function scoreForSide(score, rootTurn, side) {
     if (!score) return null;
@@ -4023,6 +4143,12 @@
     punishmentPlayback = null;
     variationNeedsAnalysis = false;
     gameReviewResults = [];
+    if (siteSuperAnalysisRequestMode === 'game') {
+      siteSuperAnalysisAbortController?.abort(); siteSuperAnalysisAbortController = null;
+      siteSuperAnalysisRequestId += 1; siteSuperAnalysisBusy = false; runGuidedGameAnalysisButton.disabled = false;
+      siteSuperAnalysisActiveKey = '';
+    }
+    guidedGameChallenge.hidden = true; guidedGameResult.hidden = true; guidedGameResult.replaceChildren(); guidedGameStatus.textContent = '';
     renderMoveList();
     renderAdvantageChart(gameReviewResults);
     clearAnalysisView('Análise da partida solicitada para os lances importados.');

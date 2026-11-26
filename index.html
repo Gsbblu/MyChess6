@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#101512">
+    <meta name="theme-color" content="#0d131b">
     <meta name="description" content="Gabe's Chess — revisão de partidas, análise com Stockfish e estudo de xadrez.">
     <title>Gabe's Chess — revisão de xadrez</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101512'/%3E%3Ctext x='32' y='47' font-size='42' text-anchor='middle' fill='%23eeeed2'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=background-preview-2">
+    <link rel="stylesheet" href="styles.css?v=ocean-background">
   </head>
-  <body>
+  <body data-background="ocean">
     <noscript><p class="import-status error" role="alert">Gabe's Chess precisa de JavaScript para funcionar. Ative o JavaScript neste navegador e recarregue a página.</p></noscript>
     <header class="topbar">
       <a class="brand" href="#analisar" aria-label="Gabe's Chess, início">
@@ -25,13 +25,6 @@
           <h1 id="page-title">Entenda o que <em>decidiu</em> a partida.</h1>
           <p class="intro-copy">Encontre os momentos importantes e aprenda com suas decisões.</p>
         </div>
-        <fieldset class="background-picker" aria-label="Testar planos de fundo">
-          <legend>TESTAR FUNDO</legend>
-          <button type="button" class="background-option selected" data-background="forest" aria-label="Verde profundo" aria-pressed="true"><span></span></button>
-          <button type="button" class="background-option" data-background="ocean" aria-label="Azul oceano" aria-pressed="false"><span></span></button>
-          <button type="button" class="background-option" data-background="plum" aria-label="Ameixa escura" aria-pressed="false"><span></span></button>
-          <button type="button" class="background-option" data-background="slate" aria-label="Grafite" aria-pressed="false"><span></span></button>
-        </fieldset>
       </section>
 
       <section class="import-card" aria-label="Importar partida">
@@ -181,6 +174,13 @@
         <details class="rating-settings"><summary>Ajustar rating para avaliar os lances</summary><div class="rating-fields"><label>Rating das brancas <input id="white-rating" type="number" min="400" max="3000" step="50" value="1200"></label><label>Rating das pretas <input id="black-rating" type="number" min="400" max="3000" step="50" value="1200"></label></div><p>Os ratings do PGN são preenchidos automaticamente. Sem eles, usamos 1200. Isso ajusta uma estimativa própria de pontos esperados; a Chess.com não publica o modelo interno completo.</p></details>
         <section class="game-analysis" id="game-analysis" hidden aria-label="Análise da partida" aria-live="polite">
           <div class="game-analysis-progress"><div class="progress-copy"><span id="game-progress-label">Aguardando análise.</span><span id="game-progress-count"></span></div><progress id="game-progress" max="100" value="0"></progress></div>
+          <section class="guided-game-analysis" aria-labelledby="guided-game-title">
+            <div><p class="eyebrow">APG · ANÁLISE DE PARTIDA GUIADA</p><h3 id="guided-game-title">Entenda os momentos que mudaram a partida</h3><p>A IA se aprofunda nos lances de maior impacto, com base nas avaliações e variantes do Stockfish. Envia apenas essas posições e linhas, sem o PGN completo nem nomes dos jogadores.</p></div>
+            <button class="secondary-button" id="run-guided-game-analysis" type="button"><span aria-hidden="true">✦</span> Fazer APG</button>
+            <div class="guided-game-challenge" id="guided-game-challenge" hidden></div>
+            <div class="super-analysis-result guided-game-result" id="guided-game-result" hidden aria-live="polite"></div>
+            <span class="super-analysis-status guided-game-status" id="guided-game-status" role="status" aria-live="polite"></span>
+          </section>
           <section class="game-summary" id="game-summary" hidden aria-labelledby="game-summary-title">
             <div class="game-summary-heading"><div><p class="eyebrow">APRENDIZADO</p><h3 id="game-summary-title">Resumo da partida</h3></div><span id="game-summary-status"></span></div>
             <div class="summary-overview-card"><span class="summary-overview-kicker">VISÃO RÁPIDA</span><div class="game-summary-overview" id="game-summary-overview"></div></div>
@@ -257,7 +257,6 @@
     <script src="coach.js?v=mychess6-auto-1" defer></script>
     <script src="insights.js?v=mychess6-auto-1" defer></script>
     <script src="super-analysis-config.js?v=mychess6-cloudflare-1" defer></script>
-    <script src="background-preview.js?v=2" defer></script>
-    <script src="app.js?v=background-preview-2" defer></script>
+    <script src="app.js?v=ocean-background" defer></script>
   </body>
 </html>

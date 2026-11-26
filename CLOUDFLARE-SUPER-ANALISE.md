@@ -28,6 +28,7 @@ Não marcar a funcionalidade como validada antes desse teste. A secret key não 
 ## Como a integração funciona
 
 - O painel prepara um prompt usando FEN antes/depois do lance, SAN, classificação, avaliação e linhas do Stockfish.
+- A APG envia a cronologia completa de uma partida analisada na profundidade 16, com avaliação e classificação de cada lance, e detalha todos os momentos de maior impacto, positivos e negativos, com avaliações e variantes. Envia somente dados de xadrez, sem PGN, nomes ou resultado; o Worker usa instruções próprias e permite uma resposta mais longa que a análise de lance.
 - Nomes, resultado e relógios da partida são omitidos do prompt enviado à IA. O Worker/Turnstile processa dados técnicos como o IP para validar e limitar pedidos.
 - O navegador carrega o widget Turnstile quando o usuário clica **Analisar aqui** e envia o token junto do prompt.
 - O Worker permite a origem do GitHub Pages, valida o token pelo Siteverify, aplica limite aproximado de 3 pedidos por IP por minuto e rejeita prompts excessivamente longos.
