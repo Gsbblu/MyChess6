@@ -1,12 +1,12 @@
 {
   "format": "MyChess cloud library",
   "version": 2,
-  "revision": "0b017053777e94bd0278aae08fc574d73ae3e691bb3f97ccc582c837b66a12e3",
+  "revision": "123dabe4461846f1738cddb4d9f58ea8daf08ccc0a9ee5fdcbfa9d548c68ec4a",
   "lastSeenGameUrl": "https://www.chess.com/game/live/187862075762",
   "backfillArchiveUrl": "https://api.chess.com/pub/player/gab0bu/games/2026/11",
   "backfillComplete": true,
-  "pendingInArchive": 1,
-  "gameCount": 424,
+  "pendingInArchive": 0,
+  "gameCount": 425,
   "shards": [
     {
       "path": "games-00.json",
@@ -400,9 +400,9 @@
     },
     {
       "path": "games-c2.json",
-      "gameCount": 2,
-      "bytes": 538118,
-      "sha256": "4d35952f7032c9f96c1198a8f380be565946e3bb0b847aba86a0bbc203db8c26"
+      "gameCount": 3,
+      "bytes": 726499,
+      "sha256": "0b74cd9a3bc132e1b7fc4985b6898be6e33423cc0f32a6c3e6d96700f6ee6804"
     },
     {
       "path": "games-c4.json",
